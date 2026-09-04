@@ -23,6 +23,7 @@ Allt körs lokalt i webbläsaren. Ingen server, inget konto, ingen AI vid körni
 - [Projektstruktur](#projektstruktur)
 - [Tester](#tester)
 - [CI](#ci)
+- [Publicering](#publicering)
 - [Innehållssäkerhet](#innehållssäkerhet)
 
 Djupsystemen i V2 — tier-utmaningar, fokustimer, marknad, förmågor, bosstaktik
@@ -271,6 +272,33 @@ andra uppdrag, sparar, laddar om igen och kontrollerar att **båda** historikpos
 `npm ci`, `npm run typecheck`, `npm test` och `npm run build` på Node 22. Den
 kontrollerar också att bygget producerar de statiska filerna en publicering
 behöver. Ingen deploy sker automatiskt.
+
+## Publicering
+
+**Live-version:** https://jimmy7610.github.io/Rogueday/
+
+Publiceringen sker automatiskt. Varje push till `main` kör
+`.github/workflows/pages.yml`, som typkontrollerar, testar och bygger projektet
+och därefter publicerar innehållet i `dist/` till GitHub Pages. Adressen ovan
+uppdateras när arbetsflödet har gått igenom — misslyckas något steg publiceras
+ingenting, och den tidigare versionen ligger kvar.
+
+Bygget använder relativ bas (`base: './'` i `vite.config.ts`), så alla resurser
+begärs från `/Rogueday/` i stället för domänens rot. Det gäller även manifestet,
+ikonerna och service workern, vars scope därmed stannar inom projektets sökväg.
+`src/test/pages.test.ts` låser fast det, och arbetsflödet kontrollerar dessutom
+det byggda resultatet innan något publiceras.
+
+Spelardata påverkas inte av publiceringen. Sparfilen ligger i `localStorage` för
+det ursprung sidan körs på, så en lokal utvecklingskopia och den publicerade
+versionen har varsin sparfil.
+
+Behöver du bygga och granska exakt det som publiceras:
+
+```bash
+npm run build
+npm run preview
+```
 
 ## Innehållssäkerhet
 

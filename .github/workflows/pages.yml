@@ -1,0 +1,93 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Allows a deploy to be re-run by hand from the Actions tab.
+  workflow_dispatch:
+
+# The token permissions GitHub Pages deployment requires.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only one Pages deployment at a time. In-flight deploys are allowed to finish
+# rather than being cancelled, so a half-published site is never left behind.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Verify and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Deliberately repeated from ci.yml: nothing reaches the live site
+      # without passing the same gate.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # RogueDay is a static, backend-free app published at
+      # https://<user>.github.io/Rogueday/. The build uses a relative Vite base,
+      # so every asset is requested from that sub-path rather than the domain
+      # root. Catch a regression here rather than on the live site.
+      - name: Verify the static output
+        run: |
+          set -euo pipefail
+          test -f dist/index.html
+          test -f dist/manifest.webmanifest
+          test -f dist/sw.js
+          test -d dist/assets
+          test -d dist/icons
+
+          if grep -qE '(href|src)="/(assets|icons)/' dist/index.html; then
+            echo "::error::dist/index.html references assets from the domain root, which breaks a project site."
+            exit 1
+          fi
+
+          if ! grep -q 'href="./manifest.webmanifest"' dist/index.html; then
+            echo "::error::dist/index.html does not reference the manifest relatively."
+            exit 1
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the built site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
