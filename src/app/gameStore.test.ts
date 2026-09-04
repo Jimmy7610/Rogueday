@@ -17,8 +17,13 @@ function stateFrom(save = makeSave()): GameState {
   return {
     save,
     offers: null,
+    offersMoodRelaxed: false,
+    offersEmpty: false,
     filters: DEFAULT_FILTERS,
     pendingEvent: null,
+    eventResult: null,
+    itemReveal: null,
+    marketMessage: null,
     lastReward: null,
     loadSource: 'fresh',
     loadWarnings: [],

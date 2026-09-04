@@ -1,6 +1,8 @@
 import type {
   ActiveBuffs,
   DailyState,
+  MarketState,
+  PerkState,
   Player,
   Progression,
   RogueDaySave,
@@ -9,8 +11,8 @@ import type {
   StreakState,
 } from '@/types';
 
-export const SCHEMA_VERSION = 1;
-export const APP_VERSION = '1.0.0';
+export const SCHEMA_VERSION = 2;
+export const APP_VERSION = '2.0.0';
 export const DEFAULT_PLAYER_NAME = 'Skuggvandrare';
 
 export function createDefaultStatistics(): Statistics {
@@ -40,6 +42,10 @@ export function createDefaultStatistics(): Statistics {
     rerollsUsed: 0,
     lootFound: 0,
     eventsTriggered: 0,
+    marketPurchases: 0,
+    timedChallengesWon: 0,
+    weaknessHits: 0,
+    followUpsCompleted: 0,
     completionDates: {},
   };
 }
@@ -50,6 +56,14 @@ export function createDefaultProgression(): Progression {
 
 export function createDefaultStreak(): StreakState {
   return { current: 0, longest: 0, lastCompletionDate: null, shieldUsedOn: null };
+}
+
+export function createDefaultMarket(): MarketState {
+  return { date: null, purchased: {} };
+}
+
+export function createDefaultPerks(): PerkState {
+  return { selected: [] };
 }
 
 export function createDefaultDaily(): DailyState {
@@ -105,6 +119,9 @@ export function createDefaultSave(name = DEFAULT_PLAYER_NAME): RogueDaySave {
     daily: createDefaultDaily(),
     streak: createDefaultStreak(),
     settings: createDefaultSettings(),
+    market: createDefaultMarket(),
+    perks: createDefaultPerks(),
+    eventFollowUp: null,
     activeQuest: null,
     recentQuestIds: [],
     onboardingComplete: false,

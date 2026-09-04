@@ -1,10 +1,13 @@
 import type { RogueDaySave } from '@/types';
 import { isValidDateKey } from '@/utils/date';
+import { sanitiseTimer } from '@/game/timer';
 import {
   APP_VERSION,
   SCHEMA_VERSION,
   createDefaultBuffs,
   createDefaultDaily,
+  createDefaultMarket,
+  createDefaultPerks,
   createDefaultProgression,
   createDefaultSave,
   createDefaultSettings,
@@ -106,6 +109,20 @@ export function validateSave(candidate: unknown): ValidationResult {
 }
 
 /**
+ * Restore an in-progress quest, keeping the accepted deal exactly as it was.
+ * The timer is sanitised separately so broken stamps cannot produce nonsense
+ * elapsed times.
+ */
+function mergeActiveQuest(value: unknown): RogueDaySave['activeQuest'] {
+  if (!isObject(value) || !isObject(value.offer)) return null;
+  const timer = sanitiseTimer(value.timer);
+  const active = { ...value } as unknown as NonNullable<RogueDaySave['activeQuest']>;
+  if (timer) active.timer = timer;
+  else delete active.timer;
+  return active;
+}
+
+/**
  * Fill in anything a save is missing without ever discarding data that is
  * present. Used both after loading and after importing a backup.
  */
@@ -161,6 +178,11 @@ export function mergeWithDefaults(partial: Record<string, unknown>): RogueDaySav
             totalDamage: 0,
             defeated: false,
             ...partial.boss,
+            phasesSeen: Array.isArray((partial.boss as Record<string, unknown>).phasesSeen)
+              ? ((partial.boss as Record<string, unknown>).phasesSeen as unknown[]).filter(
+                  (value): value is number => typeof value === 'number',
+                )
+              : [],
           } as RogueDaySave['boss'])
         : null,
     bossHistory: Array.isArray(partial.bossHistory)
@@ -201,10 +223,31 @@ export function mergeWithDefaults(partial: Record<string, unknown>): RogueDaySav
         : null,
     },
     settings: { ...createDefaultSettings(), ...(settings as object) },
-    activeQuest:
-      isObject(partial.activeQuest) && isObject(partial.activeQuest.offer)
-        ? (partial.activeQuest as unknown as RogueDaySave['activeQuest'])
+    market: isObject(partial.market)
+      ? {
+          ...createDefaultMarket(),
+          date: isValidDateKey((partial.market as Record<string, unknown>).date)
+            ? ((partial.market as Record<string, unknown>).date as string)
+            : null,
+          purchased: isObject((partial.market as Record<string, unknown>).purchased)
+            ? ((partial.market as Record<string, unknown>).purchased as Record<string, number>)
+            : {},
+        }
+      : createDefaultMarket(),
+    perks: isObject(partial.perks)
+      ? {
+          selected: Array.isArray((partial.perks as Record<string, unknown>).selected)
+            ? ((partial.perks as Record<string, unknown>).selected as unknown[]).filter(
+                (id): id is string => typeof id === 'string',
+              )
+            : [],
+        }
+      : createDefaultPerks(),
+    eventFollowUp:
+      isObject(partial.eventFollowUp) && typeof partial.eventFollowUp.id === 'string'
+        ? (partial.eventFollowUp as unknown as RogueDaySave['eventFollowUp'])
         : null,
+    activeQuest: mergeActiveQuest(partial.activeQuest),
     recentQuestIds: Array.isArray(partial.recentQuestIds)
       ? partial.recentQuestIds.filter((id): id is string => typeof id === 'string')
       : [],

@@ -1,7 +1,10 @@
 import type {
+  BossDefinition,
   ChainProgressState,
+  ChallengeModifier,
   ChaosModifier,
   ChoiceTier,
+  PerkEffects,
   Quest,
   QuestFilters,
   QuestOffer,
@@ -9,6 +12,8 @@ import type {
   RogueDaySave,
 } from '@/types';
 import { CHAIN_BY_ID, QUEST_CHAINS } from '@/data/chains';
+import { eligibleChallenges } from '@/data/challenges';
+import { getWeaknessInfo } from './boss';
 import { QUESTS, getQuestById } from '@/data/quests';
 import { createRng, createId, randomRng, type Rng } from '@/utils/rng';
 import { toLocalDateKey } from '@/utils/date';
@@ -68,35 +73,45 @@ export const CHAOS_MODIFIERS: ChaosModifier[] = [
   },
   {
     id: 'music_only',
-    name: 'MUSIKENS TVÅNG',
-    description: 'Uppdraget måste göras till musik på hög volym.',
+    name: 'ARBETSSÅNGEN',
+    description: 'Genomför uppdraget till en låt eller spellista som ger dig energi.',
     rewardMultiplier: 1.15,
   },
 ];
 
-/** Does the quest satisfy the player's stated constraints? */
-export function matchesFilters(quest: Quest, filters: QuestFilters): boolean {
-  // Duration: never hand out something longer than the time the player has.
+/**
+ * HARD constraints. These describe what the player physically can do right now
+ * and are never relaxed, in any code path, for any reason:
+ *
+ *   duration - never longer than the time they said they have
+ *   energy   - never more demanding than the energy they said they have
+ *   location - never somewhere they are not
+ *
+ * Mode is also hard: a chaos-only quest must not appear in a normal run.
+ */
+export function matchesHardConstraints(quest: Quest, filters: QuestFilters): boolean {
   if (quest.duration > filters.duration) return false;
-
-  // Energy: never demand more energy than the player has.
   if (!energyAllows(filters.energy, quest.energy)) return false;
 
-  // Location: 'anywhere' from the player accepts everything; otherwise the
-  // quest must be doable at the stated place.
   if (filters.location !== 'anywhere') {
     if (!quest.locations.includes(filters.location) && !quest.locations.includes('anywhere')) {
       return false;
     }
   }
 
-  // Mood must be one the quest is written for.
-  if (!quest.moods.includes(filters.mood)) return false;
-
-  // Mode: chaos-only quests never appear in normal runs, and vice versa.
   if (quest.mode !== 'any' && quest.mode !== filters.mode) return false;
 
   return true;
+}
+
+/** Mood is a preference: it shapes the pool but may be set aside as a last resort. */
+export function matchesMood(quest: Quest, filters: QuestFilters): boolean {
+  return quest.moods.includes(filters.mood);
+}
+
+/** Does the quest satisfy every stated constraint, mood included? */
+export function matchesFilters(quest: Quest, filters: QuestFilters): boolean {
+  return matchesHardConstraints(quest, filters) && matchesMood(quest, filters);
 }
 
 const ENERGY_RANK = { low: 0, medium: 1, high: 2 } as const;
@@ -130,24 +145,53 @@ export interface PoolOptions {
   includeChains?: boolean;
 }
 
+export interface QuestPoolResult {
+  quests: Quest[];
+  /** True when mood had to be set aside to find anything at all. */
+  moodRelaxed: boolean;
+}
+
 /**
- * Build the eligible pool. Recently-seen quests are pushed out first, but if
- * that would empty the pool they are allowed back in - the player always gets
- * something that respects their filters.
+ * Build the eligible pool.
+ *
+ * Relaxation happens in a strict order and never touches a hard constraint:
+ *
+ *   1. hard constraints + mood, minus recently seen quests
+ *   2. hard constraints + mood, recency allowed back in
+ *   3. hard constraints only  (mood relaxed - the UI says so out loud)
+ *
+ * If even step 3 is empty the pool is genuinely empty, and the caller tells the
+ * player rather than handing them something they cannot do.
  */
-export function buildQuestPool(options: PoolOptions): Quest[] {
+export function buildQuestPoolDetailed(options: PoolOptions): QuestPoolResult {
   const { filters, chains, recentQuestIds, includeChains = true } = options;
 
-  const eligible = QUESTS.filter((quest) => {
+  const allowed = (quest: Quest): boolean => {
     if (!includeChains && quest.chainId) return false;
     if (quest.chainId && !isChainQuestAvailable(quest, chains)) return false;
-    return matchesFilters(quest, filters);
-  });
+    return matchesHardConstraints(quest, filters);
+  };
+
+  const hardMatches = QUESTS.filter(allowed);
+  const withMood = hardMatches.filter((quest) => matchesMood(quest, filters));
 
   const recent = new Set(recentQuestIds);
-  const fresh = eligible.filter((quest) => !recent.has(quest.id));
+  const freshWithMood = withMood.filter((quest) => !recent.has(quest.id));
 
-  return fresh.length >= 3 ? fresh : eligible;
+  if (freshWithMood.length >= 3) return { quests: freshWithMood, moodRelaxed: false };
+  if (withMood.length > 0) return { quests: withMood, moodRelaxed: false };
+
+  // Mood is the only thing that may be given up, and only when nothing else
+  // is on offer. Hard constraints still hold.
+  const freshHard = hardMatches.filter((quest) => !recent.has(quest.id));
+  if (freshHard.length >= 3) return { quests: freshHard, moodRelaxed: true };
+
+  return { quests: hardMatches, moodRelaxed: hardMatches.length > 0 };
+}
+
+/** Backwards-compatible pool accessor. */
+export function buildQuestPool(options: PoolOptions): Quest[] {
+  return buildQuestPoolDetailed(options).quests;
 }
 
 function computeRewards(
@@ -155,10 +199,15 @@ function computeRewards(
   rarity: Rarity,
   tier: ChoiceTier,
   modifier?: ChaosModifier,
+  challenge?: ChallengeModifier,
 ): { xp: number; gold: number; bossDamage: number } {
   const rarityMultiplier = RARITY_MULTIPLIER[rarity];
-  const tierMultiplier = TIER_REWARD_MULTIPLIER[tier];
   const modifierMultiplier = modifier?.rewardMultiplier ?? 1;
+
+  // The challenge carries the tier's reward premium. Without one (SAFE, or a
+  // tier whose pool was empty) the flat tier multiplier applies instead, so a
+  // WILD offer is never worth less than a SAFE one.
+  const tierMultiplier = challenge?.rewardMultiplier ?? TIER_REWARD_MULTIPLIER[tier];
 
   const xp = Math.round(quest.baseXp * rarityMultiplier * tierMultiplier * modifierMultiplier);
   const gold = Math.round(quest.baseGold * rarityMultiplier * tierMultiplier * modifierMultiplier);
@@ -191,10 +240,14 @@ export interface BuildOfferOptions {
   rng: Rng;
   isDaily?: boolean;
   forcedRarity?: Rarity;
+  /** The week's boss, so the offer can advertise a weakness hit up front. */
+  boss?: BossDefinition | undefined;
+  /** Perk effects, for the weakness bonus readout. */
+  effects?: PerkEffects | undefined;
 }
 
 export function buildOffer(options: BuildOfferOptions): QuestOffer {
-  const { quest, tier, filters, rng, isDaily = false, forcedRarity } = options;
+  const { quest, tier, filters, rng, isDaily = false, forcedRarity, boss, effects } = options;
 
   const rarity = forcedRarity ?? rollTierRarity(tier, quest.rarity, rng);
 
@@ -207,7 +260,16 @@ export function buildOffer(options: BuildOfferOptions): QuestOffer {
     }
   }
 
-  const rewards = computeRewards(quest, rarity, tier, modifier);
+  // WILD and DANGEROUS always carry a real, visible challenge when one fits.
+  let challenge: ChallengeModifier | undefined;
+  if (tier !== 'safe' && !isDaily) {
+    const candidates = eligibleChallenges(quest, tier);
+    if (candidates.length > 0) challenge = rng.pick(candidates);
+  }
+
+  const rewards = computeRewards(quest, rarity, tier, modifier, challenge);
+
+  const weakness = getWeaknessInfo(boss, quest.category, effects?.weaknessBonusExtra ?? 0);
 
   const chain = quest.chainId ? CHAIN_BY_ID[quest.chainId] : undefined;
 
@@ -220,8 +282,11 @@ export function buildOffer(options: BuildOfferOptions): QuestOffer {
     gold: rewards.gold,
     bossDamage: rewards.bossDamage,
     ...(modifier ? { modifier } : {}),
-    hidden: modifier?.hidesObjective === true,
+    ...(challenge ? { challenge } : {}),
+    hidden: modifier?.hidesObjective === true || challenge?.hidesObjective === true,
     isDaily,
+    weaknessMultiplier: weakness.multiplier,
+    hitsWeakness: weakness.weak,
     ...(chain && quest.chainStep !== undefined
       ? {
           chainInfo: {
@@ -240,41 +305,58 @@ export interface RollOptions {
   chains: Record<string, ChainProgressState>;
   recentQuestIds: string[];
   rng?: Rng;
+  /** The week's boss, so offers can advertise weakness hits. */
+  boss?: BossDefinition | undefined;
+  effects?: PerkEffects | undefined;
+}
+
+export interface QuestRollResult {
+  offers: QuestOffer[];
+  /** True when mood was set aside to find anything; the UI must say so. */
+  moodRelaxed: boolean;
+  /** True when nothing at all matched the hard constraints. */
+  empty: boolean;
+  /** How many quests the choices were drawn from. */
+  poolSize: number;
 }
 
 /**
- * Roll the three choices. Each tier gets a distinct quest where the pool
- * allows it, and all three always respect the player's filters.
+ * Roll the three choices.
+ *
+ * Every offer always satisfies the player's hard constraints - there is no
+ * fallback path that hands out a 60-minute outdoor quest to someone with 15
+ * minutes at home. If nothing matches, the result is explicitly empty and the
+ * UI asks them to widen their filters instead.
  */
-export function rollQuestChoices(options: RollOptions): QuestOffer[] {
-  const { filters, chains, recentQuestIds, rng = randomRng } = options;
+export function rollQuestChoices(options: RollOptions): QuestRollResult {
+  const { filters, chains, recentQuestIds, rng = randomRng, boss, effects } = options;
 
-  const pool = buildQuestPool({ filters, chains, recentQuestIds });
+  const pool = buildQuestPoolDetailed({ filters, chains, recentQuestIds });
 
-  if (pool.length === 0) {
-    // Nothing matched even after relaxing recency - fall back to the least
-    // demanding quests that still respect duration and location.
-    const fallback = QUESTS.filter(
-      (quest) =>
-        quest.duration <= filters.duration &&
-        quest.mode !== 'chaos' &&
-        (filters.location === 'anywhere' ||
-          quest.locations.includes(filters.location) ||
-          quest.locations.includes('anywhere')),
-    );
-    const source = fallback.length > 0 ? fallback : QUESTS;
-    const picks = rng.shuffle(source).slice(0, 3);
-    return (['safe', 'wild', 'dangerous'] as ChoiceTier[]).map((tier, index) =>
-      buildOffer({ quest: picks[index % picks.length], tier, filters, rng }),
-    );
+  if (pool.quests.length === 0) {
+    return { offers: [], moodRelaxed: false, empty: true, poolSize: 0 };
   }
 
-  const shuffled = rng.shuffle(pool);
+  const shuffled = rng.shuffle(pool.quests);
   const tiers: ChoiceTier[] = ['safe', 'wild', 'dangerous'];
 
-  return tiers.map((tier, index) =>
-    buildOffer({ quest: shuffled[index % shuffled.length], tier, filters, rng }),
+  const offers = tiers.map((tier, index) =>
+    buildOffer({
+      quest: shuffled[index % shuffled.length],
+      tier,
+      filters,
+      rng,
+      boss,
+      effects,
+    }),
   );
+
+  return {
+    offers,
+    moodRelaxed: pool.moodRelaxed,
+    empty: false,
+    poolSize: pool.quests.length,
+  };
 }
 
 /* ------------------------------------------------------------------ */

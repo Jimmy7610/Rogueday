@@ -139,7 +139,12 @@ describe('completeQuest boss interaction', () => {
   it('damages the weekly boss', () => {
     const save = makeSave();
     const startingHp = save.boss!.currentHp;
-    const offer = makeOffer('clean_floor_deep');
+    // A category the test week's boss is neutral to, so the base damage lands
+    // unmodified. Weakness scaling has its own tests below.
+    const offer = makeOffer('digi_inbox_raid');
+    const boss = getBossById(save.boss!.bossId)!;
+    expect(boss.weaknessCategories).not.toContain('digital');
+    expect(boss.resistanceCategories).not.toContain('digital');
 
     const { save: next, reward } = completeQuest(save, offer, AT, NO_LUCK_RNG);
 
@@ -151,10 +156,33 @@ describe('completeQuest boss interaction', () => {
   it('doubles damage with a boss key', () => {
     const save = makeSave();
     save.buffs.bossKey = true;
-    const offer = makeOffer('clean_floor_deep');
+    const offer = makeOffer('digi_inbox_raid');
 
     const { reward } = completeQuest(save, offer, AT, NO_LUCK_RNG);
     expect(reward.bossDamage).toBe(offer.bossDamage * 2);
+  });
+
+  it('a quest in a weakness category hits 25% harder', () => {
+    const save = makeSave();
+    const boss = getBossById(save.boss!.bossId)!;
+    // The week's boss in the test fixture is weak to cleaning.
+    expect(boss.weaknessCategories).toContain('cleaning');
+
+    const offer = makeOffer('clean_floor_deep');
+    const { reward } = completeQuest(save, offer, AT, NO_LUCK_RNG);
+
+    expect(reward.bossDamage).toBe(Math.round(offer.bossDamage * 1.25));
+    expect(reward.boss?.weaknessHit).toBe(true);
+    expect(reward.boss?.weaknessMultiplier).toBeCloseTo(1.25, 5);
+  });
+
+  it('records a weakness hit in the statistics', () => {
+    const save = makeSave();
+    const { save: next } = completeQuest(save, makeOffer('clean_floor_deep'), AT, NO_LUCK_RNG);
+    expect(next.statistics.weaknessHits).toBe(1);
+
+    const neutral = completeQuest(next, makeOffer('digi_inbox_raid'), AT, NO_LUCK_RNG);
+    expect(neutral.save.statistics.weaknessHits).toBe(1);
   });
 
   it('grants the boss reward and history entry on defeat', () => {

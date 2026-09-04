@@ -1,15 +1,19 @@
 import type {
+  ActiveQuestState,
+  BossHitSummary,
   HistoryEntry,
   LootItemId,
   QuestOffer,
+  RewardLine,
   RewardSummary,
   RogueDaySave,
   Statistics,
 } from '@/types';
 import { CHAIN_BY_ID } from '@/data/chains';
+import { getBossById } from '@/data/bosses';
 import { toLocalDateKey } from '@/utils/date';
 import { createId, randomRng, type Rng } from '@/utils/rng';
-import { applyBossDamage, ensureCurrentBoss } from './boss';
+import { applyBossDamage, ensureCurrentBoss, getWeaknessInfo } from './boss';
 import { evaluateAchievements } from './achievements';
 import {
   BOSS_KEY_DAMAGE_MULTIPLIER,
@@ -21,9 +25,16 @@ import {
   removeItem,
   rollQuestLoot,
 } from './loot';
+import { getEffects, pendingMilestones } from './perks';
 import { applyGold, applyXp } from './progression';
 import { DAILY_BONUS_MULTIPLIER, advanceChain, rememberQuests } from './questSelection';
 import { registerCompletion } from './streak';
+import {
+  TIME_BONUS_DAMAGE_FRACTION,
+  TIME_BONUS_GOLD_FRACTION,
+  TIME_BONUS_XP_FRACTION,
+  beatTheClock,
+} from './timer';
 
 export interface CompletionResult {
   save: RogueDaySave;
@@ -37,66 +48,151 @@ function bumpRecord(record: Record<string, number>, key: string, amount = 1): Re
 /**
  * Complete the active quest.
  *
- * This is the single place where a completion changes the game: rewards,
- * boss damage, history, streak, chains, statistics, loot and achievements all
- * flow from here into one new authoritative save object. The caller persists
- * that object; nothing here touches storage directly.
+ * This is the single place where a completion changes the game: rewards, boss
+ * damage, history, streak, chains, statistics, loot, perks and achievements all
+ * flow from here into one new authoritative save object.
+ *
+ * Every reward is recorded as an itemised `RewardLine`. The lines are summed to
+ * produce exactly the XP and gold applied to progression, so the HUD can never
+ * move without the player being shown why.
  */
 export function completeQuest(
   save: RogueDaySave,
   offer: QuestOffer,
   now: Date = new Date(),
   rng: Rng = randomRng,
+  active?: ActiveQuestState | null,
 ): CompletionResult {
   const quest = offer.quest;
   const dateKey = toLocalDateKey(now);
   const isoNow = now.toISOString();
+  const effects = getEffects(save);
+  const lines: RewardLine[] = [];
 
-  /* ---------------- rewards ---------------- */
+  /* ---------------- quest reward ---------------- */
 
-  const dailyMultiplier = offer.isDaily ? DAILY_BONUS_MULTIPLIER : 1;
+  const isFirstToday = (save.statistics.completionDates[dateKey] ?? 0) === 0;
+
+  const dailyMultiplier = offer.isDaily
+    ? DAILY_BONUS_MULTIPLIER + effects.dailyQuestXpBonus
+    : 1;
   const elixirMultiplier = save.buffs.xpElixir ? XP_ELIXIR_MULTIPLIER : 1;
   const shrineMultiplier = save.buffs.shrineXpBonusQuests > 0 ? SHRINE_XP_MULTIPLIER : 1;
-  const goldMultiplier = save.buffs.focusRune ? FOCUS_RUNE_GOLD_MULTIPLIER : 1;
+  const firstQuestMultiplier = isFirstToday ? 1 + effects.firstQuestXpBonus : 1;
 
-  const xpEarned = Math.round(offer.xp * dailyMultiplier * elixirMultiplier * shrineMultiplier);
-  const goldEarned = Math.round(offer.gold * dailyMultiplier * goldMultiplier);
+  const goldMultiplier =
+    (save.buffs.focusRune ? FOCUS_RUNE_GOLD_MULTIPLIER : 1) *
+    (offer.isDaily ? DAILY_BONUS_MULTIPLIER : 1) *
+    (1 + effects.goldBonus);
+
+  const xpEarned = Math.round(
+    offer.xp * dailyMultiplier * elixirMultiplier * shrineMultiplier * firstQuestMultiplier,
+  );
+  const goldEarned = Math.round(offer.gold * goldMultiplier);
+
+  lines.push({
+    id: 'quest',
+    label: 'UPPDRAG',
+    xp: xpEarned,
+    gold: goldEarned,
+    detail: quest.title,
+    tone: 'default',
+  });
+
+  /* ---------------- timed challenge ---------------- */
+
+  const activeQuest = active ?? save.activeQuest;
+  const hadTimedChallenge = Boolean(offer.challenge?.timerMinutes);
+  const timeBonus = hadTimedChallenge && beatTheClock(activeQuest ?? null, now);
+
+  let timeBonusXp = 0;
+  let timeBonusGold = 0;
+  if (timeBonus) {
+    timeBonusXp = Math.round(xpEarned * TIME_BONUS_XP_FRACTION);
+    timeBonusGold = Math.round(goldEarned * TIME_BONUS_GOLD_FRACTION);
+    lines.push({
+      id: 'time',
+      label: 'TIDSBONUS',
+      xp: timeBonusXp,
+      gold: timeBonusGold,
+      detail: offer.challenge?.name ?? 'Klarat i tid',
+      tone: 'bonus',
+    });
+  }
 
   /* ---------------- boss ---------------- */
 
   const { boss: currentBoss } = ensureCurrentBoss(save.boss, now);
-  const rawDamage = offer.bossDamage * (save.buffs.bossKey ? BOSS_KEY_DAMAGE_MULTIPLIER : 1);
+  const definition = getBossById(currentBoss.bossId);
+  const weakness = getWeaknessInfo(definition, quest.category, effects.weaknessBonusExtra);
+
+  const bossKeyMultiplier = save.buffs.bossKey ? BOSS_KEY_DAMAGE_MULTIPLIER : 1;
+  const rawDamage =
+    offer.bossDamage *
+    bossKeyMultiplier *
+    weakness.multiplier *
+    (1 + effects.bossDamageBonus) *
+    (timeBonus ? 1 + TIME_BONUS_DAMAGE_FRACTION : 1);
+
   const bossResult = applyBossDamage(currentBoss, rawDamage, now);
 
   let bossHistory = save.bossHistory;
-  let bossRewardXp = 0;
-  let bossRewardGold = 0;
   const bossLoot: LootItemId[] = [];
 
   if (bossResult.justDefeated && bossResult.defeatedBoss) {
-    const definition = bossResult.defeatedBoss;
-    bossRewardXp = definition.reward.xp;
-    bossRewardGold = definition.reward.gold;
-    bossLoot.push(definition.reward.chest);
+    const defeated = bossResult.defeatedBoss;
+    bossLoot.push(defeated.reward.chest);
+    lines.push({
+      id: 'boss',
+      label: 'BOSS BESEGRAD',
+      xp: defeated.reward.xp,
+      gold: defeated.reward.gold,
+      detail: defeated.name,
+      loot: [defeated.reward.chest],
+      tone: 'boss',
+    });
     bossHistory = [
       {
-        bossId: definition.id,
-        bossName: definition.name,
+        bossId: defeated.id,
+        bossName: defeated.name,
         weekKey: bossResult.boss.weekKey,
         defeatedAt: isoNow,
         questsUsed: bossResult.boss.questsContributed,
         totalDamage: bossResult.boss.totalDamage,
-        rewardXp: definition.reward.xp,
-        rewardGold: definition.reward.gold,
-        rewardChest: definition.reward.chest,
+        rewardXp: defeated.reward.xp,
+        rewardGold: defeated.reward.gold,
+        rewardChest: defeated.reward.chest,
       },
       ...save.bossHistory,
     ];
   }
 
+  const bossSummary: BossHitSummary | null = definition
+    ? {
+        bossId: definition.id,
+        bossName: definition.name,
+        icon: definition.icon,
+        accent: definition.accent,
+        hpBefore: bossResult.hpBefore,
+        hpAfter: bossResult.boss.currentHp,
+        maxHp: bossResult.boss.maxHp,
+        damage: bossResult.damageDealt,
+        weaknessHit: weakness.weak,
+        weaknessMultiplier: weakness.multiplier,
+        resisted: weakness.resistant,
+        defeated: bossResult.justDefeated,
+        phasesTriggered: bossResult.phasesTriggered,
+      }
+    : null;
+
   /* ---------------- loot ---------------- */
 
-  const questLoot = rollQuestLoot(offer.rarity, save.buffs.luckyCoin, rng);
+  const questLoot = rollQuestLoot(
+    offer.rarity,
+    save.buffs.luckyCoin,
+    rng,
+    effects.lootChanceBonus,
+  );
   const allLoot: LootItemId[] = [...questLoot.items, ...bossLoot];
 
   /* ---------------- chains ---------------- */
@@ -106,12 +202,17 @@ export function completeQuest(
     ? CHAIN_BY_ID[chainResult.completedChainId]
     : undefined;
 
-  let chainXp = 0;
-  let chainGold = 0;
   if (completedChain) {
-    chainXp = completedChain.bonusXp;
-    chainGold = completedChain.bonusGold;
     if (completedChain.chestReward) allLoot.push(completedChain.chestReward);
+    lines.push({
+      id: 'chain',
+      label: 'KEDJEBONUS',
+      xp: completedChain.bonusXp,
+      gold: completedChain.bonusGold,
+      detail: completedChain.name,
+      ...(completedChain.chestReward ? { loot: [completedChain.chestReward] } : {}),
+      tone: 'chain',
+    });
   }
 
   /* ---------------- streak ---------------- */
@@ -147,6 +248,9 @@ export function completeQuest(
 
   /* ---------------- statistics ---------------- */
 
+  const subtotalXp = lines.reduce((sum, line) => sum + line.xp, 0);
+  const subtotalGold = lines.reduce((sum, line) => sum + line.gold, 0);
+
   const statistics: Statistics = {
     ...save.statistics,
     questsCompleted: save.statistics.questsCompleted + 1,
@@ -156,8 +260,8 @@ export function completeQuest(
       [offer.rarity]: save.statistics.questsByRarity[offer.rarity] + 1,
     },
     questsByDuration: bumpRecord(save.statistics.questsByDuration, String(quest.duration)),
-    totalXpEarned: save.statistics.totalXpEarned + xpEarned + bossRewardXp + chainXp,
-    totalGoldEarned: save.statistics.totalGoldEarned + goldEarned + bossRewardGold + chainGold,
+    totalXpEarned: save.statistics.totalXpEarned + subtotalXp,
+    totalGoldEarned: save.statistics.totalGoldEarned + subtotalGold,
     totalMinutes: save.statistics.totalMinutes + quest.duration,
     totalBossDamage: save.statistics.totalBossDamage + bossResult.damageDealt,
     bossesDefeated: save.statistics.bossesDefeated + (bossResult.justDefeated ? 1 : 0),
@@ -167,14 +271,17 @@ export function completeQuest(
     dailyQuestsCompleted: save.statistics.dailyQuestsCompleted + (offer.isDaily ? 1 : 0),
     chainsCompleted: save.statistics.chainsCompleted + (completedChain ? 1 : 0),
     lootFound: save.statistics.lootFound + allLoot.length,
+    timedChallengesWon: save.statistics.timedChallengesWon + (timeBonus ? 1 : 0),
+    weaknessHits: save.statistics.weaknessHits + (weakness.weak ? 1 : 0),
     completionDates: bumpRecord(save.statistics.completionDates, dateKey),
   };
 
-  /* ---------------- progression ---------------- */
+  /* ---------------- progression (part one) ---------------- */
 
-  const totalXp = xpEarned + bossRewardXp + chainXp;
-  const xpResult = applyXp(save.progression, totalXp);
-  let progression = applyGold(xpResult.progression, goldEarned + bossRewardGold + chainGold);
+  const levelBefore = save.progression.level;
+  const xpResult = applyXp(save.progression, subtotalXp);
+  let progression = applyGold(xpResult.progression, subtotalGold);
+  const levelUps = [...xpResult.levelUps];
 
   /* ---------------- assemble the new save ---------------- */
 
@@ -182,7 +289,7 @@ export function completeQuest(
     ...save,
     progression,
     inventory,
-    buffs: consumeBuffs(save.buffs),
+    buffs: consumeBuffs(save.buffs, effects.bossKeyDoubleHit && save.buffs.bossKey),
     history: [historyEntry, ...save.history],
     boss: bossResult.boss,
     bossHistory,
@@ -199,9 +306,18 @@ export function completeQuest(
   const achievementResult = evaluateAchievements(nextSave, now);
 
   if (achievementResult.unlocked.length > 0) {
+    lines.push({
+      id: 'badges',
+      label: 'MÄRKEN',
+      xp: achievementResult.rewardXp,
+      gold: achievementResult.rewardGold,
+      detail: achievementResult.unlocked.map((entry) => entry.name).join(' · '),
+      tone: 'badge',
+    });
+
     const achievementXp = applyXp(nextSave.progression, achievementResult.rewardXp);
     progression = applyGold(achievementXp.progression, achievementResult.rewardGold);
-    xpResult.levelUps.push(...achievementXp.levelUps);
+    levelUps.push(...achievementXp.levelUps);
 
     nextSave = {
       ...nextSave,
@@ -215,17 +331,34 @@ export function completeQuest(
     };
   }
 
+  /* ---------------- totals ---------------- */
+
+  const totalXp = lines.reduce((sum, line) => sum + line.xp, 0);
+  const totalGold = lines.reduce((sum, line) => sum + line.gold, 0);
+
+  const perkChoicesUnlocked = pendingMilestones(
+    nextSave.progression.level,
+    nextSave.perks,
+  ).filter((milestone) => milestone > levelBefore);
+
   const reward: RewardSummary = {
+    lines,
+    totalXp,
+    totalGold,
     xp: xpEarned,
     gold: goldEarned,
     bossDamage: bossResult.damageDealt,
     bossDefeated: bossResult.justDefeated,
+    boss: bossSummary,
     loot: allLoot,
-    levelUps: xpResult.levelUps,
+    levelUps,
     achievements: achievementResult.unlocked,
     ...(completedChain ? { chainCompleted: completedChain } : {}),
     streak: streakResult.streak.current,
+    streakSaved: streakResult.shieldUsed,
     dailyBonus: offer.isDaily,
+    timeBonus,
+    perkChoicesUnlocked,
   };
 
   return { save: nextSave, reward };

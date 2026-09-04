@@ -3,6 +3,15 @@ import type { BossDefinition } from '@/types';
 /**
  * Veckans fiender. Rotationen är deterministisk och räknas ut lokalt från
  * veckonyckeln - ingen server, ingen nätverksförfrågan.
+ *
+ * V2: varje boss har nu en taktisk profil.
+ *
+ * - `weaknessCategories` ger +25% bossskada för uppdrag i de kategorierna.
+ * - `resistanceCategories` ger -15%. De används sparsamt, så att ett uppdrag
+ *   aldrig känns bortkastat - bara något mindre effektivt.
+ * - `phases` är repliker som utlöses en enda gång när HP passerar 75/50/25%.
+ *
+ * HP-värdena är balanserade mot faktiska mätningar, se `bossBalance.test.ts`.
  */
 export const BOSSES: BossDefinition[] = [
   {
@@ -11,11 +20,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Uppskjutandets Furste',
     description: 'Han viskar "imorgon" tills veckor blir år.',
     flavourText: 'Han har väntat på dig. Han är mycket bra på att vänta.',
-    maxHp: 2500,
+    maxHp: 1100,
     difficulty: 'hard',
     icon: '👑',
     accent: '#a855f7',
     reward: { xp: 500, gold: 120, badgeId: 'boss_procrastination', chest: 'epic_chest' },
+    weaknessCategories: ['adulting', 'organization', 'morning'],
+    resistanceCategories: ['evening'],
+    phases: [
+      { threshold: 0.75, message: 'Fursten rynkar pannan. "Det där kunde ha väntat till imorgon."' },
+      { threshold: 0.5, message: 'HANS KRONA SPRICKER. Uppskjutandets makt vacklar.' },
+      { threshold: 0.25, message: '"Imorgon... imorgon..." Rösten är knappt hörbar nu.' },
+    ],
   },
   {
     id: 'laundry_mountain',
@@ -23,11 +39,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Den Ständigt Växande',
     description: 'Ett berg av tyg som återföds varje vecka.',
     flavourText: 'Du besegrade det förra veckan. Det bryr sig inte.',
-    maxHp: 2200,
+    maxHp: 810,
     difficulty: 'medium',
     icon: '🧺',
     accent: '#38bdf8',
     reward: { xp: 420, gold: 100, badgeId: 'boss_laundry', chest: 'mystery_chest' },
+    weaknessCategories: ['cleaning', 'home', 'organization'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Tvättberget mullrar. En strumpa rullar nerför sluttningen.' },
+      { threshold: 0.5, message: 'BERGET DELAR SIG I TVÅ HÖGAR. Ingen av dem ser gladare ut.' },
+      { threshold: 0.25, message: 'TVÄTTBERGET ÄR DESPERAT. Det är bara en hög nu. Nästan.' },
+    ],
   },
   {
     id: 'eternal_inbox',
@@ -35,11 +58,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Den Som Aldrig Töms',
     description: 'För varje mejl du raderar föds tre nya.',
     flavourText: '99+ olästa. Den ler.',
-    maxHp: 2800,
+    maxHp: 1080,
     difficulty: 'hard',
     icon: '📧',
     accent: '#22d3ee',
     reward: { xp: 540, gold: 130, badgeId: 'boss_inbox', chest: 'epic_chest' },
+    weaknessCategories: ['digital', 'adulting', 'organization'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Olästräknaren darrar. Den har aldrig gått nedåt förut.' },
+      { threshold: 0.5, message: 'INKORGEN BÖRJAR PANIKA och skickar tre nyhetsbrev till.' },
+      { threshold: 0.25, message: 'Den är nästan tom. Den vet inte vad den ska ta sig till.' },
+    ],
   },
   {
     id: 'kitchen_beast',
@@ -47,11 +77,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Diskbergets Väktare',
     description: 'Den lever i vasken och äter tallrikar.',
     flavourText: 'Den luktar illa och den vet om det.',
-    maxHp: 2000,
+    maxHp: 825,
     difficulty: 'medium',
     icon: '🍽️',
     accent: '#34d399',
     reward: { xp: 380, gold: 90, badgeId: 'boss_kitchen', chest: 'mystery_chest' },
+    weaknessCategories: ['cleaning', 'food', 'home'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Något klirrar i vasken. Besten har märkt dig.' },
+      { threshold: 0.5, message: 'DISKBÄNKEN SYNS IGEN. Besten ryter från avloppet.' },
+      { threshold: 0.25, message: 'Bara en kastrull kvar mellan dig och segern.' },
+    ],
   },
   {
     id: 'doom_drawer',
@@ -59,11 +96,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Kaosets Behållare',
     description: 'Gem, sladdar och en nyckel till ingenting.',
     flavourText: 'Ingen vet vad som finns längst bak. Ingen vill veta.',
-    maxHp: 1800,
+    maxHp: 730,
     difficulty: 'medium',
     icon: '🗄️',
     accent: '#fbbf24',
     reward: { xp: 340, gold: 85, badgeId: 'boss_drawer', chest: 'mystery_chest' },
+    weaknessCategories: ['organization', 'decluttering', 'home'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Lådan går att stänga igen. Knappt.' },
+      { threshold: 0.5, message: 'DU HITTAR NYCKELN. Den går fortfarande inte till någonting.' },
+      { threshold: 0.25, message: 'Botten är synlig. Ingen har sett den sedan inflyttningen.' },
+    ],
   },
   {
     id: 'scroll_demon',
@@ -71,11 +115,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Tummens Tyrann',
     description: 'Den stjäl timmar och lämnar ingenting kvar.',
     flavourText: '"Bara en till" är dess enda besvärjelse. Den fungerar alltid.',
-    maxHp: 3000,
+    maxHp: 1100,
     difficulty: 'hard',
     icon: '📱',
     accent: '#f472b6',
     reward: { xp: 580, gold: 140, badgeId: 'boss_scroll', chest: 'epic_chest' },
+    weaknessCategories: ['mindfulness', 'movement', 'outside'],
+    resistanceCategories: ['digital'],
+    phases: [
+      { threshold: 0.75, message: 'Flödet laddar långsammare. Demonen tappar greppet.' },
+      { threshold: 0.5, message: 'DEN ERBJUDER DIG EN NOTIS. Du tittar inte ens.' },
+      { threshold: 0.25, message: '"Bara en till", viskar den. Den låter inte längre övertygande.' },
+    ],
   },
   {
     id: 'couch_tyrant',
@@ -83,11 +134,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Gravitationens Mästare',
     description: 'Den drar dig ner och släpper aldrig taget.',
     flavourText: 'Du skulle bara sitta ner en sekund.',
-    maxHp: 2400,
+    maxHp: 780,
     difficulty: 'medium',
     icon: '🛋️',
     accent: '#818cf8',
     reward: { xp: 450, gold: 105, badgeId: 'boss_couch', chest: 'mystery_chest' },
+    weaknessCategories: ['movement', 'walking', 'outside'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Kuddarna reser sig. Tyrannen har tappat en fjärrkontroll.' },
+      { threshold: 0.5, message: 'DRAGNINGSKRAFTEN FÖRSVAGAS. Du kan resa dig på första försöket.' },
+      { threshold: 0.25, message: 'Soffan är bara en soffa nu. Nästan.' },
+    ],
   },
   {
     id: 'clutter_hydra',
@@ -95,11 +153,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Den Mångkantade',
     description: 'Rensa en hög och två nya växer fram.',
     flavourText: 'Varje avhuggen hög föder två nya. Klassiskt.',
-    maxHp: 2600,
+    maxHp: 1030,
     difficulty: 'hard',
     icon: '🐍',
     accent: '#4ade80',
     reward: { xp: 500, gold: 120, badgeId: 'boss_hydra', chest: 'epic_chest' },
+    weaknessCategories: ['decluttering', 'organization', 'cleaning'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Ett huvud faller. Bara ett nytt växer ut. Framsteg.' },
+      { threshold: 0.5, message: 'HYDRAN SLUTAR VÄXA. Den har aldrig behövt göra det förut.' },
+      { threshold: 0.25, message: 'Sista högen väser svagt mot dig.' },
+    ],
   },
   {
     id: 'dust_king',
@@ -107,11 +172,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Härskare Över Det Osynliga',
     description: 'Han regerar i hörn dit ingen tittar.',
     flavourText: 'Han har suttit på din bokhylla i månader. Krönt.',
-    maxHp: 1900,
+    maxHp: 730,
     difficulty: 'medium',
     icon: '👻',
     accent: '#94a3b8',
     reward: { xp: 360, gold: 88, badgeId: 'boss_dust', chest: 'mystery_chest' },
+    weaknessCategories: ['cleaning', 'home', 'decluttering'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Kungen hostar. Hans rike blir mindre för varje trasa.' },
+      { threshold: 0.5, message: 'HYLLAN GLÄNSER. Tronen har tappat sin glans i stället.' },
+      { threshold: 0.25, message: 'Han gömmer sig bakom elementet. Det är hans sista fäste.' },
+    ],
   },
   {
     id: 'paperwork_lich',
@@ -119,11 +191,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Byråkratins Odöde',
     description: 'Formulär som aldrig dör, bara arkiveras.',
     flavourText: 'Den kräver en signatur. Sedan en till. Sedan en till.',
-    maxHp: 3200,
+    maxHp: 1370,
     difficulty: 'extreme',
     icon: '📜',
     accent: '#e879f9',
     reward: { xp: 650, gold: 160, badgeId: 'boss_lich', chest: 'legendary_chest' },
+    weaknessCategories: ['adulting', 'organization', 'digital'],
+    resistanceCategories: ['creative'],
+    phases: [
+      { threshold: 0.75, message: 'Lichen stämplar ett papper. AVSLAGET, står det. På sig själv.' },
+      { threshold: 0.5, message: 'ARKIVET RASAR. Tusen blanketter faller som löv.' },
+      { threshold: 0.25, message: 'Den ber om en sista signatur. Den vet att den förlorat.' },
+    ],
   },
   {
     id: 'snooze_dragon',
@@ -131,11 +210,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Morgonens Mardröm',
     description: 'Nio minuter i taget slukar den din morgon.',
     flavourText: 'Den har vunnit varje morgon i år. Hittills.',
-    maxHp: 2300,
+    maxHp: 990,
     difficulty: 'hard',
     icon: '🐉',
     accent: '#fb923c',
     reward: { xp: 470, gold: 115, badgeId: 'boss_snooze', chest: 'epic_chest' },
+    weaknessCategories: ['morning', 'health', 'movement'],
+    resistanceCategories: ['evening'],
+    phases: [
+      { threshold: 0.75, message: 'Draken vaknar till. Den är inte van vid att någon gör det först.' },
+      { threshold: 0.5, message: 'NIO MINUTER BLIR FEM. Dess makt krymper.' },
+      { threshold: 0.25, message: 'Den trycker på snooze på sig själv. Det hjälper inte.' },
+    ],
   },
   {
     id: 'chaos_titan',
@@ -143,11 +229,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Allt På En Gång',
     description: 'När allt kollapsar samtidigt är det den som håller i trådarna.',
     flavourText: 'Den är inte ond. Den är bara helt oorganiserad.',
-    maxHp: 3500,
+    maxHp: 1430,
     difficulty: 'extreme',
     icon: '🌀',
     accent: '#f43f5e',
     reward: { xp: 720, gold: 175, badgeId: 'boss_titan', chest: 'legendary_chest' },
+    weaknessCategories: ['organization', 'mindfulness', 'cleaning'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Titanen tappar en tråd. Bara en. Men den märks.' },
+      { threshold: 0.5, message: 'VIRVELN SAKTAR IN. Man kan nästan se ordning i mitten.' },
+      { threshold: 0.25, message: 'Kaoset har blivit en lista. Titanen hatar listor.' },
+    ],
   },
   {
     id: 'fridge_wraith',
@@ -155,11 +248,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Den Som Bor Längst Bak',
     description: 'Något har stått där sedan i våras. Det andas.',
     flavourText: 'Ingen öppnar den lådan. Ingen vågar.',
-    maxHp: 2100,
+    maxHp: 770,
     difficulty: 'medium',
     icon: '🥶',
     accent: '#60a5fa',
     reward: { xp: 400, gold: 95, badgeId: 'boss_fridge', chest: 'mystery_chest' },
+    weaknessCategories: ['food', 'cleaning', 'decluttering'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'Vålnaden ryser. Någon har öppnat grönsakslådan.' },
+      { threshold: 0.5, message: 'DEN OIDENTIFIERADE BURKEN ÄR BORTA. Kylan känns renare.' },
+      { threshold: 0.25, message: 'Bara en sylt från 2021 står kvar och stirrar.' },
+    ],
   },
   {
     id: 'cable_kraken',
@@ -167,11 +267,18 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Sladdarnas Härskare',
     description: 'Åtta armar av laddare till enheter du inte äger längre.',
     flavourText: 'Den knyter sig själv medan du sover.',
-    maxHp: 2450,
+    maxHp: 1010,
     difficulty: 'hard',
     icon: '🐙',
     accent: '#2dd4bf',
     reward: { xp: 460, gold: 110, badgeId: 'boss_kraken', chest: 'epic_chest' },
+    weaknessCategories: ['organization', 'digital', 'decluttering'],
+    resistanceCategories: [],
+    phases: [
+      { threshold: 0.75, message: 'En arm reds ut. Sju kvar, och de är arga.' },
+      { threshold: 0.5, message: 'KRAKEN TAPPAR GREPPET. Du hittar en laddare som faktiskt används.' },
+      { threshold: 0.25, message: 'Den är nästan bara en sladd nu. En vanlig, ofarlig sladd.' },
+    ],
   },
 ];
 
@@ -182,3 +289,9 @@ export const BOSS_BY_ID: Record<string, BossDefinition> = Object.fromEntries(
 export function getBossById(id: string): BossDefinition | undefined {
   return BOSS_BY_ID[id];
 }
+
+/** Damage multiplier when a quest category matches a boss weakness. */
+export const WEAKNESS_MULTIPLIER = 1.25;
+
+/** Damage multiplier when a quest category is one the boss resists. */
+export const RESISTANCE_MULTIPLIER = 0.85;

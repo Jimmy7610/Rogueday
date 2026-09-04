@@ -1,14 +1,31 @@
-import type { GameEventDefinition, LootItemId, PendingEvent, RogueDaySave } from '@/types';
-import { EVENT_BY_ID, EVENT_TRIGGER_CHANCE, GAME_EVENTS } from '@/data/events';
+import type {
+  EventFollowUp,
+  EventResult,
+  GameEventDefinition,
+  ItemRevealState,
+  LootItemId,
+  PendingEvent,
+  RogueDaySave,
+} from '@/types';
+import {
+  EVENT_BY_ID,
+  EVENT_TRIGGER_CHANCE,
+  FOLLOW_UP_OBJECTIVES,
+  GAME_EVENTS,
+} from '@/data/events';
 import { LOOT_BY_ID } from '@/data/loot';
-import { randomRng, weightedPick, type Rng } from '@/utils/rng';
+import { addDays, toLocalDateKey } from '@/utils/date';
+import { createId, randomRng, weightedPick, type Rng } from '@/utils/rng';
 import { addItem, openChest, removeItem } from './loot';
 import { applyGold, applyXp } from './progression';
 
 /**
  * Random events fire after a completed quest. By design nothing here can
  * seriously hurt the player - the worst outcome is a small gold nibble that
- * can also be refused.
+ * can also be avoided entirely.
+ *
+ * Every resolution returns an `EventResult` describing exactly what happened,
+ * so the outcome is shown rather than silently folded into the save.
  */
 export function maybeTriggerEvent(
   save: RogueDaySave,
@@ -17,8 +34,14 @@ export function maybeTriggerEvent(
 ): PendingEvent | null {
   if (!rng.chance(EVENT_TRIGGER_CHANCE)) return null;
 
+  // Never stack a second bonus objective on top of an unclaimed one.
+  const available = GAME_EVENTS.filter(
+    (event) => !(event.id === 'double_or_nothing' && save.eventFollowUp),
+  );
+  if (available.length === 0) return null;
+
   const definition = weightedPick(
-    GAME_EVENTS.map((event) => ({ ...event })),
+    available.map((event) => ({ ...event })),
     rng,
   );
 
@@ -53,13 +76,25 @@ function rollPayload(
       const price = Math.max(10, Math.round((basePrice * (100 - discount)) / 100));
       return { itemId, price, discount };
     }
-    case 'double_or_nothing':
-      return { bonusGold: rng.int(15, 45), bonusXp: rng.int(30, 90) };
+    case 'double_or_nothing': {
+      const objective = rng.int(0, FOLLOW_UP_OBJECTIVES.length - 1);
+      return {
+        objective,
+        bonusGold: rng.int(15, 45),
+        bonusXp: rng.int(30, 90),
+      };
+    }
     case 'lucky_drop':
       return { chestId: rng.chance(0.15) ? 'epic_chest' : 'mystery_chest' };
     case 'goblin_tax':
       // Never more than a small nibble, and never more than the player has.
-      return { amount: Math.min(save.progression.gold, rng.int(3, 12)) };
+      return {
+        amount: Math.min(save.progression.gold, rng.int(3, 12)),
+        // Whether the paperwork actually contains a mistake. Deciding it here
+        // means the outcome is fixed before the player chooses.
+        flawed: rng.chance(0.6) ? 1 : 0,
+        refund: rng.int(8, 22),
+      };
     case 'mysterious_stranger':
       return {
         left: rng.pick(['lucky_coin', 'focus_rune', 'reroll_token']),
@@ -75,11 +110,8 @@ function rollPayload(
 
 export interface EventOutcome {
   save: RogueDaySave;
-  /** Swedish summary lines shown in the event result. */
-  messages: string[];
-  itemsGained: LootItemId[];
-  goldDelta: number;
-  xpDelta: number;
+  /** Everything the player needs to see, in one object. */
+  result: EventResult;
 }
 
 /** Apply the player's chosen branch of a pending event. */
@@ -88,11 +120,16 @@ export function resolveEvent(
   event: PendingEvent,
   choiceId: string,
   rng: Rng = randomRng,
+  now: Date = new Date(),
 ): EventOutcome {
+  const definition = EVENT_BY_ID[event.eventId];
   const messages: string[] = [];
   const itemsGained: LootItemId[] = [];
   let goldDelta = 0;
-  let xpDelta = 0;
+  // Events never grant XP directly any more: the only XP path is claiming a
+  // follow-up objective, which is handled in claimFollowUp.
+  const xpDelta = 0;
+  let followUp: EventFollowUp | undefined;
 
   let next: RogueDaySave = {
     ...save,
@@ -136,16 +173,6 @@ export function resolveEvent(
     }
   };
 
-  const grantXp = (amount: number): void => {
-    xpDelta += amount;
-    const result = applyXp(next.progression, amount);
-    next = {
-      ...next,
-      progression: result.progression,
-      statistics: { ...next.statistics, totalXpEarned: next.statistics.totalXpEarned + amount },
-    };
-  };
-
   switch (event.eventId) {
     case 'wandering_merchant': {
       if (choiceId === 'buy') {
@@ -168,11 +195,26 @@ export function resolveEvent(
 
     case 'double_or_nothing': {
       if (choiceId === 'accept') {
-        const bonusGold = Number(event.payload.bonusGold ?? 0);
-        const bonusXp = Number(event.payload.bonusXp ?? 0);
-        grantGold(bonusGold);
-        grantXp(bonusXp);
-        messages.push(`Bonusmålet klarat: +${bonusXp} XP och +${bonusGold} guld.`);
+        // Accepting no longer hands out free rewards - it creates a real,
+        // optional bonus objective that has to be done to pay out.
+        const index = Number(event.payload.objective ?? 0);
+        const objective =
+          FOLLOW_UP_OBJECTIVES[index] ?? FOLLOW_UP_OBJECTIVES[0];
+
+        followUp = {
+          id: createId('followup'),
+          eventId: 'double_or_nothing',
+          title: objective.title,
+          description: objective.description,
+          rewardXp: Number(event.payload.bonusXp ?? 40),
+          rewardGold: Number(event.payload.bonusGold ?? 20),
+          createdAt: now.toISOString(),
+          expiresOn: addDays(toLocalDateKey(now), 1),
+        };
+
+        next = { ...next, eventFollowUp: followUp };
+        messages.push(`Vadet gäller: ${objective.title}.`);
+        messages.push('Klara det innan dagen är slut så betalar rösten ut.');
       } else {
         messages.push('Du behåller det du har. Klokt val, kanske.');
       }
@@ -196,13 +238,32 @@ export function resolveEvent(
     }
 
     case 'goblin_tax': {
-      const amount = Number(event.payload.amount ?? 0);
+      const amount = Math.min(Number(event.payload.amount ?? 0), next.progression.gold);
+
       if (choiceId === 'pay') {
-        grantGold(-Math.min(amount, next.progression.gold));
-        messages.push(`Goblinen tar ${amount} guld och försvinner nöjd.`);
+        // Paying is no longer strictly worse: the goblin leaves something.
+        grantGold(-amount);
+        messages.push(`Goblinen tar ${amount} guld och stämplar ditt formulär.`);
+        if (rng.chance(0.5)) {
+          grantItem('reroll_token');
+          messages.push('Den rotar i säcken och räcker dig ett mynt. "Kvitto."');
+        } else {
+          messages.push('Den försvinner nöjd runt hörnet.');
+        }
+      } else if (choiceId === 'outsmart') {
+        const flawed = Number(event.payload.flawed ?? 0) === 1;
+        if (flawed) {
+          const refund = Number(event.payload.refund ?? 10);
+          grantGold(refund);
+          messages.push('Formuläret är daterat "i förrgår" och undertecknat "Goblin".');
+          messages.push(`Den blir generad och betalar dig ${refund} guld för besväret.`);
+        } else {
+          grantGold(-amount);
+          messages.push('Papperen är faktiskt i ordning. Irriterande nog.');
+          messages.push(`Du betalar ${amount} guld.`);
+        }
       } else {
-        // Refusing always works - the event may not punish the player hard.
-        messages.push('Du vägrar. Goblinen skriker förolämpat och springer iväg tomhänt.');
+        messages.push('Du går bara förbi. Goblinen ropar efter dig utan övertygelse.');
       }
       break;
     }
@@ -252,16 +313,109 @@ export function resolveEvent(
       break;
   }
 
-  return { save: next, messages, itemsGained, goldDelta, xpDelta };
+  return {
+    save: next,
+    result: {
+      eventId: event.eventId,
+      choiceId,
+      title: definition?.name ?? 'HÄNDELSE',
+      messages,
+      goldDelta,
+      xpDelta,
+      itemsGained,
+      ...(followUp ? { followUp } : {}),
+    },
+  };
 }
 
-/** Use an inventory item outside of events (from the inventory panel). */
+/* ------------------------------------------------------------------ */
+/* Follow-up objectives                                                */
+/* ------------------------------------------------------------------ */
+
+/** Drop a bonus objective once its day has passed. Silent and unpunishing. */
+export function expireFollowUp(
+  followUp: EventFollowUp | null,
+  now: Date = new Date(),
+): EventFollowUp | null {
+  if (!followUp) return null;
+  return toLocalDateKey(now) > followUp.expiresOn ? null : followUp;
+}
+
+export interface FollowUpOutcome {
+  ok: boolean;
+  save: RogueDaySave;
+  result: EventResult;
+}
+
+/** Claim the DOUBLE OR NOTHING bonus after actually doing the extra objective. */
+export function claimFollowUp(save: RogueDaySave): FollowUpOutcome {
+  const followUp = save.eventFollowUp;
+
+  if (!followUp) {
+    return {
+      ok: false,
+      save,
+      result: {
+        eventId: 'double_or_nothing',
+        choiceId: 'claim',
+        title: 'INGET VAD',
+        messages: ['Det finns inget bonusmål att lösa in.'],
+        goldDelta: 0,
+        xpDelta: 0,
+        itemsGained: [],
+      },
+    };
+  }
+
+  const xpResult = applyXp(save.progression, followUp.rewardXp);
+  const progression = applyGold(xpResult.progression, followUp.rewardGold);
+
+  const next: RogueDaySave = {
+    ...save,
+    progression,
+    eventFollowUp: null,
+    statistics: {
+      ...save.statistics,
+      totalXpEarned: save.statistics.totalXpEarned + followUp.rewardXp,
+      totalGoldEarned: save.statistics.totalGoldEarned + followUp.rewardGold,
+      followUpsCompleted: save.statistics.followUpsCompleted + 1,
+    },
+  };
+
+  return {
+    ok: true,
+    save: next,
+    result: {
+      eventId: followUp.eventId,
+      choiceId: 'claim',
+      title: 'VADET VUNNET',
+      messages: [`${followUp.title} avklarat.`, 'Rösten betalar ut, precis som den lovade.'],
+      goldDelta: followUp.rewardGold,
+      xpDelta: followUp.rewardXp,
+      itemsGained: [],
+    },
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* Using items                                                         */
+/* ------------------------------------------------------------------ */
+
 export interface UseItemResult {
+  ok: boolean;
   save: RogueDaySave;
   messages: string[];
   itemsGained: LootItemId[];
+  /** Transient presentation state for the reveal animation. */
+  reveal: ItemRevealState | null;
 }
 
+/**
+ * Use an inventory item.
+ *
+ * The inventory and gold changes are applied here and persisted immediately;
+ * the returned `reveal` is presentation only and is never written to the save.
+ */
 export function useInventoryItem(
   save: RogueDaySave,
   itemId: LootItemId,
@@ -269,17 +423,30 @@ export function useInventoryItem(
 ): UseItemResult {
   const item = LOOT_BY_ID[itemId];
   if (!item?.usable) {
-    return { save, messages: ['Det föremålet kan inte användas.'], itemsGained: [] };
+    return {
+      ok: false,
+      save,
+      messages: ['Det föremålet kan inte användas.'],
+      itemsGained: [],
+      reveal: null,
+    };
   }
 
   const owned = save.inventory.find((entry) => entry.itemId === itemId)?.count ?? 0;
   if (owned <= 0) {
-    return { save, messages: ['Du har inget sådant föremål.'], itemsGained: [] };
+    return {
+      ok: false,
+      save,
+      messages: ['Du har inget sådant föremål.'],
+      itemsGained: [],
+      reveal: null,
+    };
   }
 
   let next: RogueDaySave = { ...save, inventory: removeItem(save.inventory, itemId, 1) };
   const messages: string[] = [];
   const itemsGained: LootItemId[] = [];
+  let goldGained = 0;
 
   if (item.isChest) {
     const contents = openChest(itemId, rng);
@@ -289,6 +456,7 @@ export function useInventoryItem(
       messages.push(`Du fick ${LOOT_BY_ID[dropped].name}.`);
     }
     if (contents.gold > 0) {
+      goldGained = contents.gold;
       next = {
         ...next,
         progression: applyGold(next.progression, contents.gold),
@@ -306,7 +474,21 @@ export function useInventoryItem(
         lootFound: next.statistics.lootFound + contents.items.length,
       },
     };
-    return { save: next, messages, itemsGained };
+
+    return {
+      ok: true,
+      save: next,
+      messages,
+      itemsGained,
+      reveal: {
+        sourceItemId: itemId,
+        title: 'KISTA ÖPPNAD',
+        itemsGained,
+        goldGained,
+        messages,
+        isChest: true,
+      },
+    };
   }
 
   const buffKey = {
@@ -321,7 +503,20 @@ export function useInventoryItem(
     messages.push(`${item.name} aktiverad. Gäller nästa avklarade uppdrag.`);
   }
 
-  return { save: next, messages, itemsGained };
+  return {
+    ok: true,
+    save: next,
+    messages,
+    itemsGained,
+    reveal: {
+      sourceItemId: itemId,
+      title: 'AKTIVERAD',
+      itemsGained: [],
+      goldGained: 0,
+      messages,
+      isChest: false,
+    },
+  };
 }
 
 export function getEventDefinition(eventId: string): GameEventDefinition | undefined {

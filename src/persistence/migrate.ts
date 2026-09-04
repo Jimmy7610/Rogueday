@@ -3,9 +3,18 @@ import { SCHEMA_VERSION } from './defaults';
 
 type Migration = (save: Record<string, unknown>) => Record<string, unknown>;
 
+function asObject(value: unknown): Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
 /**
  * Migrations run in order from the save's own version up to SCHEMA_VERSION.
  * Key `n` upgrades a version-`n` save to version `n + 1`.
+ *
+ * Every migration is additive: it may introduce new fields, but it must never
+ * drop or rewrite a value the player already earned.
  *
  * Version 0 covers pre-schema prototype saves that had no version marker.
  */
@@ -27,6 +36,45 @@ const MIGRATIONS: Record<number, Migration> = {
     bossHistory: save.bossHistory ?? [],
     recentQuestIds: save.recentQuestIds ?? [],
   }),
+
+  /**
+   * v1 -> v2: the depth pass.
+   *
+   * Adds the market, milestone perks, event follow-ups, boss phase tracking and
+   * the new statistics counters. Everything a v1 player earned - XP, level,
+   * gold, history, boss state, boss history, achievements, streak, inventory,
+   * chains, statistics, settings and name - is carried through untouched.
+   */
+  1: (save) => {
+    const statistics = asObject(save.statistics);
+    const boss = save.boss;
+
+    return {
+      ...save,
+      schemaVersion: 2,
+
+      // New v2 sections, only ever added.
+      market: save.market ?? { date: null, purchased: {} },
+      perks: save.perks ?? { selected: [] },
+      eventFollowUp: save.eventFollowUp ?? null,
+
+      // A v1 boss has no phase history. Treat every phase as unseen so the
+      // player still gets the reactions for the rest of the week, rather than
+      // pretending they already happened.
+      boss:
+        typeof boss === 'object' && boss !== null && !Array.isArray(boss)
+          ? { ...(boss as Record<string, unknown>), phasesSeen: (boss as Record<string, unknown>).phasesSeen ?? [] }
+          : boss ?? null,
+
+      statistics: {
+        ...statistics,
+        marketPurchases: statistics.marketPurchases ?? 0,
+        timedChallengesWon: statistics.timedChallengesWon ?? 0,
+        weaknessHits: statistics.weaknessHits ?? 0,
+        followUpsCompleted: statistics.followUpsCompleted ?? 0,
+      },
+    };
+  },
 };
 
 export interface MigrationResult {

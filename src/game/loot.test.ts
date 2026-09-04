@@ -13,7 +13,13 @@ import {
   rollLootChance,
   rollQuestLoot,
 } from './loot';
-import { maybeTriggerEvent, resolveEvent, useInventoryItem } from './events';
+import {
+  claimFollowUp,
+  expireFollowUp,
+  maybeTriggerEvent,
+  resolveEvent,
+  useInventoryItem,
+} from './events';
 import { ALWAYS_RNG, makeSave, NO_LUCK_RNG } from '@/test/helpers';
 
 describe('loot catalogue', () => {
@@ -189,13 +195,17 @@ describe('using items', () => {
     expect(countItem(result.save.inventory, 'mystery_chest')).toBe(0);
     expect(result.itemsGained.length).toBe(1);
     expect(result.save.statistics.lootFound).toBe(1);
+    expect(result.reveal?.isChest).toBe(true);
+    expect(result.reveal?.title).toBe('KISTA ÖPPNAD');
   });
 
   it('refuses when the item is not owned', () => {
     const save = makeSave();
     const result = useInventoryItem(save, 'xp_elixir', createRng('none'));
 
+    expect(result.ok).toBe(false);
     expect(result.save).toBe(save);
+    expect(result.reveal).toBeNull();
     expect(result.messages[0]).toContain('inget sådant');
   });
 
@@ -204,6 +214,7 @@ describe('using items', () => {
     save.inventory = [{ itemId: 'reroll_token', count: 1 }];
 
     const result = useInventoryItem(save, 'reroll_token', createRng('n'));
+    expect(result.ok).toBe(false);
     expect(result.save).toBe(save);
     expect(countItem(save.inventory, 'reroll_token')).toBe(1);
   });
@@ -244,9 +255,9 @@ describe('random events', () => {
     save.progression.gold = 100;
 
     const event = { eventId: 'goblin_tax' as const, payload: { amount: 10 }, createdAt: '' };
-    const outcome = resolveEvent(save, event, 'refuse', createRng('r'));
+    const { save: outcomeSave, result: outcome } = resolveEvent(save, event, 'refuse', createRng('r'));
 
-    expect(outcome.save.progression.gold).toBe(100);
+    expect(outcomeSave.progression.gold).toBe(100);
     expect(outcome.goldDelta).toBe(0);
   });
 
@@ -255,9 +266,9 @@ describe('random events', () => {
     save.progression.gold = 100;
 
     const event = { eventId: 'goblin_tax' as const, payload: { amount: 10 }, createdAt: '' };
-    const outcome = resolveEvent(save, event, 'pay', createRng('p'));
+    const { save: outcomeSave } = resolveEvent(save, event, 'pay', createRng('p'));
 
-    expect(outcome.save.progression.gold).toBe(90);
+    expect(outcomeSave.progression.gold).toBe(90);
   });
 
   it('the merchant refuses the sale when the player cannot pay', () => {
@@ -269,9 +280,9 @@ describe('random events', () => {
       payload: { itemId: 'xp_elixir', price: 50, discount: 40 },
       createdAt: '',
     };
-    const outcome = resolveEvent(save, event, 'buy', createRng('b'));
+    const { save: outcomeSave, result: outcome } = resolveEvent(save, event, 'buy', createRng('b'));
 
-    expect(outcome.save.progression.gold).toBe(5);
+    expect(outcomeSave.progression.gold).toBe(5);
     expect(outcome.itemsGained).toEqual([]);
     expect(outcome.messages[0]).toContain('inte råd');
   });
@@ -285,11 +296,11 @@ describe('random events', () => {
       payload: { itemId: 'xp_elixir', price: 50, discount: 40 },
       createdAt: '',
     };
-    const outcome = resolveEvent(save, event, 'buy', createRng('b'));
+    const { save: outcomeSave, result: outcome } = resolveEvent(save, event, 'buy', createRng('b'));
 
-    expect(outcome.save.progression.gold).toBe(30);
+    expect(outcomeSave.progression.gold).toBe(30);
     expect(outcome.itemsGained).toEqual(['xp_elixir']);
-    expect(outcome.save.statistics.totalGoldSpent).toBe(50);
+    expect(outcomeSave.statistics.totalGoldSpent).toBe(50);
   });
 
   it('the shrine grants an XP bonus for a cost', () => {
@@ -301,10 +312,10 @@ describe('random events', () => {
       payload: { cost: 30, quests: 3 },
       createdAt: '',
     };
-    const outcome = resolveEvent(save, event, 'offer', createRng('s'));
+    const { save: outcomeSave } = resolveEvent(save, event, 'offer', createRng('s'));
 
-    expect(outcome.save.progression.gold).toBe(70);
-    expect(outcome.save.buffs.shrineXpBonusQuests).toBe(3);
+    expect(outcomeSave.progression.gold).toBe(70);
+    expect(outcomeSave.buffs.shrineXpBonusQuests).toBe(3);
   });
 
   it('the lucky drop always gives something', () => {
@@ -314,35 +325,108 @@ describe('random events', () => {
       payload: { chestId: 'mystery_chest' },
       createdAt: '',
     };
-    const outcome = resolveEvent(save, event, 'take', createRng('d'));
+    const { result: outcome } = resolveEvent(save, event, 'take', createRng('d'));
 
     expect(outcome.itemsGained.length + outcome.goldDelta).toBeGreaterThan(0);
   });
 
-  it('double or nothing only ever adds', () => {
+  it('double or nothing creates a real bonus objective instead of free rewards', () => {
     const save = makeSave();
     const before = save.progression.gold;
 
     const event = {
       eventId: 'double_or_nothing' as const,
-      payload: { bonusGold: 30, bonusXp: 60 },
+      payload: { objective: 0, bonusGold: 30, bonusXp: 60 },
       createdAt: '',
     };
 
     const accepted = resolveEvent(save, event, 'accept', createRng('a'));
-    expect(accepted.save.progression.gold).toBe(before + 30);
-    expect(accepted.xpDelta).toBe(60);
+
+    // Accepting pays nothing yet - it sets a challenge.
+    expect(accepted.save.progression.gold).toBe(before);
+    expect(accepted.result.followUp).toBeDefined();
+    expect(accepted.result.followUp?.rewardGold).toBe(30);
+    expect(accepted.result.followUp?.rewardXp).toBe(60);
+    expect(accepted.save.eventFollowUp).not.toBeNull();
 
     const declined = resolveEvent(save, event, 'decline', createRng('a'));
     expect(declined.save.progression.gold).toBe(before);
+    expect(declined.save.eventFollowUp).toBeNull();
+  });
+
+  it('claiming the bonus objective pays out exactly once', () => {
+    const save = makeSave();
+    const event = {
+      eventId: 'double_or_nothing' as const,
+      payload: { objective: 0, bonusGold: 30, bonusXp: 60 },
+      createdAt: '',
+    };
+    const accepted = resolveEvent(save, event, 'accept', createRng('a')).save;
+    const goldBefore = accepted.progression.gold;
+
+    const claimed = claimFollowUp(accepted);
+    expect(claimed.ok).toBe(true);
+    expect(claimed.save.progression.gold).toBe(goldBefore + 30);
+    expect(claimed.save.statistics.followUpsCompleted).toBe(1);
+    expect(claimed.save.eventFollowUp).toBeNull();
+
+    // A second claim has nothing to pay.
+    const again = claimFollowUp(claimed.save);
+    expect(again.ok).toBe(false);
+    expect(again.save.progression.gold).toBe(claimed.save.progression.gold);
+  });
+
+  it('an unclaimed bonus objective expires quietly the next day', () => {
+    const save = makeSave();
+    const event = {
+      eventId: 'double_or_nothing' as const,
+      payload: { objective: 0, bonusGold: 30, bonusXp: 60 },
+      createdAt: '',
+    };
+    const accepted = resolveEvent(
+      save,
+      event,
+      'accept',
+      createRng('a'),
+      new Date(2026, 8, 4, 12),
+    ).save;
+
+    expect(expireFollowUp(accepted.eventFollowUp, new Date(2026, 8, 5, 9))).not.toBeNull();
+    expect(expireFollowUp(accepted.eventFollowUp, new Date(2026, 8, 7, 9))).toBeNull();
+  });
+
+  it('the goblin offers a genuine alternative to paying', () => {
+    const save = makeSave();
+    save.progression.gold = 100;
+
+    const flawed = {
+      eventId: 'goblin_tax' as const,
+      payload: { amount: 10, flawed: 1, refund: 15 },
+      createdAt: '',
+    };
+    const outsmarted = resolveEvent(save, flawed, 'outsmart', createRng('o'));
+    expect(outsmarted.save.progression.gold).toBe(115);
+
+    // When the paperwork is sound, granting it costs the stated amount.
+    const sound = {
+      eventId: 'goblin_tax' as const,
+      payload: { amount: 10, flawed: 0, refund: 15 },
+      createdAt: '',
+    };
+    const checked = resolveEvent(save, sound, 'outsmart', createRng('o'));
+    expect(checked.save.progression.gold).toBe(90);
+
+    // Walking away is always free.
+    const walked = resolveEvent(save, sound, 'walk', createRng('o'));
+    expect(walked.save.progression.gold).toBe(100);
   });
 
   it('records the event in the statistics', () => {
     const save = makeSave();
     const event = { eventId: 'goblin_tax' as const, payload: { amount: 5 }, createdAt: '' };
-    const outcome = resolveEvent(save, event, 'refuse', createRng('x'));
+    const { save: outcomeSave } = resolveEvent(save, event, 'refuse', createRng('x'));
 
-    expect(outcome.save.statistics.eventsTriggered).toBe(1);
+    expect(outcomeSave.statistics.eventsTriggered).toBe(1);
   });
 
   it('no event branch can take the player below zero gold', () => {
@@ -354,14 +438,14 @@ describe('random events', () => {
         const pending = maybeTriggerEvent(save, new Date(), ALWAYS_RNG);
         const payload = pending?.eventId === event.id ? pending.payload : { amount: 5, cost: 5, price: 5 };
 
-        const outcome = resolveEvent(
+        const { save: outcomeSave } = resolveEvent(
           save,
           { eventId: event.id, payload, createdAt: '' },
           choice.id,
           createRng('safety'),
         );
 
-        expect(outcome.save.progression.gold, `${event.id}/${choice.id}`).toBeGreaterThanOrEqual(0);
+        expect(outcomeSave.progression.gold, `${event.id}/${choice.id}`).toBeGreaterThanOrEqual(0);
       }
     }
   });

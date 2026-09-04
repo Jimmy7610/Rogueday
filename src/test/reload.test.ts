@@ -153,7 +153,9 @@ describe('full reload persistence', () => {
     for (let index = 0; index < 5; index += 1) {
       save = loadGame().save.history.length > 0 || index > 0 ? loadGame().save : save;
 
-      const offer = makeOffer('clean_floor_deep');
+      // A boss-neutral quest, so five hits accumulate without killing the
+      // rebalanced boss part-way through the loop.
+      const offer = makeOffer('digi_inbox_raid');
       const result = completeQuest(
         save,
         offer,

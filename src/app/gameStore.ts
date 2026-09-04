@@ -1,4 +1,6 @@
 import type {
+  EventResult,
+  ItemRevealState,
   LootItemId,
   PendingEvent,
   QuestFilters,
@@ -9,11 +11,21 @@ import type {
 } from '@/types';
 import { toLocalDateKey } from '@/utils/date';
 import { randomRng, type Rng } from '@/utils/rng';
+import { getBossById } from '@/data/bosses';
 import { ensureCurrentBoss } from '@/game/boss';
 import { abandonQuest, completeQuest } from '@/game/completion';
-import { maybeTriggerEvent, resolveEvent, useInventoryItem } from '@/game/events';
+import {
+  claimFollowUp,
+  expireFollowUp,
+  maybeTriggerEvent,
+  resolveEvent,
+  useInventoryItem,
+} from '@/game/events';
 import { removeItem } from '@/game/loot';
+import { purchaseOffer, reconcileMarket } from '@/game/market';
+import { getEffects, selectPerk } from '@/game/perks';
 import { buildDailyOffer, getRerollAvailability, rememberQuests, rollQuestChoices } from '@/game/questSelection';
+import { createTimer, pauseTimer, resetTimer, resumeTimer } from '@/game/timer';
 import { createDefaultDaily } from '@/persistence/defaults';
 import { loadGame, saveGame, type LoadResult } from '@/persistence/storage';
 
@@ -29,8 +41,18 @@ export interface GameState {
   save: RogueDaySave;
   /** Offers currently on the table, if the finder modal has rolled. */
   offers: QuestOffer[] | null;
+  /** True when mood had to be relaxed to fill the current offers. */
+  offersMoodRelaxed: boolean;
+  /** True when the last roll found nothing matching the hard constraints. */
+  offersEmpty: boolean;
   filters: QuestFilters;
   pendingEvent: PendingEvent | null;
+  /** Outcome of the event the player just resolved, shown before it closes. */
+  eventResult: EventResult | null;
+  /** Transient chest / purchase reveal. Never persisted. */
+  itemReveal: ItemRevealState | null;
+  /** Transient message shown by the market. */
+  marketMessage: { text: string; ok: boolean } | null;
   lastReward: RewardSummary | null;
   loadSource: LoadResult['source'];
   loadWarnings: string[];
@@ -60,6 +82,17 @@ export type GameAction =
   | { type: 'RESOLVE_EVENT'; choiceId: string; rng?: Rng }
   | { type: 'DISMISS_EVENT' }
   | { type: 'USE_ITEM'; itemId: LootItemId; rng?: Rng }
+  | { type: 'DISMISS_ITEM_REVEAL' }
+  | { type: 'DISMISS_EVENT_RESULT' }
+  | { type: 'START_TIMER'; minutes?: number | null; now?: Date }
+  | { type: 'TOGGLE_TIMER'; now?: Date }
+  | { type: 'RESET_TIMER'; now?: Date }
+  | { type: 'STOP_TIMER' }
+  | { type: 'BUY_OFFER'; offerId: string; now?: Date }
+  | { type: 'CLEAR_MARKET_MESSAGE' }
+  | { type: 'SELECT_PERK'; perkId: string }
+  | { type: 'CLAIM_FOLLOW_UP'; now?: Date }
+  | { type: 'DISMISS_FOLLOW_UP' }
   | { type: 'SET_SETTINGS'; settings: Partial<Settings> }
   | { type: 'SET_PLAYER_NAME'; name: string }
   | { type: 'COMPLETE_ONBOARDING'; name: string }
@@ -96,6 +129,14 @@ export function reconcileWithClock(save: RogueDaySave, now: Date = new Date()): 
     };
   }
 
+  // Yesterday's market stock and purchase record no longer apply.
+  const market = reconcileMarket(next.market, now);
+  if (market !== next.market) next = { ...next, market };
+
+  // An unclaimed bonus objective quietly lapses rather than nagging forever.
+  const followUp = expireFollowUp(next.eventFollowUp, now);
+  if (followUp !== next.eventFollowUp) next = { ...next, eventFollowUp: followUp };
+
   return next;
 }
 
@@ -106,8 +147,13 @@ export function createInitialState(): GameState {
   return {
     save,
     offers: null,
+    offersMoodRelaxed: false,
+    offersEmpty: false,
     filters: DEFAULT_FILTERS,
     pendingEvent: null,
+    eventResult: null,
+    itemReveal: null,
+    marketMessage: null,
     lastReward: null,
     loadSource: result.source,
     loadWarnings: result.warnings,
@@ -116,32 +162,47 @@ export function createInitialState(): GameState {
   };
 }
 
+/** The week's boss definition, for weakness hints on offers. */
+function currentBossDefinition(save: RogueDaySave) {
+  return save.boss ? getBossById(save.boss.bossId) : undefined;
+}
+
 export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'SET_FILTERS':
       return { ...state, filters: { ...state.filters, ...action.filters } };
 
     case 'ROLL_QUESTS': {
-      const offers = rollQuestChoices({
+      const result = rollQuestChoices({
         filters: action.filters,
         chains: state.save.questChains,
         recentQuestIds: state.save.recentQuestIds,
+        boss: currentBossDefinition(state.save),
+        effects: getEffects(state.save),
         ...(action.rng ? { rng: action.rng } : {}),
       });
-      return { ...state, filters: action.filters, offers };
+      return {
+        ...state,
+        filters: action.filters,
+        offers: result.empty ? null : result.offers,
+        offersMoodRelaxed: result.moodRelaxed,
+        offersEmpty: result.empty,
+      };
     }
 
     case 'REROLL': {
       const availability = getRerollAvailability(state.save);
       if (!availability.canReroll) return state;
 
-      const offers = rollQuestChoices({
+      const result = rollQuestChoices({
         filters: state.filters,
         chains: state.save.questChains,
         recentQuestIds: [
           ...(state.offers?.map((offer) => offer.quest.id) ?? []),
           ...state.save.recentQuestIds,
         ],
+        boss: currentBossDefinition(state.save),
+        effects: getEffects(state.save),
         ...(action.rng ? { rng: action.rng } : {}),
       });
 
@@ -160,11 +221,17 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         },
       };
 
-      return { ...state, save, offers };
+      return {
+        ...state,
+        save,
+        offers: result.empty ? null : result.offers,
+        offersMoodRelaxed: result.moodRelaxed,
+        offersEmpty: result.empty,
+      };
     }
 
     case 'CLOSE_OFFERS':
-      return { ...state, offers: null };
+      return { ...state, offers: null, offersEmpty: false, offersMoodRelaxed: false };
 
     case 'ACCEPT_QUEST': {
       const save: RogueDaySave = {
@@ -196,10 +263,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const now = action.now ?? new Date();
       const rng = action.rng ?? randomRng;
 
-      const { save, reward } = completeQuest(state.save, active.offer, now, rng);
+      const { save, reward } = completeQuest(state.save, active.offer, now, rng, active);
       const pendingEvent = maybeTriggerEvent(save, now, rng);
 
-      return { ...state, save, lastReward: reward, pendingEvent };
+      return { ...state, save, lastReward: reward, pendingEvent, eventResult: null };
     }
 
     case 'ABANDON_QUEST': {
@@ -218,16 +285,120 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         action.choiceId,
         action.rng ?? randomRng,
       );
-      return { ...state, save: outcome.save, pendingEvent: null };
+      // The event closes only after the player has seen what it did.
+      return {
+        ...state,
+        save: outcome.save,
+        pendingEvent: null,
+        eventResult: outcome.result,
+      };
     }
 
     case 'DISMISS_EVENT':
       return { ...state, pendingEvent: null };
 
+    case 'DISMISS_EVENT_RESULT':
+      return { ...state, eventResult: null };
+
     case 'USE_ITEM': {
       const result = useInventoryItem(state.save, action.itemId, action.rng ?? randomRng);
-      return { ...state, save: result.save };
+      if (!result.ok) return { ...state, marketMessage: { text: result.messages[0] ?? '', ok: false } };
+      // The inventory and gold changes are applied immediately; the reveal is
+      // purely presentational and is never persisted.
+      return { ...state, save: result.save, itemReveal: result.reveal };
     }
+
+    case 'DISMISS_ITEM_REVEAL':
+      return { ...state, itemReveal: null };
+
+    /* ---------------- focus timer ---------------- */
+
+    case 'START_TIMER': {
+      const active = state.save.activeQuest;
+      if (!active) return state;
+      const now = action.now ?? new Date();
+      const minutes =
+        action.minutes === undefined
+          ? (active.offer.challenge?.timerMinutes ?? null)
+          : action.minutes;
+      return {
+        ...state,
+        save: { ...state.save, activeQuest: { ...active, timer: createTimer(minutes, now) } },
+      };
+    }
+
+    case 'TOGGLE_TIMER': {
+      const active = state.save.activeQuest;
+      if (!active?.timer) return state;
+      const now = action.now ?? new Date();
+      const timer = active.timer.runningSince
+        ? pauseTimer(active.timer, now)
+        : resumeTimer(active.timer, now);
+      return { ...state, save: { ...state.save, activeQuest: { ...active, timer } } };
+    }
+
+    case 'RESET_TIMER': {
+      const active = state.save.activeQuest;
+      if (!active?.timer) return state;
+      return {
+        ...state,
+        save: {
+          ...state.save,
+          activeQuest: { ...active, timer: resetTimer(active.timer, action.now ?? new Date()) },
+        },
+      };
+    }
+
+    case 'STOP_TIMER': {
+      const active = state.save.activeQuest;
+      if (!active?.timer) return state;
+      const { timer: _timer, ...rest } = active;
+      return { ...state, save: { ...state.save, activeQuest: rest } };
+    }
+
+    /* ---------------- market ---------------- */
+
+    case 'BUY_OFFER': {
+      const result = purchaseOffer(state.save, action.offerId, action.now ?? new Date());
+      if (!result.ok) {
+        return { ...state, marketMessage: { text: result.message, ok: false } };
+      }
+      return {
+        ...state,
+        save: result.save,
+        marketMessage: { text: result.message, ok: true },
+        itemReveal: {
+          sourceItemId: result.itemId!,
+          title: 'KÖPT',
+          itemsGained: [result.itemId!],
+          goldGained: -(result.pricePaid ?? 0),
+          messages: [result.message],
+          isChest: false,
+        },
+      };
+    }
+
+    case 'CLEAR_MARKET_MESSAGE':
+      return { ...state, marketMessage: null };
+
+    /* ---------------- perks ---------------- */
+
+    case 'SELECT_PERK': {
+      const result = selectPerk(state.save, action.perkId);
+      if (!result.ok) return state;
+      return { ...state, save: { ...state.save, perks: result.perks } };
+    }
+
+    /* ---------------- event follow-up ---------------- */
+
+    case 'CLAIM_FOLLOW_UP': {
+      const outcome = claimFollowUp(state.save);
+      if (!outcome.ok) return state;
+      return { ...state, save: outcome.save, eventResult: outcome.result };
+    }
+
+    case 'DISMISS_FOLLOW_UP':
+      return { ...state, save: { ...state.save, eventFollowUp: null } };
 
     case 'SET_SETTINGS':
       return {
@@ -258,7 +429,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         save: reconcileWithClock(action.save),
         offers: null,
+        offersEmpty: false,
+        offersMoodRelaxed: false,
         pendingEvent: null,
+        eventResult: null,
+        itemReveal: null,
+        marketMessage: null,
         lastReward: null,
         loadSource: action.source ?? state.loadSource,
         loadWarnings: [],
@@ -288,6 +464,14 @@ const PERSISTING_ACTIONS = new Set<GameAction['type']>([
   'ABANDON_QUEST',
   'RESOLVE_EVENT',
   'USE_ITEM',
+  'START_TIMER',
+  'TOGGLE_TIMER',
+  'RESET_TIMER',
+  'STOP_TIMER',
+  'BUY_OFFER',
+  'SELECT_PERK',
+  'CLAIM_FOLLOW_UP',
+  'DISMISS_FOLLOW_UP',
   'SET_SETTINGS',
   'SET_PLAYER_NAME',
   'COMPLETE_ONBOARDING',

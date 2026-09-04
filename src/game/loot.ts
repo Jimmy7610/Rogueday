@@ -5,9 +5,9 @@ import { randomRng, weightedPick, type Rng } from '@/utils/rng';
 /** Lucky Coin adds a flat bonus to the roll. */
 export const LUCKY_COIN_BONUS = 0.25;
 
-export function rollLootChance(rarity: Rarity, luckyCoin: boolean): number {
+export function rollLootChance(rarity: Rarity, luckyCoin: boolean, perkBonus = 0): number {
   const base = LOOT_CHANCE_BY_RARITY[rarity];
-  return Math.min(1, base + (luckyCoin ? LUCKY_COIN_BONUS : 0));
+  return Math.min(1, base + (luckyCoin ? LUCKY_COIN_BONUS : 0) + Math.max(0, perkBonus));
 }
 
 export interface LootRollResult {
@@ -16,8 +16,13 @@ export interface LootRollResult {
 }
 
 /** Roll a quest completion's loot. Returns an empty result on a miss. */
-export function rollQuestLoot(rarity: Rarity, luckyCoin: boolean, rng: Rng = randomRng): LootRollResult {
-  const chance = rollLootChance(rarity, luckyCoin);
+export function rollQuestLoot(
+  rarity: Rarity,
+  luckyCoin: boolean,
+  rng: Rng = randomRng,
+  perkBonus = 0,
+): LootRollResult {
+  const chance = rollLootChance(rarity, luckyCoin, perkBonus);
   if (!rng.chance(chance)) return { items: [], gold: 0 };
 
   const drop = weightedPick(
@@ -111,12 +116,17 @@ export const BUFF_BY_ITEM: Partial<Record<LootItemId, keyof ActiveBuffs>> = {
   focus_rune: 'focusRune',
 };
 
-/** Consume the one-shot buffs after a completion. */
-export function consumeBuffs(buffs: ActiveBuffs): ActiveBuffs {
+/**
+ * Consume the one-shot buffs after a completion.
+ *
+ * `keepBossKey` comes from the Slayer perk NYCKELSMED, which lets a Boss Key
+ * survive one extra qualifying hit.
+ */
+export function consumeBuffs(buffs: ActiveBuffs, keepBossKey = false): ActiveBuffs {
   return {
     xpElixir: false,
     luckyCoin: false,
-    bossKey: false,
+    bossKey: keepBossKey,
     focusRune: false,
     shrineXpBonusQuests: Math.max(0, buffs.shrineXpBonusQuests - 1),
   };

@@ -175,7 +175,7 @@ describe('matchesFilters', () => {
 
 describe('rollQuestChoices', () => {
   it('always returns exactly three offers, one per tier', () => {
-    const offers = rollQuestChoices({
+    const { offers } = rollQuestChoices({
       filters: BASE,
       chains: {},
       recentQuestIds: [],
@@ -196,7 +196,7 @@ describe('rollQuestChoices', () => {
     };
 
     for (let seed = 0; seed < 60; seed += 1) {
-      const offers = rollQuestChoices({
+      const { offers } = rollQuestChoices({
         filters,
         chains: {},
         recentQuestIds: [],
@@ -215,7 +215,7 @@ describe('rollQuestChoices', () => {
     let dangerousTotal = 0;
 
     for (let seed = 0; seed < 120; seed += 1) {
-      const offers = rollQuestChoices({
+      const { offers } = rollQuestChoices({
         filters: BASE,
         chains: {},
         recentQuestIds: [],
@@ -254,7 +254,7 @@ describe('rollQuestChoices', () => {
     const pool = buildQuestPool({ filters, chains: {}, recentQuestIds: everything });
     expect(pool.length).toBeGreaterThan(0);
 
-    const offers = rollQuestChoices({
+    const { offers } = rollQuestChoices({
       filters,
       chains: {},
       recentQuestIds: everything,
@@ -270,7 +270,7 @@ describe('rollQuestChoices', () => {
         chains: {},
         recentQuestIds: [],
         rng: createRng(`n-${index}`),
-      }),
+      }).offers,
     ).flat();
     expect(normalOffers.every((offer) => offer.modifier === undefined)).toBe(true);
 
@@ -280,7 +280,7 @@ describe('rollQuestChoices', () => {
         chains: {},
         recentQuestIds: [],
         rng: createRng(`c-${index}`),
-      }),
+      }).offers,
     ).flat();
     expect(chaosOffers.some((offer) => offer.modifier !== undefined)).toBe(true);
     // Dangerous chaos offers always carry a modifier.
