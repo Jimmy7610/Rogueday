@@ -414,10 +414,22 @@ describe('navigation accessibility', () => {
 
   it('exposes the five screens as tabs', () => {
     renderApp();
-    const tabs = screen.getAllByRole('tab');
+    // The quest hub has its own subtab strip, so scope to the screen switcher.
+    const nav = screen.getByRole('tablist', { name: /skärmar/i });
+    const tabs = within(nav).getAllByRole('tab');
 
     expect(tabs).toHaveLength(5);
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('the quest hub exposes its own subtabs', () => {
+    renderApp();
+    const hub = screen.getByRole('tablist', { name: /uppdragsnav/i });
+    const labels = within(hub)
+      .getAllByRole('tab')
+      .map((tab) => tab.textContent?.replace(/[^A-ZÄÖÅ]/g, ''));
+
+    expect(labels).toEqual(['ÄVENTYR', 'VÄSKA', 'MARKNAD']);
   });
 
   it('arrow keys move between screens', async () => {

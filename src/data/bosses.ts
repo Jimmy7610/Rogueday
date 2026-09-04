@@ -6,7 +6,7 @@ import type { BossDefinition } from '@/types';
  *
  * V2: varje boss har nu en taktisk profil.
  *
- * - `weaknessCategories` ger +25% bossskada för uppdrag i de kategorierna.
+ * - `weaknessCategories` ger +25% bosskada för uppdrag i de kategorierna.
  * - `resistanceCategories` ger -15%. De används sparsamt, så att ett uppdrag
  *   aldrig känns bortkastat - bara något mindre effektivt.
  * - `phases` är repliker som utlöses en enda gång när HP passerar 75/50/25%.

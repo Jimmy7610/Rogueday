@@ -109,7 +109,8 @@ export function reconcileWithClock(save: RogueDaySave, now: Date = new Date()): 
   let next = save;
 
   const { boss, rotated } = ensureCurrentBoss(save.boss, now);
-  if (rotated || save.boss === null) {
+  // Also adopt a rescaled (rebalanced) boss, not only a rotated one.
+  if (rotated || save.boss === null || boss !== save.boss) {
     next = { ...next, boss };
   }
 

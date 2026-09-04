@@ -22,7 +22,11 @@ Allt körs lokalt i webbläsaren. Ingen server, inget konto, ingen AI vid körni
 - [Nollkostnadsarkitektur](#nollkostnadsarkitektur)
 - [Projektstruktur](#projektstruktur)
 - [Tester](#tester)
+- [CI](#ci)
 - [Innehållssäkerhet](#innehållssäkerhet)
+
+Djupsystemen i V2 — tier-utmaningar, fokustimer, marknad, förmågor, bosstaktik
+och belöningsspecifikationen — beskrivs i [docs/v2.md](docs/v2.md).
 
 ---
 
@@ -44,9 +48,9 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 | **Filtrering** | Tid (5/15/30/60 min), energi, plats och sinnesstämning respekteras strikt |
 | **Tre val** | Varje tärningsslag ger tre alternativ med stigande risk och belöning |
 | **Sällsynthet** | Vanlig 45% · Ovanlig 28% · Sällsynt 17% · Episk 8% · Legendarisk 2% |
-| **Nivåer** | 50 nivåer med stigande XP-kurva och 25 datadrivna titlar |
+| **Nivåer** | 50 nivåer, 25 datadrivna titlar, förmågeval var femte nivå |
 | **Guld och loot** | 10 föremålstyper, kistor, buffar och en väska |
-| **Veckoboss** | 14 bossar i deterministisk lokal veckorotation |
+| **Veckoboss** | 14 bossar med svagheter, faser och balanserad HP |
 | **Uppdragskedjor** | 6 flerdelade kedjor med bonus, märke och kista på slutet |
 | **Dagens uppdrag** | Ett deterministiskt uppdrag per lokal kalenderdag, med bonus |
 | **Kaos-läge** | 8 kaosmodifierare: förbannelser, speedruns, mysterieuppdrag, dubbel-XP-vad |
@@ -55,6 +59,12 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 | **Svit** | Lokala kalenderdagar, med svitsköld som skyddar en missad dag |
 | **Statistik** | Fullständig och äkta — inga påhittade siffror |
 | **Historik** | Överlever omladdning, omstart och stängd webbläsare |
+| **Tier-utmaningar** | 17 utmaningar som gör VILT och FARLIGT till verkligt olika spelsätt |
+| **Fokustimer** | Valfri, byggd på riktiga tidsstämplar — straffar aldrig |
+| **Marknad** | Deterministiskt dagligt utbud att spendera guld på |
+| **Förmågor** | 30 milstolpeförmågor i tre teman |
+| **Bosstaktik** | Svagheter, motstånd och fasrepliker per boss |
+| **Belöningsspecifikation** | Varje XP och guldmynt redovisas post för post |
 
 ## Kom igång
 
@@ -107,6 +117,10 @@ projektet som anropar `localStorage`. Det finns inga utspridda `setItem`-anrop n
 rogueDay.save.v1        huvudsparfil
 rogueDay.save.backup    säkerhetskopia
 ```
+
+Nycklarna är oförändrade sedan 1.0. Schemat är version 2; en sparfil från
+version 1 migreras automatiskt vid inläsning utan att förlora någonting. Se
+[docs/v2.md](docs/v2.md#sparfil-v1--v2).
 
 **Startordning vid varje sidladdning:**
 
@@ -200,8 +214,10 @@ Din spelardata lämnar aldrig din enhet.
 src/
   app/          GameProvider, reducer, App-skalet
   components/   HUD, navigation, modaler, delade UI-delar
-  data/         uppdrag, bossar, märken, loot, händelser, nivåer, kedjor
-  game/         spellogik: val, XP, boss, loot, svit, märken, slutförande
+  data/         uppdrag, bossar, märken, loot, händelser, nivåer, kedjor,
+                utmaningar, förmågor
+  game/         spellogik: val, XP, boss, loot, svit, märken, slutförande,
+                marknad, förmågor, fokustimer
   hooks/        useSound (Web Audio)
   persistence/  defaults, validering, migrering, lagring
   screens/      Uppdrag, Boss, Historik, Märken, Data, Onboarding
@@ -221,7 +237,7 @@ sig, märken för sig, lagring för sig. Det finns ingen `App.tsx` på 5000 rade
 npm test
 ```
 
-309 tester täcker bland annat:
+430 tester täcker bland annat:
 
 - uppdragsfiltrering, sällsynthet och urval
 - XP-beräkning och nivåprogression
@@ -233,12 +249,28 @@ npm test
 - serialisering, laddning, migrering, backup-återställning
 - JSON-export, JSON-import, skadad sparfil, nollställning
 - service workerns install-, activate- och fetch-logik mot en mockad scope
+- hårda filter som aldrig får tummas på (tid, energi, plats)
+- tier-utmaningar och att en riskabel nivå aldrig är värd mindre än en trygg
+- fokustimerns tidsstämpelmatematik, paus, återupptagning och omstart
+- marknadens deterministiska dagsutbud, köp, slutsålda varor och rabatter
+- förmågor: upplåsning, val, validering och faktisk effekt
+- bossars svagheter, motstånd och att varje fas utlöses exakt en gång
+- bossbalans genom simulerad veckospelning
+- att belöningsposterna summerar till exakt den ändring som sker
+- migrering v1 → v2 mot en komplett v1-sparfil
 - hela appen genom React Testing Library, inklusive tangentbordsnavigering
 
 Nyckeltestet heter **`persists complete progression across full reload`** och gör exakt det
 specifikationen kräver: skapar ett spel, slutför ett uppdrag, sparar, förstör tillståndet i
 minnet, laddar från lagringen, verifierar XP, historik, statistik och boss-HP, slutför ett
 andra uppdrag, sparar, laddar om igen och kontrollerar att **båda** historikposterna finns kvar.
+
+## CI
+
+`.github/workflows/ci.yml` körs vid push och pull request mot `main` och kör
+`npm ci`, `npm run typecheck`, `npm test` och `npm run build` på Node 22. Den
+kontrollerar också att bygget producerar de statiska filerna en publicering
+behöver. Ingen deploy sker automatiskt.
 
 ## Innehållssäkerhet
 

@@ -52,7 +52,7 @@ export const PERKS: PerkDefinition[] = [
   {
     id: 'slayer_5',
     name: 'VASST STÅL',
-    description: '+8% bossskada.',
+    description: '+8% bosskada.',
     theme: 'slayer',
     level: 5,
     icon: '🗡️',
@@ -104,7 +104,7 @@ export const PERKS: PerkDefinition[] = [
   {
     id: 'slayer_15',
     name: 'TUNGT SLAG',
-    description: '+10% bossskada.',
+    description: '+10% bosskada.',
     theme: 'slayer',
     level: 15,
     icon: '🔨',
@@ -156,7 +156,7 @@ export const PERKS: PerkDefinition[] = [
   {
     id: 'slayer_25',
     name: 'BRYTPUNKT',
-    description: '+12% bossskada.',
+    description: '+12% bosskada.',
     theme: 'slayer',
     level: 25,
     icon: '💥',
@@ -208,7 +208,7 @@ export const PERKS: PerkDefinition[] = [
   {
     id: 'slayer_35',
     name: 'KROSSARE',
-    description: '+12% bossskada.',
+    description: '+12% bosskada.',
     theme: 'slayer',
     level: 35,
     icon: '⚒️',
@@ -234,7 +234,7 @@ export const PERKS: PerkDefinition[] = [
   {
     id: 'slayer_40',
     name: 'BOSSDÖDARE',
-    description: '+15% bossskada.',
+    description: '+15% bosskada.',
     theme: 'slayer',
     level: 40,
     icon: '☠️',
@@ -286,7 +286,7 @@ export const PERKS: PerkDefinition[] = [
   {
     id: 'slayer_50',
     name: 'VECKANS MARDRÖM',
-    description: '+15% bossskada.',
+    description: '+15% bosskada.',
     theme: 'slayer',
     level: 50,
     icon: '🏆',

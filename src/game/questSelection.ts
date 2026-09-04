@@ -21,7 +21,10 @@ import {
   RARITY_DAMAGE_MULTIPLIER,
   RARITY_MULTIPLIER,
   TIER_REWARD_MULTIPLIER,
+  maxRarity,
+  rollRarity,
   rollTierRarity,
+  upgradeRarity,
 } from './rarity';
 
 /** How many recently-seen quests to remember and avoid re-offering. */
@@ -340,14 +343,38 @@ export function rollQuestChoices(options: RollOptions): QuestRollResult {
   const shuffled = rng.shuffle(pool.quests);
   const tiers: ChoiceTier[] = ['safe', 'wild', 'dangerous'];
 
+  // Pick three quests, then hand the biggest to the riskiest tier.
+  //
+  // Each tier draws a different quest, so without this the tier multipliers
+  // are applied to different baselines and a DANGEROUS 5-minute quest can pay
+  // less than a SAFE 30-minute one. Sorting by base reward keeps the promise
+  // the tiers make: riskier is always worth more.
+  // Sort by the quest's intrinsic value - base reward scaled by its own
+  // rarity - because that, not duration alone, is what drives the payout.
+  const intrinsicValue = (quest: Quest): number =>
+    quest.baseXp * RARITY_MULTIPLIER[quest.rarity];
+
+  const picks = Array.from(
+    { length: tiers.length },
+    (_, index) => shuffled[index % shuffled.length],
+  ).sort((a, b) => intrinsicValue(a) - intrinsicValue(b));
+
+  // Rarity is rolled ONCE and then upgraded per tier, rather than rolled
+  // independently three times. Independent rolls let a SAFE offer come out
+  // legendary while DANGEROUS came out uncommon, which inverts the rewards.
+  // The shared roll keeps the documented distribution for SAFE and makes each
+  // riskier tier strictly at least as good.
+  const sharedRarity = rollRarity(rng);
+
   const offers = tiers.map((tier, index) =>
     buildOffer({
-      quest: shuffled[index % shuffled.length],
+      quest: picks[index],
       tier,
       filters,
       rng,
       boss,
       effects,
+      forcedRarity: maxRarity(picks[index].rarity, upgradeRarity(sharedRarity, index)),
     }),
   );
 

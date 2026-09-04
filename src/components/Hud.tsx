@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useGame } from '@/app/GameProvider';
 import { getLevelInfo } from '@/game/progression';
-import { getDisplayStreak } from '@/game/streak';
+import { getStreakStatus } from '@/game/streak';
 import { MAX_LEVEL } from '@/data/levels';
 import { ProgressBar, formatNumber } from './ui';
 
@@ -13,7 +13,7 @@ export function Hud(): JSX.Element {
   const { save } = state;
 
   const level = getLevelInfo(save.progression);
-  const streak = getDisplayStreak(save.streak);
+  const streak = getStreakStatus(save.streak, save.inventory);
   const completedToday = save.statistics.completionDates[todayKey()] ?? 0;
 
   // Hold the previous XP for one frame so the bar animates from where it was
@@ -47,13 +47,13 @@ export function Hud(): JSX.Element {
             <span className="hud__name">{save.player.name}</span>
             <span className="hud__rank">{level.title}</span>
             <span
-              className={streak > 0 ? 'hud__streak' : 'hud__streak hud__streak--cold'}
+              className={`hud__streak hud__streak--${streak.tone}`}
               title={`Längsta svit: ${save.streak.longest} dagar`}
             >
               <span className="hud__streak-flame" aria-hidden="true">
-                🔥
+                {streak.icon}
               </span>
-              {streak > 0 ? `${streak} ${streak === 1 ? 'DAG' : 'DAGAR'}` : 'INGEN SVIT'}
+              {streak.label}
             </span>
           </div>
         </div>

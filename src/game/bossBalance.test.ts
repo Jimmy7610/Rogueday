@@ -21,9 +21,17 @@ import { makeSave, NO_LUCK_RNG } from '@/test/helpers';
  *   HARD     16-22
  *   EXTREME  20-28
  *
- * Rarity luck, longer quests, boss weaknesses, Boss Keys, daily quests and
- * chain finales all pull the real number below these figures, which is the
- * intent: the bands describe the plain, unoptimised path.
+ * "Typical" means the `mixed` style: a player who rotates through the tiers,
+ * sometimes taking a wild or dangerous offer. That is the intended way to
+ * play, so it is what the bands describe.
+ *
+ * The `safe` style - never once taking a risk - is deliberately the slowest
+ * route, because SAFE now draws the smallest of the three quests on offer. It
+ * still has to finish in a sane number of quests, which the bound below checks,
+ * but it is not the balance target.
+ *
+ * Rarity luck, boss weaknesses, Boss Keys, daily quests, timed challenges and
+ * chain finales all pull the real number further down.
  */
 
 const TARGET_BANDS: Record<Difficulty, [number, number]> = {
@@ -109,22 +117,33 @@ describe('weekly boss balance', () => {
     }
   });
 
-  it('lands inside the design band for its difficulty', () => {
-    const report: string[] = [];
-
+  it('lands inside the design band for a normal, tier-mixing player', () => {
     for (const boss of BOSSES) {
-      const median = medianQuests(boss.id, 'safe');
+      const median = medianQuests(boss.id, 'mixed');
       const [min, max] = TARGET_BANDS[boss.difficulty];
-      report.push(`${boss.name} (${boss.difficulty}): ${median} quests [${min}-${max}]`);
 
       expect(
         median,
-        `${boss.name} (${boss.difficulty}) took ${median} safe quests, band is ${min}-${max}`,
+        `${boss.name} (${boss.difficulty}) took ${median} quests, band is ${min}-${max}`,
       ).toBeGreaterThanOrEqual(min);
       expect(
         median,
-        `${boss.name} (${boss.difficulty}) took ${median} safe quests, band is ${min}-${max}`,
+        `${boss.name} (${boss.difficulty}) took ${median} quests, band is ${min}-${max}`,
       ).toBeLessThanOrEqual(max);
+    }
+  });
+
+  it('stays reasonable even for a player who never takes a risk', () => {
+    // SAFE always draws the smallest quest on offer, so this path is slower by
+    // design. It must still be a week of ordinary effort, not a grind.
+    for (const boss of BOSSES) {
+      const median = medianQuests(boss.id, 'safe');
+      const ceiling = Math.round(TARGET_BANDS[boss.difficulty][1] * 1.8);
+
+      expect(
+        median,
+        `${boss.name}: ${median} cautious quests exceeds the ${ceiling} ceiling`,
+      ).toBeLessThanOrEqual(ceiling);
     }
   });
 
@@ -132,7 +151,7 @@ describe('weekly boss balance', () => {
     const byDifficulty = new Map<Difficulty, number[]>();
 
     for (const boss of BOSSES) {
-      const median = medianQuests(boss.id, 'safe');
+      const median = medianQuests(boss.id, 'mixed');
       const list = byDifficulty.get(boss.difficulty) ?? [];
       list.push(median);
       byDifficulty.set(boss.difficulty, list);

@@ -8,6 +8,7 @@ import './styles/base.css';
 import './styles/layout.css';
 import './styles/components.css';
 import './styles/game.css';
+import './styles/v2.css';
 import './styles/animations.css';
 
 const container = document.getElementById('root');

@@ -35,6 +35,27 @@ export function createBossState(weekKey: string): BossState {
 }
 
 /**
+ * Rescale an in-progress boss whose maxHp no longer matches its definition.
+ *
+ * This happens when a boss is rebalanced between versions: a save made mid-week
+ * still carries the old HP pool, which would leave the player fighting a boss
+ * at the old difficulty on a new build. The remaining *fraction* of health is
+ * preserved, so nobody loses or gains progress - the bar sits exactly where it
+ * did, against the correct total.
+ *
+ * Idempotent: once the totals agree it does nothing.
+ */
+export function rescaleBossToDefinition(boss: BossState): BossState {
+  const definition = getBossById(boss.bossId);
+  if (!definition || definition.maxHp === boss.maxHp || boss.maxHp <= 0) return boss;
+
+  const remainingFraction = Math.max(0, Math.min(1, boss.currentHp / boss.maxHp));
+  const currentHp = boss.defeated ? 0 : Math.round(definition.maxHp * remainingFraction);
+
+  return { ...boss, maxHp: definition.maxHp, currentHp };
+}
+
+/**
  * Return the boss state for the current week, creating a fresh one when the
  * week has rolled over. The previous week's state is never mutated here -
  * callers persist the returned value.
@@ -46,7 +67,7 @@ export function ensureCurrentBoss(
   const weekKey = getWeekKey(now);
 
   if (existing && existing.weekKey === weekKey) {
-    return { boss: existing, rotated: false };
+    return { boss: rescaleBossToDefinition(existing), rotated: false };
   }
 
   return { boss: createBossState(weekKey), rotated: true };

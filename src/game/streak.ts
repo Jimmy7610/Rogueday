@@ -113,3 +113,59 @@ export function getDisplayStreak(streak: StreakState, now: Date = new Date()): n
 export function hasCompletedToday(streak: StreakState, now: Date = new Date()): boolean {
   return streak.lastCompletionDate === toLocalDateKey(now);
 }
+
+
+/* ------------------------------------------------------------------ */
+/* Display status                                                      */
+/* ------------------------------------------------------------------ */
+
+export interface StreakStatus {
+  /** Days to show; 0 when the streak has lapsed. */
+  days: number;
+  label: string;
+  icon: string;
+  tone: 'hot' | 'risk' | 'cold';
+  /** True when yesterday was missed but a shield can still bridge it. */
+  atRisk: boolean;
+}
+
+/**
+ * How the streak should read in the HUD right now.
+ *
+ * A streak whose last completion was the day before yesterday has not lapsed
+ * if the player owns a Streak Shield - the shield will bridge it on the next
+ * completion. Saying "INGEN SVIT" there would be simply wrong, so it says the
+ * streak is at risk and that a shield is ready. The wording is never shaming.
+ */
+export function getStreakStatus(
+  streak: StreakState,
+  inventory: InventoryEntry[],
+  now: Date = new Date(),
+): StreakStatus {
+  const days = getDisplayStreak(streak, now);
+
+  if (days > 0) {
+    return {
+      days,
+      label: `${days} ${days === 1 ? 'DAG' : 'DAGAR'}`,
+      icon: '🔥',
+      tone: 'hot',
+      atRisk: false,
+    };
+  }
+
+  const last = streak.lastCompletionDate;
+  const hasShield = (inventory.find((entry) => entry.itemId === 'streak_shield')?.count ?? 0) > 0;
+
+  if (last && hasShield && daysBetween(last, toLocalDateKey(now)) === 2) {
+    return {
+      days: streak.current,
+      label: 'SVIT I FARA',
+      icon: '🛡️',
+      tone: 'risk',
+      atRisk: true,
+    };
+  }
+
+  return { days: 0, label: 'INGEN SVIT', icon: '🔥', tone: 'cold', atRisk: false };
+}

@@ -40,7 +40,7 @@ export const LOOT_ITEMS: LootItem[] = [
   {
     id: 'boss_key',
     name: 'BOSSNYCKEL',
-    description: 'Dubbel bossskada på nästa avklarade uppdrag.',
+    description: 'Dubbel bosskada på nästa avklarade uppdrag.',
     icon: '🗝️',
     rarity: 'rare',
     isChest: false,

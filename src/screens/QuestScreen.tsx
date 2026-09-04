@@ -1,10 +1,13 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { QuestOffer } from '@/types';
 import { useGame } from '@/app/GameProvider';
 import { CATEGORY_ICONS, CATEGORY_LABELS, getQuestById } from '@/data/quests';
 import { LOOT_BY_ID } from '@/data/loot';
 import { buildDailyOffer, getActiveChains, getRerollAvailability } from '@/game/questSelection';
 import { useSound } from '@/hooks/useSound';
+import { BossStrip } from '@/components/BossStrip';
+import { FocusTimer } from '@/components/FocusTimer';
+import { Market } from '@/components/Market';
 import { QuestChoiceModal } from '@/components/QuestChoiceModal';
 import { QuestFinderModal } from '@/components/QuestFinderModal';
 import {
@@ -18,26 +21,45 @@ import {
 } from '@/components/ui';
 import { toLocalDateKey } from '@/utils/date';
 
+type HubTab = 'adventure' | 'bag' | 'market';
+
+const TABS: { id: HubTab; label: string; icon: string }[] = [
+  { id: 'adventure', label: 'ÄVENTYR', icon: '🧭' },
+  { id: 'bag', label: 'VÄSKA', icon: '🎒' },
+  { id: 'market', label: 'MARKNAD', icon: '🏪' },
+];
+
 interface QuestScreenProps {
   /** Set by the reward modal's "NYTT UPPDRAG" button. */
   autoOpenFinder: boolean;
   onFinderOpened: () => void;
+  /** Navigate to the boss screen. */
+  onOpenBoss: () => void;
 }
 
-export function QuestScreen({ autoOpenFinder, onFinderOpened }: QuestScreenProps): JSX.Element {
+export function QuestScreen({
+  autoOpenFinder,
+  onFinderOpened,
+  onOpenBoss,
+}: QuestScreenProps): JSX.Element {
   const { state, dispatch } = useGame();
   const { save } = state;
   const play = useSound();
 
   const [finderOpen, setFinderOpen] = useState(false);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
+  const [tab, setTab] = useState<HubTab>('adventure');
 
-  if (autoOpenFinder && !finderOpen && !save.activeQuest) {
-    // Runs during render on purpose: opening on the next tick would flash the
-    // hero screen between the reward modal closing and the finder appearing.
+  // Opening the finder after the reward modal is a side effect, not something
+  // to do while rendering: touching parent state during render warns in React.
+  useEffect(() => {
+    if (!autoOpenFinder) return;
     onFinderOpened();
-    setFinderOpen(true);
-  }
+    if (!save.activeQuest) {
+      setTab('adventure');
+      setFinderOpen(true);
+    }
+  }, [autoOpenFinder, onFinderOpened, save.activeQuest]);
 
   const openFinder = useCallback(() => {
     play('click');
@@ -65,12 +87,13 @@ export function QuestScreen({ autoOpenFinder, onFinderOpened }: QuestScreenProps
 
   const activeQuest = save.activeQuest;
 
+  /* An active quest takes over the screen entirely. */
   if (activeQuest) {
     return (
       <>
-        <ActiveQuestCard offer={activeQuest.offer} />
+        <ActiveQuestCard />
         {state.offers && (
-          <QuestChoiceModalWrapper
+          <ChoiceModal
             selectedOfferId={selectedOfferId}
             setSelectedOfferId={setSelectedOfferId}
             onAccept={handleAccept}
@@ -82,20 +105,59 @@ export function QuestScreen({ autoOpenFinder, onFinderOpened }: QuestScreenProps
 
   return (
     <>
-      <div className="hero">
-        <div className="hero__icon" aria-hidden="true">
-          🧭
-        </div>
-        <h1 className="hero__title">DITT ÄVENTYR VÄNTAR</h1>
-        <p className="hero__text">Förvandla vardaglig tristess till verkliga hjältedåd.</p>
-        <button type="button" className="btn btn--primary btn--lg btn--block" onClick={openFinder}>
-          HITTA ETT UPPDRAG 🎲
-        </button>
+      <div className="hub-tabs" role="tablist" aria-label="Uppdragsnav">
+        {TABS.map((entry) => (
+          <button
+            key={entry.id}
+            type="button"
+            role="tab"
+            aria-selected={tab === entry.id}
+            className={tab === entry.id ? 'hub-tab hub-tab--active' : 'hub-tab'}
+            onClick={() => {
+              play('click');
+              setTab(entry.id);
+            }}
+          >
+            <span aria-hidden="true">{entry.icon}</span> {entry.label}
+            {entry.id === 'bag' && save.inventory.length > 0 && (
+              <span className="hub-tab__count">{save.inventory.length}</span>
+            )}
+          </button>
+        ))}
       </div>
 
-      <DailyQuestCard />
-      <ChainProgress />
-      <InventoryPanel />
+      {tab === 'adventure' && (
+        <>
+          <div className="hero">
+            <div className="hero__icon" aria-hidden="true">
+              🧭
+            </div>
+            <h1 className="hero__title">DITT ÄVENTYR VÄNTAR</h1>
+            <p className="hero__text">Förvandla vardaglig tristess till verkliga hjältedåd.</p>
+            <button
+              type="button"
+              className="btn btn--primary btn--lg btn--block"
+              onClick={openFinder}
+            >
+              HITTA ETT UPPDRAG 🎲
+            </button>
+          </div>
+
+          <BossStrip onOpen={onOpenBoss} />
+          <FollowUpCard />
+          <DailyQuestCard />
+          <ChainProgress />
+        </>
+      )}
+
+      {tab === 'bag' && (
+        <>
+          <InventoryPanel />
+          <ActiveBuffs />
+        </>
+      )}
+
+      {tab === 'market' && <Market />}
 
       {finderOpen && (
         <QuestFinderModal
@@ -106,11 +168,25 @@ export function QuestScreen({ autoOpenFinder, onFinderOpened }: QuestScreenProps
       )}
 
       {state.offers && !finderOpen && (
-        <QuestChoiceModalWrapper
+        <ChoiceModal
           selectedOfferId={selectedOfferId}
           setSelectedOfferId={setSelectedOfferId}
           onAccept={handleAccept}
         />
+      )}
+
+      {state.offersEmpty && !finderOpen && (
+        <div className="notice notice--warn" role="status" style={{ marginTop: 14 }}>
+          Inga uppdrag matchar just de valen. Prova mer tid, högre energi eller "var som helst".
+          <button
+            type="button"
+            className="btn btn--sm"
+            style={{ marginTop: 10 }}
+            onClick={openFinder}
+          >
+            ÄNDRA FILTER
+          </button>
+        </div>
       )}
     </>
   );
@@ -118,7 +194,7 @@ export function QuestScreen({ autoOpenFinder, onFinderOpened }: QuestScreenProps
 
 /* ------------------------------------------------------------------ */
 
-function QuestChoiceModalWrapper({
+function ChoiceModal({
   selectedOfferId,
   setSelectedOfferId,
   onAccept,
@@ -138,6 +214,7 @@ function QuestChoiceModalWrapper({
     <QuestChoiceModal
       offers={state.offers}
       selectedId={selectedOfferId}
+      moodRelaxed={state.offersMoodRelaxed}
       onSelect={(id) => {
         play('click');
         setSelectedOfferId(id);
@@ -160,11 +237,16 @@ function QuestChoiceModalWrapper({
 
 /* ------------------------------------------------------------------ */
 
-function ActiveQuestCard({ offer }: { offer: QuestOffer }): JSX.Element {
-  const { dispatch } = useGame();
+function ActiveQuestCard(): JSX.Element | null {
+  const { state, dispatch } = useGame();
   const play = useSound();
-  const quest = offer.quest;
   const [confirmAbandon, setConfirmAbandon] = useState(false);
+
+  const active = state.save.activeQuest;
+  if (!active) return null;
+
+  const { offer } = active;
+  const quest = offer.quest;
 
   return (
     <div className="active-quest" data-rarity={offer.rarity}>
@@ -195,6 +277,16 @@ function ActiveQuestCard({ offer }: { offer: QuestOffer }): JSX.Element {
       <p className="active-quest__flavour">{quest.flavourText}</p>
       <p className="active-quest__desc">{quest.description}</p>
 
+      {offer.challenge && (
+        <div className="challenge-box">
+          <span className="challenge-box__tier">
+            {offer.tier === 'dangerous' ? '☢️ FARLIG UTMANING' : '🌟 VILD UTMANING'}
+          </span>
+          <span className="challenge-box__name">{offer.challenge.name}</span>
+          <span className="challenge-box__req">{offer.challenge.requirement}</span>
+        </div>
+      )}
+
       {offer.modifier && (
         <div className="offer__modifier" style={{ marginBottom: 16 }}>
           <span aria-hidden="true">🌀</span>
@@ -203,6 +295,13 @@ function ActiveQuestCard({ offer }: { offer: QuestOffer }): JSX.Element {
             <br />
             <span className="offer__modifier-desc">{offer.modifier.description}</span>
           </span>
+        </div>
+      )}
+
+      {offer.hitsWeakness && (
+        <div className="weakness-flag">
+          ⚔ SVAG MOT VECKANS BOSS · +
+          {Math.round(((offer.weaknessMultiplier ?? 1.25) - 1) * 100)}% BOSSKADA
         </div>
       )}
 
@@ -228,10 +327,14 @@ function ActiveQuestCard({ offer }: { offer: QuestOffer }): JSX.Element {
           <div className="reward-block__label">GULD</div>
         </div>
         <div className="reward-block">
-          <div className="reward-block__value reward-dmg">-{offer.bossDamage}</div>
+          <div className="reward-block__value reward-dmg">
+            -{Math.round(offer.bossDamage * (offer.weaknessMultiplier ?? 1))}
+          </div>
           <div className="reward-block__label">BOSS HP</div>
         </div>
       </div>
+
+      <FocusTimer active={active} />
 
       <div className="active-quest__actions">
         <button
@@ -279,6 +382,50 @@ function ActiveQuestCard({ offer }: { offer: QuestOffer }): JSX.Element {
         )}
       </div>
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+/** The optional bonus objective from DOUBLE OR NOTHING. */
+function FollowUpCard(): JSX.Element | null {
+  const { state, dispatch } = useGame();
+  const play = useSound();
+  const followUp = state.save.eventFollowUp;
+  if (!followUp) return null;
+
+  return (
+    <section className="section">
+      <SectionTitle>BONUSMÅL</SectionTitle>
+      <div className="followup">
+        <div className="followup__tag">🎲 DUBBELT ELLER INGET</div>
+        <h3 className="followup__title">{followUp.title}</h3>
+        <p className="followup__desc">{followUp.description}</p>
+        <p className="followup__reward mono">
+          +{followUp.rewardXp} XP · +{followUp.rewardGold} guld
+        </p>
+        <div className="followup__actions">
+          <button
+            type="button"
+            className="btn btn--magenta"
+            style={{ flex: 1 }}
+            onClick={() => {
+              play('loot');
+              dispatch({ type: 'CLAIM_FOLLOW_UP' });
+            }}
+          >
+            KLARAT — LÖS IN
+          </button>
+          <button
+            type="button"
+            className="btn btn--ghost btn--sm"
+            onClick={() => dispatch({ type: 'DISMISS_FOLLOW_UP' })}
+          >
+            SKIPPA
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -377,7 +524,10 @@ function InventoryPanel(): JSX.Element {
     <section className="section">
       <SectionTitle>VÄSKA</SectionTitle>
       {items.length === 0 ? (
-        <EmptyState icon="🎒" text="Väskan är tom. Slutför uppdrag för att hitta föremål." />
+        <EmptyState
+          icon="🎒"
+          text="Väskan är tom. Slutför uppdrag för att hitta föremål, eller besök marknaden."
+        />
       ) : (
         <div className="inv-grid">
           {items.map((entry) => {
@@ -408,7 +558,6 @@ function InventoryPanel(): JSX.Element {
           })}
         </div>
       )}
-      <ActiveBuffs />
     </section>
   );
 }
@@ -420,7 +569,7 @@ function ActiveBuffs(): JSX.Element | null {
   const active: string[] = [];
   if (buffs.xpElixir) active.push('🧪 +25% XP');
   if (buffs.luckyCoin) active.push('🪙 Ökad lootchans');
-  if (buffs.bossKey) active.push('🗝️ Dubbel bossskada');
+  if (buffs.bossKey) active.push('🗝️ Dubbel bosskada');
   if (buffs.focusRune) active.push('🔮 +15% guld');
   if (buffs.shrineXpBonusQuests > 0)
     active.push(`⛩️ +30% XP (${buffs.shrineXpBonusQuests} kvar)`);

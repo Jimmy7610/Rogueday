@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { RogueDaySave } from '@/types';
 import { completeQuest } from '@/game/completion';
+import { getMarketView, purchaseOffer } from '@/game/market';
+import { selectPerk } from '@/game/perks';
+import { createTimer } from '@/game/timer';
 import { loadGame, saveGame } from '@/persistence/storage';
 import { createInitialState } from '@/app/gameStore';
 import { makeOffer, makeSave, NO_LUCK_RNG } from './helpers';
@@ -246,5 +249,163 @@ describe('full reload persistence', () => {
     expect(reloaded.questChains.forgotten_drawer?.completed).toBe(false);
     expect(reloaded.inventory).toHaveLength(2);
     expect(reloaded.inventory.find((entry) => entry.itemId === 'reroll_token')?.count).toBe(3);
+  });
+});
+
+/**
+ * V2 state must survive a reload exactly as v1 state does.
+ */
+describe('V2 state across a full reload', () => {
+  beforeEach(() => window.localStorage.clear());
+
+  it('market purchases survive a reload and cannot be repeated', () => {
+    let save: RogueDaySave = makeSave();
+    save.progression.gold = 3000;
+
+    const featured = getMarketView(save).offers.find((offer) => offer.featured)!;
+    const bought = purchaseOffer(save, featured.offerId);
+    expect(bought.ok).toBe(true);
+    save = bought.save;
+
+    const goldAfter = save.progression.gold;
+    saveGame(save);
+
+    const reloaded = loadGame().save;
+
+    expect(reloaded.progression.gold).toBe(goldAfter);
+    expect(reloaded.market.purchased[featured.offerId]).toBe(1);
+    expect(reloaded.statistics.marketPurchases).toBe(1);
+    expect(
+      reloaded.inventory.find((entry) => entry.itemId === featured.itemId)?.count,
+    ).toBe(1);
+
+    // The refreshed view still shows it sold out - no infinite restock.
+    const view = getMarketView(reloaded).offers.find(
+      (offer) => offer.offerId === featured.offerId,
+    )!;
+    expect(view.soldOut).toBe(true);
+
+    const again = purchaseOffer(reloaded, featured.offerId);
+    expect(again.ok).toBe(false);
+  });
+
+  it('selected perks survive a reload and keep applying', () => {
+    let save: RogueDaySave = makeSave();
+    save.progression.level = 10;
+    save.perks = selectPerk(save, 'fortune_5').perks;
+    save.perks = selectPerk({ ...save, perks: save.perks }, 'slayer_10').perks;
+
+    saveGame(save);
+    const reloaded = loadGame().save;
+
+    expect(reloaded.perks.selected).toEqual(['fortune_5', 'slayer_10']);
+
+    // The effect is still live after the reload.
+    const plain = makeSave();
+    const offer = makeOffer('digi_inbox_raid');
+    const withPerk = completeQuest(reloaded, offer, new Date('2026-09-04T12:00:00'), NO_LUCK_RNG);
+    const without = completeQuest(plain, offer, new Date('2026-09-04T12:00:00'), NO_LUCK_RNG);
+
+    expect(withPerk.reward.gold).toBeGreaterThan(without.reward.gold);
+  });
+
+  it('an active quest keeps its challenge and timer across a reload', () => {
+    const save: RogueDaySave = makeSave();
+    const offer = {
+      ...makeOffer('digi_inbox_raid'),
+      challenge: {
+        id: 'danger_speed_12',
+        name: 'TOLV MINUTER',
+        requirement: 'Klara det på 12 minuter.',
+        tier: 'dangerous' as const,
+        rewardMultiplier: 1.6,
+        timerMinutes: 12,
+      },
+    };
+
+    // Local wall-clock time; the stored stamp is its UTC form.
+    const startedAt = new Date('2026-09-04T12:00:00');
+    save.activeQuest = {
+      offer,
+      acceptedAt: startedAt.toISOString(),
+      timer: createTimer(12, startedAt),
+    };
+
+    saveGame(save);
+    const reloaded = loadGame().save;
+
+    expect(reloaded.activeQuest?.offer.challenge?.id).toBe('danger_speed_12');
+    expect(reloaded.activeQuest?.offer.challenge?.requirement).toBe(
+      'Klara det på 12 minuter.',
+    );
+    expect(reloaded.activeQuest?.timer?.targetMs).toBe(12 * 60000);
+    expect(reloaded.activeQuest?.timer?.runningSince).toBe(startedAt.toISOString());
+  });
+
+  it('boss phase history survives a reload so a phase never repeats', () => {
+    let save: RogueDaySave = makeSave();
+    save.boss = { ...save.boss!, currentHp: Math.floor(save.boss!.maxHp * 0.7) };
+
+    const result = completeQuest(
+      save,
+      makeOffer('clean_floor_deep'),
+      new Date('2026-09-04T12:00:00'),
+      NO_LUCK_RNG,
+    );
+    save = result.save;
+    expect(save.boss!.phasesSeen.length).toBeGreaterThan(0);
+    const seen = [...save.boss!.phasesSeen];
+
+    saveGame(save);
+    const reloaded = loadGame().save;
+
+    expect(reloaded.boss?.phasesSeen).toEqual(seen);
+
+    // The same phase does not fire again after the reload.
+    const next = completeQuest(
+      reloaded,
+      makeOffer('home_trash_run'),
+      new Date('2026-09-05T12:00:00'),
+      NO_LUCK_RNG,
+    );
+    for (const phase of next.reward.boss?.phasesTriggered ?? []) {
+      expect(seen).not.toContain(phase.threshold);
+    }
+  });
+
+  it('an event follow-up survives a reload and can still be claimed', () => {
+    const save: RogueDaySave = makeSave();
+    save.eventFollowUp = {
+      id: 'followup_1',
+      eventId: 'double_or_nothing',
+      title: 'FEM SAKER PÅ PLATS',
+      description: 'Lägg tillbaka fem saker.',
+      rewardXp: 60,
+      rewardGold: 30,
+      createdAt: '2026-09-04T12:00:00.000Z',
+      expiresOn: '2026-09-05',
+    };
+
+    saveGame(save);
+    const reloaded = loadGame().save;
+
+    expect(reloaded.eventFollowUp?.title).toBe('FEM SAKER PÅ PLATS');
+    expect(reloaded.eventFollowUp?.rewardXp).toBe(60);
+  });
+
+  it('the new statistics counters survive a reload', () => {
+    let save: RogueDaySave = makeSave();
+    save.statistics.marketPurchases = 4;
+    save.statistics.timedChallengesWon = 3;
+    save.statistics.weaknessHits = 11;
+    save.statistics.followUpsCompleted = 2;
+
+    saveGame(save);
+    save = loadGame().save;
+
+    expect(save.statistics.marketPurchases).toBe(4);
+    expect(save.statistics.timedChallengesWon).toBe(3);
+    expect(save.statistics.weaknessHits).toBe(11);
+    expect(save.statistics.followUpsCompleted).toBe(2);
   });
 });

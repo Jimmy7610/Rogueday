@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useGame } from '@/app/GameProvider';
 import { getBossById } from '@/data/bosses';
 import { LOOT_BY_ID } from '@/data/loot';
-import { getBossHpPercent, getDamageToday } from '@/game/boss';
+import { CATEGORY_ICONS, CATEGORY_LABELS } from '@/data/quests';
+import { getBossHpPercent, getDamageToday, getLatestPhase } from '@/game/boss';
 import { formatCountdown, formatDateTime, msUntilWeeklyReset } from '@/utils/date';
 import { EmptyState, ProgressBar, SectionTitle, Stat, formatNumber } from '@/components/ui';
 
@@ -48,6 +49,7 @@ export function BossScreen(): JSX.Element {
 
   const percent = getBossHpPercent(boss);
   const damageToday = getDamageToday(boss);
+  const latestPhase = getLatestPhase(boss);
 
   return (
     <>
@@ -102,7 +104,76 @@ export function BossScreen(): JSX.Element {
         </div>
 
         <p className="boss-stage__flavour">”{definition.flavourText}”</p>
+
+        {latestPhase && (
+          <p className="boss-stage__phase" role="status">
+            {latestPhase.message}
+          </p>
+        )}
       </div>
+
+      <section className="section" style={{ marginTop: 18 }}>
+        <SectionTitle>TAKTIK</SectionTitle>
+        <div className="panel">
+          <div className="panel__body">
+            <div className="weakness-panel">
+              <span className="weakness-panel__label weakness-panel__label--weak">SVAGHET</span>
+              <span className="weakness-panel__tags">
+                {definition.weaknessCategories.map((category) => (
+                  <span key={category} className="weakness-tag weakness-tag--weak">
+                    {CATEGORY_ICONS[category]} {CATEGORY_LABELS[category]}
+                  </span>
+                ))}
+              </span>
+            </div>
+            <p className="weakness-panel__note">
+              Uppdrag i dessa kategorier gör +25% bosskada.
+            </p>
+
+            {definition.resistanceCategories.length > 0 && (
+              <>
+                <div className="weakness-panel" style={{ marginTop: 12 }}>
+                  <span className="weakness-panel__label weakness-panel__label--resist">
+                    MOTSTÅND
+                  </span>
+                  <span className="weakness-panel__tags">
+                    {definition.resistanceCategories.map((category) => (
+                      <span key={category} className="weakness-tag weakness-tag--resist">
+                        {CATEGORY_ICONS[category]} {CATEGORY_LABELS[category]}
+                      </span>
+                    ))}
+                  </span>
+                </div>
+                <p className="weakness-panel__note">
+                  Dessa gör -15% skada. De räknas fortfarande — bara lite mindre.
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <SectionTitle>FASER</SectionTitle>
+        <div className="panel">
+          <div className="panel__body">
+            {definition.phases.map((phase) => {
+              const revealed = boss.phasesSeen.includes(phase.threshold);
+              return (
+                <div
+                  key={phase.threshold}
+                  className={revealed ? 'phase-row phase-row--seen' : 'phase-row'}
+                >
+                  <span className="phase-row__mark">{Math.round(phase.threshold * 100)}%</span>
+                  <span className="phase-row__text">
+                    {revealed ? phase.message : '???'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       <section className="section" style={{ marginTop: 18 }}>
         <SectionTitle>STRIDSRAPPORT</SectionTitle>

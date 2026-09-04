@@ -17,6 +17,7 @@ import {
 import { formatDateTime } from '@/utils/date';
 import { KeyValue, SectionTitle, ToggleRow, formatNumber } from '@/components/ui';
 import { Modal } from '@/components/Modal';
+import { PerkPanel } from '@/components/PerkChooser';
 
 export function DataScreen(): JSX.Element {
   const { state, dispatch, saveNow, replaceSave } = useGame();
@@ -176,9 +177,15 @@ export function DataScreen(): JSX.Element {
             />
             <KeyValue label="Svit" value={`${save.streak.current} (bäst ${save.streak.longest})`} />
             <KeyValue label="Föremål i väskan" value={save.inventory.length} />
+            <KeyValue label="Valda förmågor" value={save.perks.selected.length} />
+            <KeyValue label="Marknadsköp" value={save.statistics.marketPurchases} />
+            <KeyValue label="Klarade tidsutmaningar" value={save.statistics.timedChallengesWon} />
+            <KeyValue label="Svaghetsträffar" value={save.statistics.weaknessHits} />
           </div>
         </div>
       </section>
+
+      <PerkPanel />
 
       {/* --- backup / restore --- */}
       <section className="section">

@@ -322,7 +322,7 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
   {
     id: 'boss_damage_5k',
     name: 'FEM TUSEN SLAG',
-    description: 'Gör 5 000 total bossskada.',
+    description: 'Gör 5 000 total bosskada.',
     hiddenName: '???',
     category: 'boss',
     icon: '💥',
@@ -333,7 +333,7 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
   {
     id: 'boss_damage_25k',
     name: 'FÖRÖDELSE',
-    description: 'Gör 25 000 total bossskada.',
+    description: 'Gör 25 000 total bosskada.',
     hiddenName: '???',
     category: 'boss',
     icon: '🌪️',

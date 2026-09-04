@@ -7,6 +7,8 @@ import { DIFFICULTY_LABELS, ENERGY_LABELS, RarityTag } from './ui';
 interface QuestChoiceModalProps {
   offers: QuestOffer[];
   selectedId: string | null;
+  /** True when mood was set aside to fill these choices. */
+  moodRelaxed?: boolean;
   onSelect: (offerId: string) => void;
   onAccept: (offer: QuestOffer) => void;
   onReroll: () => void;
@@ -21,6 +23,7 @@ const TIER_ORDER: ChoiceTier[] = ['safe', 'wild', 'dangerous'];
 export function QuestChoiceModal({
   offers,
   selectedId,
+  moodRelaxed = false,
   onSelect,
   onAccept,
   onReroll,
@@ -60,6 +63,13 @@ export function QuestChoiceModal({
         </>
       }
     >
+      {moodRelaxed && (
+        <p className="notice notice--warn" style={{ marginBottom: 12 }} role="status">
+          Inga uppdrag matchade din sinnesstämning just nu, så den är bortkopplad. Tid, energi
+          och plats respekteras fortfarande fullt ut.
+        </p>
+      )}
+
       <div className="offer-list">
         {ordered.map((offer) => {
           const classes = ['offer'];
@@ -98,6 +108,23 @@ export function QuestChoiceModal({
 
               <p className="offer__flavour">”{offer.quest.flavourText}”</p>
 
+              {offer.challenge && (
+                <div className="challenge-box challenge-box--compact">
+                  <span className="challenge-box__tier">
+                    {offer.tier === 'dangerous' ? '☢️ FARLIG UTMANING' : '🌟 VILD UTMANING'}
+                  </span>
+                  <span className="challenge-box__name">{offer.challenge.name}</span>
+                  <span className="challenge-box__req">{offer.challenge.requirement}</span>
+                </div>
+              )}
+
+              {offer.hitsWeakness && (
+                <div className="weakness-flag weakness-flag--compact">
+                  ⚔ SVAG MOT VECKANS BOSS · +
+                  {Math.round(((offer.weaknessMultiplier ?? 1.25) - 1) * 100)}% SKADA
+                </div>
+              )}
+
               {offer.modifier && (
                 <div className="offer__modifier">
                   <span aria-hidden="true">🌀</span>
@@ -109,12 +136,14 @@ export function QuestChoiceModal({
                 </div>
               )}
 
-              <p
-                className="offer__flavour"
-                style={{ marginBottom: 8, fontStyle: 'normal', fontSize: 11 }}
-              >
-                {TIER_DESCRIPTIONS[offer.tier]}
-              </p>
+              {!offer.challenge && (
+                <p
+                  className="offer__flavour"
+                  style={{ marginBottom: 8, fontStyle: 'normal', fontSize: 11 }}
+                >
+                  {TIER_DESCRIPTIONS[offer.tier]}
+                </p>
+              )}
 
               <div className="offer__footer">
                 <div className="meta-row">

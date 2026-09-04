@@ -45,7 +45,7 @@ export function Navigation({
 
   return (
     <nav className="nav" aria-label="Huvudnavigering">
-      <div className="nav__inner" role="tablist">
+      <div className="nav__inner" role="tablist" aria-label="Skärmar">
         {ITEMS.map((item, index) => {
           const isActive = item.id === active;
           return (

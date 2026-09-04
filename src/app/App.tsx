@@ -4,6 +4,9 @@ import { useGame } from './GameProvider';
 import { Hud } from '@/components/Hud';
 import { Navigation } from '@/components/Navigation';
 import { EventModal } from '@/components/EventModal';
+import { EventResultModal } from '@/components/EventResultModal';
+import { LootRevealModal } from '@/components/LootRevealModal';
+import { PerkChooserModal } from '@/components/PerkChooser';
 import { RewardModal } from '@/components/RewardModal';
 import { QuestScreen } from '@/screens/QuestScreen';
 import { BossScreen } from '@/screens/BossScreen';
@@ -12,6 +15,7 @@ import { BadgeScreen } from '@/screens/BadgeScreen';
 import { DataScreen } from '@/screens/DataScreen';
 import { Onboarding } from '@/screens/Onboarding';
 import { useSound } from '@/hooks/useSound';
+import { hasPendingChoice } from '@/game/perks';
 
 const SCREEN_TITLES: Record<ScreenId, { title: string; subtitle: string }> = {
   quests: { title: 'UPPDRAG', subtitle: 'Verkliga hjältedåd, ett i taget.' },
@@ -78,6 +82,7 @@ export function App(): JSX.Element {
   }
 
   const meta = SCREEN_TITLES[screen];
+  const hasPendingPerk = hasPendingChoice(state.save);
 
   return (
     <div className="app-shell">
@@ -102,6 +107,7 @@ export function App(): JSX.Element {
           <QuestScreen
             autoOpenFinder={autoOpenFinder}
             onFinderOpened={() => setAutoOpenFinder(false)}
+            onOpenBoss={() => setScreen('boss')}
           />
         )}
         {screen === 'boss' && <BossScreen />}
@@ -119,11 +125,14 @@ export function App(): JSX.Element {
         bossDefeated={state.save.boss?.defeated ?? false}
       />
 
+      {/* One modal at a time, in the order the player earned them. */}
       {reward && (
         <RewardModal reward={reward} onContinue={handleContinue} onNewQuest={handleNewQuest} />
       )}
 
-      {!reward && state.pendingEvent && (
+      {!reward && <PerkChooserModal />}
+
+      {!reward && !hasPendingPerk && state.pendingEvent && (
         <EventModal
           event={state.pendingEvent}
           gold={state.save.progression.gold}
@@ -132,6 +141,20 @@ export function App(): JSX.Element {
             dispatch({ type: 'RESOLVE_EVENT', choiceId });
           }}
           onDismiss={() => dispatch({ type: 'DISMISS_EVENT' })}
+        />
+      )}
+
+      {!reward && !hasPendingPerk && !state.pendingEvent && state.eventResult && (
+        <EventResultModal
+          result={state.eventResult}
+          onClose={() => dispatch({ type: 'DISMISS_EVENT_RESULT' })}
+        />
+      )}
+
+      {!reward && !hasPendingPerk && state.itemReveal && (
+        <LootRevealModal
+          reveal={state.itemReveal}
+          onClose={() => dispatch({ type: 'DISMISS_ITEM_REVEAL' })}
         />
       )}
 
