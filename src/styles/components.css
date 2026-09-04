@@ -156,7 +156,7 @@
   align-items: center;
   justify-content: center;
   gap: 5px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 9px 13px;
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-sm);
@@ -523,6 +523,14 @@
   border: 1px solid var(--border-soft);
   background: rgba(0, 0, 0, 0.5);
   transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+/* The pill is 26px for looks; this invisible extension gives it a 44px
+   touch target without changing the visual design. */
+.toggle::before {
+  content: '';
+  position: absolute;
+  inset: -9px -6px;
 }
 
 .toggle::after {
