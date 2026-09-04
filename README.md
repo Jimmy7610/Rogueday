@@ -275,13 +275,24 @@ behöver. Ingen deploy sker automatiskt.
 
 ## Publicering
 
-**Live-version:** https://jimmy7610.github.io/Rogueday/
+Adress när publiceringen är aktiverad:
+**https://jimmy7610.github.io/Rogueday/**
 
 Publiceringen sker automatiskt. Varje push till `main` kör
 `.github/workflows/pages.yml`, som typkontrollerar, testar och bygger projektet
-och därefter publicerar innehållet i `dist/` till GitHub Pages. Adressen ovan
-uppdateras när arbetsflödet har gått igenom — misslyckas något steg publiceras
-ingenting, och den tidigare versionen ligger kvar.
+och därefter publicerar innehållet i `dist/` till GitHub Pages. Misslyckas något
+steg publiceras ingenting, och den tidigare versionen ligger kvar.
+
+### Engångsinställning
+
+GitHub Pages måste slås på en gång per repo innan arbetsflödet kan publicera:
+
+**Settings → Pages → Build and deployment → Source → `GitHub Actions`**
+
+Utan den inställningen stannar arbetsflödet på steget *Configure Pages*. Bygget
+och testerna körs ändå, så ingenting trasigt hinner publiceras. När den är på
+räcker det att köra om arbetsflödet (Actions → *Deploy to GitHub Pages* →
+*Re-run all jobs*) eller pusha på nytt.
 
 Bygget använder relativ bas (`base: './'` i `vite.config.ts`), så alla resurser
 begärs från `/Rogueday/` i stället för domänens rot. Det gäller även manifestet,
