@@ -205,7 +205,7 @@ describe('focus timer', () => {
   it('is optional, and can be started, paused and hidden', async () => {
     seed((save) => {
       save.activeQuest = {
-        offer: makeOffer('digi_inbox_raid'),
+        offer: makeOffer('ad_inbox_raid'),
         acceptedAt: new Date().toISOString(),
       };
     });
@@ -228,7 +228,7 @@ describe('focus timer', () => {
 
   it('an expired challenge timer never blocks completion', async () => {
     const timedOffer = {
-      ...makeOffer('digi_inbox_raid'),
+      ...makeOffer('ad_inbox_raid'),
       challenge: {
         id: 'danger_speed_12',
         name: 'TOLV MINUTER',
@@ -268,7 +268,7 @@ describe('focus timer', () => {
     seed((save) => {
       save.activeQuest = {
         offer: {
-          ...makeOffer('digi_inbox_raid'),
+          ...makeOffer('ad_inbox_raid'),
           challenge: {
             id: 'wild_no_social',
             name: 'FOKUSLÅS',
@@ -346,7 +346,7 @@ describe('event outcomes are shown', () => {
     seed((save) => {
       save.progression.gold = 500;
       save.activeQuest = {
-        offer: makeOffer('digi_inbox_raid'),
+        offer: makeOffer('ad_inbox_raid'),
         acceptedAt: new Date().toISOString(),
       };
     });

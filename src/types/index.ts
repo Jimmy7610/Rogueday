@@ -50,6 +50,33 @@ export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
 /** The three offered risk tiers after a roll. */
 export type ChoiceTier = 'safe' | 'wild' | 'dangerous';
 
+/**
+ * Practical, machine-readable tags describing how an activity actually feels
+ * to do. Separate from the Swedish flavour `tags`, which are for humans.
+ *
+ * Used for selection weighting, coverage reports and validation - not all of
+ * them are surfaced in the UI.
+ */
+export type ContentTag =
+  | 'quiet'
+  | 'phone-free'
+  | 'no-money'
+  | 'family-friendly'
+  | 'solo'
+  | 'social'
+  | 'creative'
+  | 'physical'
+  | 'outdoors'
+  | 'indoors'
+  | 'errand'
+  | 'focus'
+  | 'relaxing'
+  | 'exploration'
+  | 'cleaning'
+  | 'admin'
+  | 'screen'
+  | 'seated';
+
 export interface Quest {
   id: string;
   title: string;
@@ -65,7 +92,10 @@ export interface Quest {
   baseXp: number;
   baseGold: number;
   rarity: Rarity;
+  /** Swedish flavour tags, for humans. */
   tags: string[];
+  /** Practical tags, for selection and validation. */
+  contentTags: ContentTag[];
   /** Set when the quest belongs to a chain. */
   chainId?: string;
   chainStep?: number;
@@ -611,6 +641,23 @@ export interface SaveMetadata {
   appVersion: string;
 }
 
+/**
+ * v3: the player's lightweight thumbs-up / thumbs-down signal.
+ *
+ * Purely local. One score per quest category, nudged by a small step every
+ * time the player reacts to a finished or abandoned quest. It is deliberately
+ * weak and clamped: it can make a category a little more or a little less
+ * likely, and it can never remove one from the pool.
+ */
+export interface FeedbackState {
+  /** Category -> score, clamped to [-FEEDBACK_LIMIT, FEEDBACK_LIMIT]. */
+  scores: Partial<Record<QuestCategory, number>>;
+  /** Per-quest reactions, so the UI can show what was already rated. */
+  quests: Record<string, 1 | -1>;
+  up: number;
+  down: number;
+}
+
 export interface RogueDaySave {
   schemaVersion: number;
   player: Player;
@@ -635,6 +682,8 @@ export interface RogueDaySave {
   activeQuest: ActiveQuestState | null;
   /** Quest ids recently offered/completed, most recent first. */
   recentQuestIds: string[];
+  /** v3: local thumbs-up/down weighting. */
+  feedback: FeedbackState;
   onboardingComplete: boolean;
   metadata: SaveMetadata;
 }

@@ -11,7 +11,9 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "icons": "node scripts/generate-icons.mjs"
+    "icons": "node scripts/generate-icons.mjs",
+    "coverage": "node scripts/coverage-report.mjs",
+    "qa:filters": "node scripts/qa-filters.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

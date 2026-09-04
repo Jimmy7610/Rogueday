@@ -34,7 +34,7 @@ function makeV1Fixture(): Record<string, unknown> {
     history: [
       {
         entryId: 'h_a',
-        questId: 'digi_inbox_raid',
+        questId: 'ad_inbox_raid',
         title: 'INBOX NOLL-RÄDEN',
         category: 'digital',
         rarity: 'rare',
@@ -137,7 +137,7 @@ function makeV1Fixture(): Record<string, unknown> {
     },
     settings: { sound: true, reducedMotion: false, animations: true, highContrast: true },
     activeQuest: null,
-    recentQuestIds: ['digi_inbox_raid', 'home_dish_mountain'],
+    recentQuestIds: ['ad_inbox_raid', 'home_dish_mountain'],
     onboardingComplete: true,
     metadata: {
       createdAt: '2026-01-04T10:00:00.000Z',
@@ -161,7 +161,7 @@ describe('v1 -> v2 migration', () => {
 
     expect(result.migrated).toBe(true);
     expect(result.fromVersion).toBe(1);
-    expect(result.toVersion).toBe(2);
+    expect(result.toVersion).toBe(SCHEMA_VERSION);
     expect(result.save.schemaVersion).toBe(SCHEMA_VERSION);
   });
 
@@ -184,7 +184,7 @@ describe('v1 -> v2 migration', () => {
     const save = migrateFixture();
 
     expect(save.history).toHaveLength(2);
-    expect(save.history[0].questId).toBe('digi_inbox_raid');
+    expect(save.history[0].questId).toBe('ad_inbox_raid');
     expect(save.history[0].xpEarned).toBe(75);
     expect(save.history[0].bossDamage).toBe(90);
     expect(save.history[1].isDaily).toBe(true);

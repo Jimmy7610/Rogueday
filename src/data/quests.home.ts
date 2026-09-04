@@ -14,7 +14,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     cat: 'adulting',
     dur: 15,
     energy: 'medium',
-    loc: ['home', 'anywhere'],
+    loc: ['anywhere'],
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['ekonomi', 'vuxenpoäng'],
@@ -39,7 +39,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     cat: 'adulting',
     dur: 5,
     energy: 'low',
-    loc: ['home', 'anywhere'],
+    loc: ['anywhere'],
     tags: ['rensning', 'snabbt'],
   },
   {

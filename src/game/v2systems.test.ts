@@ -376,7 +376,7 @@ describe('focus timer', () => {
   it('beating the clock is measured against the stored target', () => {
     const start = new Date('2026-09-04T10:00:00');
     const active = {
-      offer: makeOffer('digi_inbox_raid'),
+      offer: makeOffer('ad_inbox_raid'),
       acceptedAt: start.toISOString(),
       timer: createTimer(12, start),
     };
@@ -402,7 +402,7 @@ describe('focus timer', () => {
 
   it('missing the time costs nothing at all', () => {
     const save = makeSave();
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const timed = {
       ...offer,
       challenge: {
@@ -435,7 +435,7 @@ describe('focus timer', () => {
 
   it('beating the time grants a visible bonus line', () => {
     const save = makeSave();
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const timed = {
       ...offer,
       challenge: {
@@ -674,7 +674,7 @@ describe('perks', () => {
     const buffed = makeSave();
     buffed.perks = { selected: ['fortune_5'] };
 
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const a = completeQuest(plain, offer, AT, NO_LUCK_RNG);
     const b = completeQuest(buffed, offer, AT, NO_LUCK_RNG);
 
@@ -686,7 +686,7 @@ describe('perks', () => {
     const buffed = makeSave();
     buffed.perks = { selected: ['slayer_5'] };
 
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const a = completeQuest(plain, offer, AT, NO_LUCK_RNG);
     const b = completeQuest(buffed, offer, AT, NO_LUCK_RNG);
 
@@ -697,7 +697,7 @@ describe('perks', () => {
     let save = makeSave();
     save.perks = { selected: ['momentum_5'] };
 
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const first = completeQuest(save, offer, AT, NO_LUCK_RNG);
     save = first.save;
     const second = completeQuest(save, offer, AT, NO_LUCK_RNG);
@@ -896,7 +896,7 @@ describe('rebalanced boss rescaling', () => {
 describe('reward breakdown', () => {
   it('the lines always sum to the reported totals', () => {
     const save = makeSave();
-    const { reward } = completeQuest(save, makeOffer('digi_inbox_raid'), AT, NO_LUCK_RNG);
+    const { reward } = completeQuest(save, makeOffer('ad_inbox_raid'), AT, NO_LUCK_RNG);
 
     const xpSum = reward.lines.reduce((sum, line) => sum + line.xp, 0);
     const goldSum = reward.lines.reduce((sum, line) => sum + line.gold, 0);
@@ -912,7 +912,7 @@ describe('reward breakdown', () => {
 
     const { save: next, reward } = completeQuest(
       save,
-      makeOffer('digi_inbox_raid'),
+      makeOffer('ad_inbox_raid'),
       AT,
       NO_LUCK_RNG,
     );

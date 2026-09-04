@@ -11,6 +11,7 @@ import {
   shouldPersist,
   type GameState,
 } from './gameStore';
+import { getDailyQuestForDate } from '@/game/questSelection';
 import { makeOffer, makeSave } from '@/test/helpers';
 
 function stateFrom(save = makeSave()): GameState {
@@ -23,6 +24,8 @@ function stateFrom(save = makeSave()): GameState {
     pendingEvent: null,
     eventResult: null,
     itemReveal: null,
+    lastQuest: null,
+    lastQuestOutcome: null,
     marketMessage: null,
     lastReward: null,
     loadSource: 'fresh',
@@ -223,7 +226,11 @@ describe('reducer', () => {
     const state = gameReducer(stateFrom(save), { type: 'ACCEPT_DAILY' });
 
     expect(state.save.activeQuest?.offer.isDaily).toBe(true);
-    expect(state.save.activeQuest?.offer.quest.id).toBe(save.daily.questId);
+    // The reducer reads the wall clock, so compare against today's roll rather
+    // than the slot the fixture was built with.
+    expect(state.save.activeQuest?.offer.quest.id).toBe(
+      getDailyQuestForDate(toLocalDateKey()).id,
+    );
   });
 
   it('SET_SETTINGS merges settings', () => {

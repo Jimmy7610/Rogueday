@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import type { BossHitSummary, RewardSummary } from '@/types';
+import type { BossHitSummary, Quest, RewardSummary } from '@/types';
 import { LOOT_BY_ID } from '@/data/loot';
 import { useGame } from '@/app/GameProvider';
 import { Modal } from './Modal';
+import { QuestFeedback } from './QuestFeedback';
 import { formatNumber } from './ui';
 
 interface RewardModalProps {
   reward: RewardSummary;
+  /** The quest that produced this reward, for the thumbs-up/down prompt. */
+  quest?: Quest | null;
   onContinue: () => void;
   onNewQuest: () => void;
 }
@@ -18,7 +21,12 @@ interface RewardModalProps {
  * itemised breakdown explains every point of XP and gold the player just
  * gained, so the HUD never moves for an unexplained reason.
  */
-export function RewardModal({ reward, onContinue, onNewQuest }: RewardModalProps): JSX.Element {
+export function RewardModal({
+  reward,
+  quest,
+  onContinue,
+  onNewQuest,
+}: RewardModalProps): JSX.Element {
   const [levelUpIndex, setLevelUpIndex] = useState(0);
   const showingLevelUp = levelUpIndex < reward.levelUps.length;
 
@@ -59,12 +67,18 @@ export function RewardModal({ reward, onContinue, onNewQuest }: RewardModalProps
         </>
       }
     >
-      <RewardBody reward={reward} />
+      <RewardBody reward={reward} quest={quest ?? null} />
     </Modal>
   );
 }
 
-function RewardBody({ reward }: { reward: RewardSummary }): JSX.Element {
+function RewardBody({
+  reward,
+  quest,
+}: {
+  reward: RewardSummary;
+  quest: Quest | null;
+}): JSX.Element {
   return (
     <div className="reward-modal">
       <div className="reward-modal__burst" aria-hidden="true">
@@ -138,6 +152,8 @@ function RewardBody({ reward }: { reward: RewardSummary }): JSX.Element {
           ))}
         </div>
       )}
+
+      {quest && <QuestFeedback quest={quest} />}
 
       <div className="reward-modal__footnotes">
         {reward.streakSaved && <p className="notice notice--ok">🛡️ SVIT RÄDDAD av din svitsköld</p>}

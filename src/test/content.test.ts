@@ -14,7 +14,7 @@ import { CHAOS_MODIFIERS } from '@/game/questSelection';
  */
 describe('content inventory', () => {
   it('meets every documented minimum', () => {
-    expect(QUEST_COUNT).toBeGreaterThanOrEqual(250);
+    expect(QUEST_COUNT).toBeGreaterThanOrEqual(1000);
     expect(BOSSES.length).toBeGreaterThanOrEqual(12);
     expect(ACHIEVEMENTS.length).toBeGreaterThanOrEqual(60);
     expect(MAX_LEVEL).toBeGreaterThanOrEqual(50);
@@ -25,7 +25,7 @@ describe('content inventory', () => {
   });
 
   it('matches the figures quoted in the README', () => {
-    expect(QUEST_COUNT).toBe(271);
+    expect(QUEST_COUNT).toBe(1008);
     expect(BOSSES.length).toBe(14);
     expect(ACHIEVEMENTS.length).toBe(85);
     expect(QUEST_CHAINS.length).toBe(6);

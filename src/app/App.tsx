@@ -127,7 +127,12 @@ export function App(): JSX.Element {
 
       {/* One modal at a time, in the order the player earned them. */}
       {reward && (
-        <RewardModal reward={reward} onContinue={handleContinue} onNewQuest={handleNewQuest} />
+        <RewardModal
+          reward={reward}
+          quest={state.lastQuestOutcome === 'completed' ? state.lastQuest : null}
+          onContinue={handleContinue}
+          onNewQuest={handleNewQuest}
+        />
       )}
 
       {!reward && <PerkChooserModal />}

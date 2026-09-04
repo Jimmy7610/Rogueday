@@ -1,4 +1,5 @@
 import type {
+  ContentTag,
   Difficulty,
   EnergyLevel,
   Mood,
@@ -36,6 +37,8 @@ export interface QuestSeed {
   /** Default: 'normal' */
   mode?: QuestMode;
   tags?: string[];
+  /** Practical tags used for selection weighting and validation. */
+  ctags?: ContentTag[];
   /** Explicit reward overrides; otherwise derived from duration + difficulty. */
   xp?: number;
   gold?: number;
@@ -97,6 +100,7 @@ export function buildQuest(seed: QuestSeed): Quest {
     baseGold: gold,
     rarity: seed.rarity ?? 'common',
     tags: seed.tags ?? [],
+    contentTags: seed.ctags ?? [],
     ...(seed.chainId ? { chainId: seed.chainId } : {}),
     ...(seed.chainStep !== undefined ? { chainStep: seed.chainStep } : {}),
   };

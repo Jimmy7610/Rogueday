@@ -27,7 +27,7 @@ describe('full reload persistence', () => {
     /* 2. Complete a quest. */
     const first = completeQuest(
       state,
-      makeOffer('digi_inbox_raid'),
+      makeOffer('ad_inbox_raid'),
       new Date('2026-09-04T10:30:00'),
       NO_LUCK_RNG,
     );
@@ -58,7 +58,7 @@ describe('full reload persistence', () => {
     expect(state.progression.totalXp).toBe(xpAfterFirst); // XP
     expect(state.progression.gold).toBe(goldAfterFirst); // gold
     expect(state.history).toHaveLength(1); // history
-    expect(state.history[0].questId).toBe('digi_inbox_raid');
+    expect(state.history[0].questId).toBe('ad_inbox_raid');
     expect(state.statistics.questsCompleted).toBe(1); // statistics
     expect(state.statistics.totalMinutes).toBe(15);
     expect(state.boss?.currentHp).toBe(bossHpAfterFirst); // boss HP
@@ -92,7 +92,7 @@ describe('full reload persistence', () => {
     expect(state.history).toHaveLength(2);
     expect(state.history.map((entry) => entry.questId)).toEqual([
       'home_dish_mountain',
-      'digi_inbox_raid',
+      'ad_inbox_raid',
     ]);
 
     expect(state.progression.totalXp).toBe(xpAfterSecond);
@@ -158,7 +158,7 @@ describe('full reload persistence', () => {
 
       // A boss-neutral quest, so five hits accumulate without killing the
       // rebalanced boss part-way through the loop.
-      const offer = makeOffer('digi_inbox_raid');
+      const offer = makeOffer('ad_inbox_raid');
       const result = completeQuest(
         save,
         offer,
@@ -302,7 +302,7 @@ describe('V2 state across a full reload', () => {
 
     // The effect is still live after the reload.
     const plain = makeSave();
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const withPerk = completeQuest(reloaded, offer, new Date('2026-09-04T12:00:00'), NO_LUCK_RNG);
     const without = completeQuest(plain, offer, new Date('2026-09-04T12:00:00'), NO_LUCK_RNG);
 
@@ -312,7 +312,7 @@ describe('V2 state across a full reload', () => {
   it('an active quest keeps its challenge and timer across a reload', () => {
     const save: RogueDaySave = makeSave();
     const offer = {
-      ...makeOffer('digi_inbox_raid'),
+      ...makeOffer('ad_inbox_raid'),
       challenge: {
         id: 'danger_speed_12',
         name: 'TOLV MINUTER',

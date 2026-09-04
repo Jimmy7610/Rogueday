@@ -12,7 +12,7 @@ const AT = new Date('2026-09-04T14:00:00');
 describe('completeQuest rewards', () => {
   it('grants the offer XP and gold', () => {
     const save = makeSave();
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const { save: next, reward } = completeQuest(save, offer, AT, NO_LUCK_RNG);
 
     expect(reward.xp).toBe(offer.xp);
@@ -62,7 +62,7 @@ describe('completeQuest rewards', () => {
 
   it('updates every statistic', () => {
     const save = makeSave();
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const { save: next } = completeQuest(save, offer, AT, NO_LUCK_RNG);
     const stats = next.statistics;
 
@@ -141,7 +141,7 @@ describe('completeQuest boss interaction', () => {
     const startingHp = save.boss!.currentHp;
     // A category the test week's boss is neutral to, so the base damage lands
     // unmodified. Weakness scaling has its own tests below.
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
     const boss = getBossById(save.boss!.bossId)!;
     expect(boss.weaknessCategories).not.toContain('digital');
     expect(boss.resistanceCategories).not.toContain('digital');
@@ -156,7 +156,7 @@ describe('completeQuest boss interaction', () => {
   it('doubles damage with a boss key', () => {
     const save = makeSave();
     save.buffs.bossKey = true;
-    const offer = makeOffer('digi_inbox_raid');
+    const offer = makeOffer('ad_inbox_raid');
 
     const { reward } = completeQuest(save, offer, AT, NO_LUCK_RNG);
     expect(reward.bossDamage).toBe(offer.bossDamage * 2);
@@ -181,7 +181,7 @@ describe('completeQuest boss interaction', () => {
     const { save: next } = completeQuest(save, makeOffer('clean_floor_deep'), AT, NO_LUCK_RNG);
     expect(next.statistics.weaknessHits).toBe(1);
 
-    const neutral = completeQuest(next, makeOffer('digi_inbox_raid'), AT, NO_LUCK_RNG);
+    const neutral = completeQuest(next, makeOffer('ad_inbox_raid'), AT, NO_LUCK_RNG);
     expect(neutral.save.statistics.weaknessHits).toBe(1);
   });
 
@@ -412,7 +412,7 @@ describe('reroll accounting', () => {
 describe('quest lookups used by completion', () => {
   it('every quest referenced by the tests exists', () => {
     for (const id of [
-      'digi_inbox_raid',
+      'ad_inbox_raid',
       'home_dish_mountain',
       'home_bed_fortress',
       'home_trash_run',

@@ -1,5 +1,6 @@
 import type {
   BossDefinition,
+  FeedbackState,
   ChainProgressState,
   ChallengeModifier,
   ChaosModifier,
@@ -14,6 +15,7 @@ import type {
 import { CHAIN_BY_ID, QUEST_CHAINS } from '@/data/chains';
 import { eligibleChallenges } from '@/data/challenges';
 import { getWeaknessInfo } from './boss';
+import { feedbackWeight } from './feedback';
 import { QUESTS, getQuestById } from '@/data/quests';
 import { createRng, createId, randomRng, type Rng } from '@/utils/rng';
 import { toLocalDateKey } from '@/utils/date';
@@ -27,8 +29,29 @@ import {
   upgradeRarity,
 } from './rarity';
 
-/** How many recently-seen quests to remember and avoid re-offering. */
-export const RECENT_MEMORY = 40;
+/**
+ * Anti-repetition, v3.
+ *
+ * Two independent mechanisms, neither of which may ever touch a hard
+ * constraint:
+ *
+ *   1. A 60-deep memory of recently offered quests, filtered out of the pool
+ *      whenever enough fresh ones remain.
+ *   2. Category variety pressure: the more often a category has shown up in
+ *      the recent window, the lower its weight in the draw. It is a weight,
+ *      not a ban, so a player whose filters only leave one category still gets
+ *      offers.
+ */
+export const RECENT_MEMORY = 60;
+
+/** How many of the most recent quests count toward category variety pressure. */
+export const CATEGORY_WINDOW = 12;
+
+/** Weight floor for a category that dominated the recent window. */
+export const MIN_CATEGORY_WEIGHT = 0.25;
+
+/** How hard each recent appearance pushes a category down. */
+export const CATEGORY_PENALTY = 0.45;
 
 export const CHAOS_MODIFIERS: ChaosModifier[] = [
   {
@@ -146,6 +169,67 @@ export interface PoolOptions {
   recentQuestIds: string[];
   /** Include chain quests in the pool (default true). */
   includeChains?: boolean;
+}
+
+/**
+ * Category variety pressure.
+ *
+ * Counts how often each category appears in the most recent slice of offers
+ * and turns that into a multiplier. A category seen three times in the last
+ * twelve is roughly a third as likely as one not seen at all.
+ */
+export function categoryWeights(recentQuestIds: string[]): Map<Quest['category'], number> {
+  const counts = new Map<Quest['category'], number>();
+  for (const id of recentQuestIds.slice(0, CATEGORY_WINDOW)) {
+    const quest = getQuestById(id);
+    if (!quest) continue;
+    counts.set(quest.category, (counts.get(quest.category) ?? 0) + 1);
+  }
+
+  const weights = new Map<Quest['category'], number>();
+  for (const [category, count] of counts) {
+    weights.set(category, Math.max(MIN_CATEGORY_WEIGHT, 1 / (1 + CATEGORY_PENALTY * count)));
+  }
+  return weights;
+}
+
+/**
+ * Draw `count` distinct quests, weighted rather than uniformly shuffled.
+ *
+ * The weights only ever reorder the *likelihood* of quests that already
+ * satisfy every hard constraint - nothing here can put an ineligible quest in
+ * front of the player, and nothing here can reduce a weight to zero.
+ */
+export function weightedSample(
+  quests: Quest[],
+  count: number,
+  rng: Rng,
+  weightOf: (quest: Quest) => number,
+): Quest[] {
+  const remaining = quests.map((quest) => ({ quest, weight: Math.max(0.01, weightOf(quest)) }));
+  const picked: Quest[] = [];
+
+  while (picked.length < count && remaining.length > 0) {
+    const total = remaining.reduce((sum, entry) => sum + entry.weight, 0);
+    let roll = rng.next() * total;
+    let index = remaining.length - 1;
+    for (let i = 0; i < remaining.length; i += 1) {
+      roll -= remaining[i].weight;
+      if (roll <= 0) {
+        index = i;
+        break;
+      }
+    }
+    picked.push(remaining[index].quest);
+    remaining.splice(index, 1);
+  }
+
+  // A pool smaller than `count` repeats entries, exactly as the old shuffle did.
+  while (picked.length < count && quests.length > 0) {
+    picked.push(quests[picked.length % quests.length]);
+  }
+
+  return picked;
 }
 
 export interface QuestPoolResult {
@@ -307,6 +391,8 @@ export interface RollOptions {
   filters: QuestFilters;
   chains: Record<string, ChainProgressState>;
   recentQuestIds: string[];
+  /** v3: the player's local thumbs-up/down scores, used as a gentle weight. */
+  feedback?: FeedbackState;
   rng?: Rng;
   /** The week's boss, so offers can advertise weakness hits. */
   boss?: BossDefinition | undefined;
@@ -332,7 +418,7 @@ export interface QuestRollResult {
  * UI asks them to widen their filters instead.
  */
 export function rollQuestChoices(options: RollOptions): QuestRollResult {
-  const { filters, chains, recentQuestIds, rng = randomRng, boss, effects } = options;
+  const { filters, chains, recentQuestIds, feedback, rng = randomRng, boss, effects } = options;
 
   const pool = buildQuestPoolDetailed({ filters, chains, recentQuestIds });
 
@@ -340,8 +426,20 @@ export function rollQuestChoices(options: RollOptions): QuestRollResult {
     return { offers: [], moodRelaxed: false, empty: true, poolSize: 0 };
   }
 
-  const shuffled = rng.shuffle(pool.quests);
   const tiers: ChoiceTier[] = ['safe', 'wild', 'dangerous'];
+
+  // Weighted draw instead of a flat shuffle: categories seen a lot recently
+  // are damped, and the player's own thumbs-up/down nudges things a little.
+  // Both are weights on an already-legal pool, so neither can produce an offer
+  // the player cannot actually do.
+  const catWeights = categoryWeights(recentQuestIds);
+  const scores = feedback?.scores ?? {};
+  const drawn = weightedSample(
+    pool.quests,
+    tiers.length,
+    rng,
+    (quest) => (catWeights.get(quest.category) ?? 1) * feedbackWeight(scores, quest.category),
+  );
 
   // Pick three quests, then hand the biggest to the riskiest tier.
   //
@@ -354,10 +452,7 @@ export function rollQuestChoices(options: RollOptions): QuestRollResult {
   const intrinsicValue = (quest: Quest): number =>
     quest.baseXp * RARITY_MULTIPLIER[quest.rarity];
 
-  const picks = Array.from(
-    { length: tiers.length },
-    (_, index) => shuffled[index % shuffled.length],
-  ).sort((a, b) => intrinsicValue(a) - intrinsicValue(b));
+  const picks = [...drawn].sort((a, b) => intrinsicValue(a) - intrinsicValue(b));
 
   // Rarity is rolled ONCE and then upgraded per tier, rather than rolled
   // independently three times. Independent rolls let a SAFE offer come out

@@ -9,6 +9,7 @@ import { BossStrip } from '@/components/BossStrip';
 import { FocusTimer } from '@/components/FocusTimer';
 import { Market } from '@/components/Market';
 import { QuestChoiceModal } from '@/components/QuestChoiceModal';
+import { QuestFeedback } from '@/components/QuestFeedback';
 import { QuestFinderModal } from '@/components/QuestFinderModal';
 import {
   DIFFICULTY_LABELS,
@@ -125,6 +126,13 @@ export function QuestScreen({
           </button>
         ))}
       </div>
+
+      {/* Just abandoned something: offer the same thumbs the reward panel does. */}
+      {tab === 'adventure' && state.lastQuestOutcome === 'abandoned' && state.lastQuest && (
+        <div className="card">
+          <QuestFeedback quest={state.lastQuest} variant="abandoned" />
+        </div>
+      )}
 
       {tab === 'adventure' && (
         <>

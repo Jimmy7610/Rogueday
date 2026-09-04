@@ -1,11 +1,13 @@
 import type { RogueDaySave } from '@/types';
 import { isValidDateKey } from '@/utils/date';
 import { sanitiseTimer } from '@/game/timer';
+import { FEEDBACK_LIMIT } from '@/game/feedback';
 import {
   APP_VERSION,
   SCHEMA_VERSION,
   createDefaultBuffs,
   createDefaultDaily,
+  createDefaultFeedback,
   createDefaultMarket,
   createDefaultPerks,
   createDefaultProgression,
@@ -113,6 +115,37 @@ export function validateSave(candidate: unknown): ValidationResult {
  * The timer is sanitised separately so broken stamps cannot produce nonsense
  * elapsed times.
  */
+/**
+ * v3 feedback. Scores are clamped on the way in so a hand-edited or corrupted
+ * backup can never turn the weighting into something that hides content.
+ */
+function mergeFeedback(value: unknown): RogueDaySave['feedback'] {
+  const base = createDefaultFeedback();
+  if (!isObject(value)) return base;
+
+  const scores: RogueDaySave['feedback']['scores'] = {};
+  if (isObject(value.scores)) {
+    for (const [key, score] of Object.entries(value.scores)) {
+      if (!isFiniteNumber(score)) continue;
+      scores[key as keyof typeof scores] = Math.max(-FEEDBACK_LIMIT, Math.min(FEEDBACK_LIMIT, score));
+    }
+  }
+
+  const quests: RogueDaySave['feedback']['quests'] = {};
+  if (isObject(value.quests)) {
+    for (const [questId, vote] of Object.entries(value.quests)) {
+      if (vote === 1 || vote === -1) quests[questId] = vote;
+    }
+  }
+
+  return {
+    scores,
+    quests,
+    up: isFiniteNumber(value.up) ? Math.max(0, Math.round(value.up)) : 0,
+    down: isFiniteNumber(value.down) ? Math.max(0, Math.round(value.down)) : 0,
+  };
+}
+
 function mergeActiveQuest(value: unknown): RogueDaySave['activeQuest'] {
   if (!isObject(value) || !isObject(value.offer)) return null;
   const timer = sanitiseTimer(value.timer);
@@ -251,6 +284,7 @@ export function mergeWithDefaults(partial: Record<string, unknown>): RogueDaySav
     recentQuestIds: Array.isArray(partial.recentQuestIds)
       ? partial.recentQuestIds.filter((id): id is string => typeof id === 'string')
       : [],
+    feedback: mergeFeedback(partial.feedback),
     onboardingComplete: partial.onboardingComplete === true,
     metadata: {
       createdAt:

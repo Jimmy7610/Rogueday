@@ -28,6 +28,8 @@ Allt körs lokalt i webbläsaren. Ingen server, inget konto, ingen AI vid körni
 
 Djupsystemen i V2 — tier-utmaningar, fokustimer, marknad, förmågor, bosstaktik
 och belöningsspecifikationen — beskrivs i [docs/v2.md](docs/v2.md).
+Innehållsexplosionen i V3 — de 1 008 uppdragen, anti-upprepning 2.0,
+innehållstaggarna och tumme upp/ned — beskrivs i [docs/v3.md](docs/v3.md).
 
 ---
 
@@ -45,7 +47,7 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 
 | System | Beskrivning |
 | --- | --- |
-| **Uppdragsbibliotek** | 271 handskrivna uppdrag i 22 kategorier, med full metadata |
+| **Uppdragsbibliotek** | 1 008 handskrivna uppdrag i 22 kategorier, med full metadata |
 | **Filtrering** | Tid (5/15/30/60 min), energi, plats och sinnesstämning respekteras strikt |
 | **Tre val** | Varje tärningsslag ger tre alternativ med stigande risk och belöning |
 | **Sällsynthet** | Vanlig 45% · Ovanlig 28% · Sällsynt 17% · Episk 8% · Legendarisk 2% |
@@ -54,7 +56,7 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 | **Veckoboss** | 14 bossar med svagheter, faser och balanserad HP |
 | **Uppdragskedjor** | 6 flerdelade kedjor med bonus, märke och kista på slutet |
 | **Dagens uppdrag** | Ett deterministiskt uppdrag per lokal kalenderdag, med bonus |
-| **Kaos-läge** | 8 kaosmodifierare: förbannelser, speedruns, mysterieuppdrag, dubbel-XP-vad |
+| **Kaos-läge** | 8 kaosmodifierare och 148 egna kaosuppdrag |
 | **Slumphändelser** | 6 händelser som aldrig straffar spelaren hårt |
 | **Märken** | 85 märken i 9 kategorier, varav flera hemliga |
 | **Svit** | Lokala kalenderdagar, med svitsköld som skyddar en missad dag |
@@ -66,6 +68,9 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 | **Förmågor** | 30 milstolpeförmågor i tre teman |
 | **Bosstaktik** | Svagheter, motstånd och fasrepliker per boss |
 | **Belöningsspecifikation** | Varje XP och guldmynt redovisas post för post |
+| **Innehållstaggar** | 18 praktiska taggar (tyst, skärmfritt, gratis, utomhus …) per uppdrag |
+| **Anti-upprepning** | 60 uppdrag djupt minne plus kategorivariation i dragningen |
+| **Tumme upp/ned** | Lokal viktning som aldrig gömmer en kategori |
 
 ## Kom igång
 
@@ -100,6 +105,8 @@ fungerar även från en underkatalog.
 | `npm test` | Kör hela testsviten en gång |
 | `npm run test:watch` | Kör testerna i bevakningsläge |
 | `npm run icons` | Genererar PWA-ikonerna lokalt (inga beroenden) |
+| `npm run coverage` | Skriver ut täckningsrapporten för uppdragsbiblioteket |
+| `npm run qa:filters` | Rullar riktiga uppdrag för varje filterkombination och kontrollerar dem |
 
 ## Så fungerar sparfilen
 
@@ -119,9 +126,10 @@ rogueDay.save.v1        huvudsparfil
 rogueDay.save.backup    säkerhetskopia
 ```
 
-Nycklarna är oförändrade sedan 1.0. Schemat är version 2; en sparfil från
-version 1 migreras automatiskt vid inläsning utan att förlora någonting. Se
-[docs/v2.md](docs/v2.md#sparfil-v1--v2).
+Nycklarna är oförändrade sedan 1.0. Schemat är version 3; sparfiler från version 1 och 2
+migreras automatiskt vid inläsning utan att förlora någonting. Migreringarna är additiva —
+de får lägga till fält men aldrig skriva över något spelaren redan tjänat ihop. Se
+[docs/v2.md](docs/v2.md#sparfil-v1--v2) och [docs/v3.md](docs/v3.md#sparfil-v2--v3).
 
 **Startordning vid varje sidladdning:**
 
@@ -238,7 +246,7 @@ sig, märken för sig, lagring för sig. Det finns ingen `App.tsx` på 5000 rade
 npm test
 ```
 
-430 tester täcker bland annat:
+497 tester täcker bland annat:
 
 - uppdragsfiltrering, sällsynthet och urval
 - XP-beräkning och nivåprogression
@@ -258,7 +266,11 @@ npm test
 - bossars svagheter, motstånd och att varje fas utlöses exakt en gång
 - bossbalans genom simulerad veckospelning
 - att belöningsposterna summerar till exakt den ändring som sker
-- migrering v1 → v2 mot en komplett v1-sparfil
+- migrering v1 → v2 och v2 → v3 mot kompletta sparfiler från varje version
+- innehållsvalidering: 1 008 unika id:n, titlar, mål och smaktexter
+- att varje kombination av tid, energi, plats och sinnesstämning har en riktig pool
+- anti-upprepningens minne, kategorivariation och viktade dragning
+- att tumme ned aldrig kan ta bort en kategori ur poolen
 - hela appen genom React Testing Library, inklusive tangentbordsnavigering
 
 Nyckeltestet heter **`persists complete progression across full reload`** och gör exakt det

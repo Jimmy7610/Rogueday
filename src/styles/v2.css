@@ -1085,3 +1085,73 @@
     min-width: 72px;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* v3: thumbs-up / thumbs-down                                         */
+/* ------------------------------------------------------------------ */
+
+.feedback {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border-hairline);
+  text-align: center;
+}
+
+.feedback__label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.feedback__buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.feedback__btn {
+  flex: 1 1 0;
+  min-height: 44px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: var(--bg-panel-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.feedback__btn:hover {
+  color: var(--text-bright);
+  border-color: var(--cyan);
+}
+
+.feedback__btn:active {
+  transform: scale(0.97);
+}
+
+.feedback__btn--on {
+  color: var(--text-bright);
+  border-color: var(--cyan);
+  background: rgba(34, 211, 238, 0.12);
+}
+
+.feedback__note {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feedback__btn {
+    transition: none;
+  }
+  .feedback__btn:active {
+    transform: none;
+  }
+}

@@ -12,6 +12,7 @@ import {
   getRerollAvailability,
   isChainQuestAvailable,
   matchesFilters,
+  RECENT_MEMORY,
   rememberQuests,
   rollQuestChoices,
 } from './questSelection';
@@ -298,7 +299,7 @@ describe('rememberQuests', () => {
 
   it('caps the memory length', () => {
     const many = Array.from({ length: 80 }, (_, index) => `q${index}`);
-    expect(rememberQuests([], many).length).toBeLessThanOrEqual(40);
+    expect(rememberQuests([], many).length).toBeLessThanOrEqual(RECENT_MEMORY);
   });
 });
 

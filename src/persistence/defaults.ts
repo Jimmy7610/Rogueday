@@ -11,7 +11,7 @@ import type {
   StreakState,
 } from '@/types';
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 export const APP_VERSION = '2.0.0';
 export const DEFAULT_PLAYER_NAME = 'Skuggvandrare';
 
@@ -98,6 +98,11 @@ export function createDefaultPlayer(name = DEFAULT_PLAYER_NAME): Player {
   return { name, createdAt: new Date().toISOString() };
 }
 
+/** v3: an empty thumbs-up/down record. */
+export function createDefaultFeedback(): RogueDaySave['feedback'] {
+  return { scores: {}, quests: {}, up: 0, down: 0 };
+}
+
 /**
  * A brand new save. This is only ever used when no valid save exists -
  * never written over a loaded save.
@@ -124,6 +129,7 @@ export function createDefaultSave(name = DEFAULT_PLAYER_NAME): RogueDaySave {
     eventFollowUp: null,
     activeQuest: null,
     recentQuestIds: [],
+    feedback: createDefaultFeedback(),
     onboardingComplete: false,
     metadata: {
       createdAt: now,

@@ -75,6 +75,20 @@ const MIGRATIONS: Record<number, Migration> = {
       },
     };
   },
+
+  /**
+   * v2 -> v3: the content pass.
+   *
+   * The only new state is the local thumbs-up/down record, which starts empty.
+   * Nothing existing is touched: a v2 player keeps their level, XP, gold,
+   * history, boss, boss history, achievements, chains, market, perks, streak,
+   * statistics and settings exactly as they were.
+   */
+  2: (save) => ({
+    ...save,
+    schemaVersion: 3,
+    feedback: save.feedback ?? { scores: {}, quests: {}, up: 0, down: 0 },
+  }),
 };
 
 export interface MigrationResult {

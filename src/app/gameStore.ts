@@ -3,6 +3,7 @@ import type {
   ItemRevealState,
   LootItemId,
   PendingEvent,
+  Quest,
   QuestFilters,
   QuestOffer,
   RewardSummary,
@@ -12,6 +13,8 @@ import type {
 import { toLocalDateKey } from '@/utils/date';
 import { randomRng, type Rng } from '@/utils/rng';
 import { getBossById } from '@/data/bosses';
+import { getQuestById } from '@/data/quests';
+import { applyFeedback } from '@/game/feedback';
 import { ensureCurrentBoss } from '@/game/boss';
 import { abandonQuest, completeQuest } from '@/game/completion';
 import {
@@ -54,6 +57,13 @@ export interface GameState {
   /** Transient message shown by the market. */
   marketMessage: { text: string; ok: boolean } | null;
   lastReward: RewardSummary | null;
+  /**
+   * The quest the player just finished or abandoned, so the thumbs-up/down
+   * prompt knows what it is rating. Never persisted.
+   */
+  lastQuest: Quest | null;
+  /** How that quest ended, so the prompt can word itself correctly. */
+  lastQuestOutcome: 'completed' | 'abandoned' | null;
   loadSource: LoadResult['source'];
   loadWarnings: string[];
   /** Bumped on every successful save so views can react. */
@@ -78,6 +88,7 @@ export type GameAction =
   | { type: 'ACCEPT_DAILY' }
   | { type: 'COMPLETE_QUEST'; now?: Date; rng?: Rng }
   | { type: 'ABANDON_QUEST' }
+  | { type: 'RATE_QUEST'; questId: string; vote: 1 | -1 }
   | { type: 'DISMISS_REWARD' }
   | { type: 'RESOLVE_EVENT'; choiceId: string; rng?: Rng }
   | { type: 'DISMISS_EVENT' }
@@ -156,6 +167,8 @@ export function createInitialState(): GameState {
     itemReveal: null,
     marketMessage: null,
     lastReward: null,
+    lastQuest: null,
+    lastQuestOutcome: null,
     loadSource: result.source,
     loadWarnings: result.warnings,
     saveTick: 0,
@@ -178,6 +191,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         filters: action.filters,
         chains: state.save.questChains,
         recentQuestIds: state.save.recentQuestIds,
+        feedback: state.save.feedback,
         boss: currentBossDefinition(state.save),
         effects: getEffects(state.save),
         ...(action.rng ? { rng: action.rng } : {}),
@@ -202,6 +216,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           ...(state.offers?.map((offer) => offer.quest.id) ?? []),
           ...state.save.recentQuestIds,
         ],
+        feedback: state.save.feedback,
         boss: currentBossDefinition(state.save),
         effects: getEffects(state.save),
         ...(action.rng ? { rng: action.rng } : {}),
@@ -243,7 +258,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           state.offers?.map((offer) => offer.quest.id) ?? [action.offer.quest.id],
         ),
       };
-      return { ...state, save, offers: null };
+      return { ...state, save, offers: null, lastQuest: null, lastQuestOutcome: null };
     }
 
     case 'ACCEPT_DAILY': {
@@ -254,7 +269,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         ...state.save,
         activeQuest: { offer, acceptedAt: new Date().toISOString() },
       };
-      return { ...state, save, offers: null };
+      return { ...state, save, offers: null, lastQuest: null, lastQuestOutcome: null };
     }
 
     case 'COMPLETE_QUEST': {
@@ -267,12 +282,38 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const { save, reward } = completeQuest(state.save, active.offer, now, rng, active);
       const pendingEvent = maybeTriggerEvent(save, now, rng);
 
-      return { ...state, save, lastReward: reward, pendingEvent, eventResult: null };
+      return {
+        ...state,
+        save,
+        lastReward: reward,
+        lastQuest: active.offer.quest,
+        lastQuestOutcome: 'completed',
+        pendingEvent,
+        eventResult: null,
+      };
     }
 
     case 'ABANDON_QUEST': {
-      if (!state.save.activeQuest) return state;
-      return { ...state, save: abandonQuest(state.save) };
+      const active = state.save.activeQuest;
+      if (!active) return state;
+      return {
+        ...state,
+        save: abandonQuest(state.save),
+        lastQuest: active.offer.quest,
+        lastQuestOutcome: 'abandoned',
+      };
+    }
+
+    /**
+     * One thumbs-up or thumbs-down. Local, tiny, and reversible: it nudges a
+     * single category score and nothing else. See src/game/feedback.ts.
+     */
+    case 'RATE_QUEST': {
+      const quest = getQuestById(action.questId);
+      if (!quest) return state;
+      const feedback = applyFeedback(state.save.feedback, quest, action.vote);
+      if (feedback === state.save.feedback) return state;
+      return { ...state, save: { ...state.save, feedback } };
     }
 
     case 'DISMISS_REWARD':
@@ -437,6 +478,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         itemReveal: null,
         marketMessage: null,
         lastReward: null,
+        lastQuest: null,
+        lastQuestOutcome: null,
         loadSource: action.source ?? state.loadSource,
         loadWarnings: [],
         saveError: null,
@@ -463,6 +506,7 @@ const PERSISTING_ACTIONS = new Set<GameAction['type']>([
   'ACCEPT_DAILY',
   'COMPLETE_QUEST',
   'ABANDON_QUEST',
+  'RATE_QUEST',
   'RESOLVE_EVENT',
   'USE_ITEM',
   'START_TIMER',
