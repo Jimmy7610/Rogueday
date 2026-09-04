@@ -1,0 +1,104 @@
+/* ==========================================================================
+   RogueDay design tokens
+   Near-black ground, dark navy panels, electric cyan primary, magenta for
+   rarity/selection, green for reward, amber for streak. Thin borders and
+   restrained neon glow - a game HUD, not a dashboard.
+   ========================================================================== */
+
+:root {
+  /* --- ground & panels --- */
+  --bg-void: #05070d;
+  --bg-deep: #070a12;
+  --bg-panel: #0c1120;
+  --bg-panel-raised: #111828;
+  --bg-panel-soft: #0f1524;
+  --bg-inset: #080b14;
+
+  /* --- borders --- */
+  --border-hairline: rgba(120, 160, 220, 0.14);
+  --border-soft: rgba(120, 170, 230, 0.22);
+  --border-strong: rgba(140, 200, 255, 0.38);
+
+  /* --- text --- */
+  --text-bright: #eaf3ff;
+  --text-primary: #c3d4ec;
+  --text-muted: #7b8db0;
+  --text-dim: #55637f;
+
+  /* --- accents --- */
+  --cyan: #22d3ee;
+  --cyan-bright: #67e8f9;
+  --cyan-deep: #0e7490;
+  --blue: #3b82f6;
+  --magenta: #d946ef;
+  --magenta-bright: #f0abfc;
+  --purple: #a855f7;
+  --green: #34d399;
+  --green-bright: #6ee7b7;
+  --amber: #fbbf24;
+  --amber-bright: #fcd34d;
+  --red: #f43f5e;
+  --orange: #fb923c;
+
+  /* --- rarity --- */
+  --rarity-common: #94a3b8;
+  --rarity-uncommon: #34d399;
+  --rarity-rare: #38bdf8;
+  --rarity-epic: #c084fc;
+  --rarity-legendary: #fbbf24;
+
+  /* --- glow --- */
+  --glow-cyan: 0 0 0 1px rgba(34, 211, 238, 0.35), 0 0 18px rgba(34, 211, 238, 0.18);
+  --glow-magenta: 0 0 0 1px rgba(217, 70, 239, 0.35), 0 0 18px rgba(217, 70, 239, 0.18);
+  --glow-green: 0 0 0 1px rgba(52, 211, 153, 0.35), 0 0 18px rgba(52, 211, 153, 0.16);
+  --glow-amber: 0 0 0 1px rgba(251, 191, 36, 0.35), 0 0 18px rgba(251, 191, 36, 0.16);
+  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 12px 32px rgba(0, 0, 0, 0.55);
+
+  /* --- layout --- */
+  --col-width: 560px;
+  --col-width-wide: 720px;
+  --hud-height: 116px;
+  --nav-height: 62px;
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+
+  /* --- type --- */
+  --font-display: 'Rajdhani', 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+
+  /* --- motion --- */
+  --dur-fast: 120ms;
+  --dur: 220ms;
+  --dur-slow: 480ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* High contrast mode: stronger borders and brighter text, same palette. */
+:root[data-contrast='high'] {
+  --border-hairline: rgba(160, 200, 255, 0.4);
+  --border-soft: rgba(180, 220, 255, 0.55);
+  --border-strong: rgba(220, 245, 255, 0.85);
+  --text-primary: #e6efff;
+  --text-muted: #b0c2de;
+  --text-dim: #8fa0bd;
+  --bg-panel: #0e1424;
+  --bg-panel-raised: #16203a;
+}
+
+/* Reduced motion: collapse every duration. Set by the settings screen and by
+   the prefers-reduced-motion media query. */
+:root[data-motion='reduced'] {
+  --dur-fast: 0ms;
+  --dur: 0ms;
+  --dur-slow: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+  }
+}

@@ -1,0 +1,248 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+import type { RogueDaySave } from '@/types';
+import { completeQuest } from '@/game/completion';
+import { loadGame, saveGame } from '@/persistence/storage';
+import { createInitialState } from '@/app/gameStore';
+import { makeOffer, makeSave, NO_LUCK_RNG } from './helpers';
+
+/**
+ * The regression suite that guards the failure the previous prototype had:
+ * progression that vanished on refresh.
+ *
+ * Every test here destroys the in-memory state completely and rebuilds it the
+ * same way a real page load does - through loadGame / createInitialState.
+ */
+describe('full reload persistence', () => {
+  beforeEach(() => window.localStorage.clear());
+
+  it('persists complete progression across full reload', () => {
+    /* 1. Fresh game. */
+    let state: RogueDaySave | null = makeSave(new Date('2026-09-04T10:00:00'));
+    const startingBossHp = state.boss?.currentHp ?? 0;
+    expect(startingBossHp).toBeGreaterThan(0);
+
+    /* 2. Complete a quest. */
+    const first = completeQuest(
+      state,
+      makeOffer('digi_inbox_raid'),
+      new Date('2026-09-04T10:30:00'),
+      NO_LUCK_RNG,
+    );
+    state = first.save;
+
+    const xpAfterFirst = state.progression.totalXp;
+    const goldAfterFirst = state.progression.gold;
+    const bossHpAfterFirst = state.boss?.currentHp ?? 0;
+    const achievementsAfterFirst = state.achievements.length;
+
+    expect(xpAfterFirst).toBeGreaterThan(0);
+    expect(bossHpAfterFirst).toBeLessThan(startingBossHp);
+    expect(achievementsAfterFirst).toBeGreaterThan(0); // FÖRSTA BLODET
+
+    /* 3. Save. */
+    expect(saveGame(state).ok).toBe(true);
+
+    /* 4. Destroy the in-memory state. */
+    state = null;
+
+    /* 5. Load from storage, exactly like a page refresh does. */
+    const reloadedOnce = loadGame();
+    state = reloadedOnce.save;
+
+    expect(reloadedOnce.source).toBe('main');
+
+    /* 6-9. Verify everything survived. */
+    expect(state.progression.totalXp).toBe(xpAfterFirst); // XP
+    expect(state.progression.gold).toBe(goldAfterFirst); // gold
+    expect(state.history).toHaveLength(1); // history
+    expect(state.history[0].questId).toBe('digi_inbox_raid');
+    expect(state.statistics.questsCompleted).toBe(1); // statistics
+    expect(state.statistics.totalMinutes).toBe(15);
+    expect(state.boss?.currentHp).toBe(bossHpAfterFirst); // boss HP
+    expect(state.achievements).toHaveLength(achievementsAfterFirst); // achievements
+    expect(state.streak.current).toBe(1); // streak
+
+    /* 10. Complete a second quest on the loaded state. */
+    const second = completeQuest(
+      state,
+      makeOffer('home_dish_mountain'),
+      new Date('2026-09-05T09:00:00'),
+      NO_LUCK_RNG,
+    );
+    state = second.save;
+
+    const xpAfterSecond = state.progression.totalXp;
+    const bossHpAfterSecond = state.boss?.currentHp ?? 0;
+
+    expect(xpAfterSecond).toBeGreaterThan(xpAfterFirst);
+    expect(bossHpAfterSecond).toBeLessThan(bossHpAfterFirst);
+
+    /* 11. Save again. */
+    expect(saveGame(state).ok).toBe(true);
+
+    /* 12. Reload again. */
+    state = null;
+    const reloadedTwice = loadGame();
+    state = reloadedTwice.save;
+
+    /* 13. BOTH history records must still be there. */
+    expect(state.history).toHaveLength(2);
+    expect(state.history.map((entry) => entry.questId)).toEqual([
+      'home_dish_mountain',
+      'digi_inbox_raid',
+    ]);
+
+    expect(state.progression.totalXp).toBe(xpAfterSecond);
+    expect(state.statistics.questsCompleted).toBe(2);
+    expect(state.boss?.currentHp).toBe(bossHpAfterSecond);
+    expect(state.streak.current).toBe(2);
+    expect(state.streak.longest).toBe(2);
+  });
+
+  it('survives ten reloads without losing a single record', () => {
+    let save = makeSave(new Date('2026-09-04T08:00:00'));
+    saveGame(save);
+
+    for (let day = 0; day < 10; day += 1) {
+      const reloaded = loadGame();
+      save = reloaded.save;
+
+      const result = completeQuest(
+        save,
+        makeOffer('home_trash_run'),
+        new Date(2026, 8, 4 + day, 12, 0, 0),
+        NO_LUCK_RNG,
+      );
+      save = result.save;
+      expect(saveGame(save).ok).toBe(true);
+    }
+
+    const final = loadGame();
+
+    expect(final.save.history).toHaveLength(10);
+    expect(final.save.statistics.questsCompleted).toBe(10);
+    expect(final.save.streak.current).toBe(10);
+    expect(final.save.streak.longest).toBe(10);
+    expect(final.save.progression.totalXp).toBeGreaterThan(0);
+  });
+
+  it('createInitialState reads the stored save rather than starting over', () => {
+    const save = makeSave(new Date('2026-09-04T10:00:00'));
+    const completed = completeQuest(
+      save,
+      makeOffer('walk_block_loop'),
+      new Date('2026-09-04T11:00:00'),
+      NO_LUCK_RNG,
+    ).save;
+    saveGame(completed);
+
+    // This is what the React provider calls on mount.
+    const state = createInitialState();
+
+    expect(state.loadSource).toBe('main');
+    expect(state.save.history).toHaveLength(1);
+    expect(state.save.progression.totalXp).toBe(completed.progression.totalXp);
+    expect(state.save.statistics.questsCompleted).toBe(1);
+  });
+
+  it('boss damage accumulates correctly across reloads', () => {
+    let save = makeSave(new Date('2026-09-07T09:00:00')); // a Monday
+    const maxHp = save.boss?.maxHp ?? 0;
+    let expectedDamage = 0;
+
+    for (let index = 0; index < 5; index += 1) {
+      save = loadGame().save.history.length > 0 || index > 0 ? loadGame().save : save;
+
+      const offer = makeOffer('clean_floor_deep');
+      const result = completeQuest(
+        save,
+        offer,
+        new Date(2026, 8, 7 + index, 10, 0, 0),
+        NO_LUCK_RNG,
+      );
+      expectedDamage += result.reward.bossDamage;
+      save = result.save;
+      saveGame(save);
+    }
+
+    const final = loadGame().save;
+
+    expect(final.boss?.totalDamage).toBe(expectedDamage);
+    expect(final.boss?.currentHp).toBe(maxHp - expectedDamage);
+    expect(final.boss?.questsContributed).toBe(5);
+    expect(final.statistics.totalBossDamage).toBe(expectedDamage);
+  });
+
+  it('achievements keep their unlock timestamps across reloads', () => {
+    let save = makeSave(new Date('2026-09-04T10:00:00'));
+    save = completeQuest(
+      save,
+      makeOffer('home_bed_fortress'),
+      new Date('2026-09-04T10:05:00'),
+      NO_LUCK_RNG,
+    ).save;
+    saveGame(save);
+
+    const firstUnlock = save.achievements[0];
+    expect(firstUnlock).toBeDefined();
+
+    const reloaded = loadGame().save;
+    const sameUnlock = reloaded.achievements.find((entry) => entry.id === firstUnlock.id);
+
+    expect(sameUnlock).toBeDefined();
+    expect(sameUnlock?.unlockedAt).toBe(firstUnlock.unlockedAt);
+
+    // A second completion must not re-stamp an already-unlocked achievement.
+    const later = completeQuest(
+      reloaded,
+      makeOffer('home_trash_run'),
+      new Date('2026-09-05T10:00:00'),
+      NO_LUCK_RNG,
+    ).save;
+
+    const stillSame = later.achievements.find((entry) => entry.id === firstUnlock.id);
+    expect(stillSame?.unlockedAt).toBe(firstUnlock.unlockedAt);
+  });
+
+  it('settings and player name survive a reload', () => {
+    const save = makeSave();
+    save.player.name = 'Kaosriddaren';
+    save.settings = {
+      sound: true,
+      reducedMotion: true,
+      animations: false,
+      highContrast: true,
+    };
+    saveGame(save);
+
+    const reloaded = loadGame().save;
+
+    expect(reloaded.player.name).toBe('Kaosriddaren');
+    expect(reloaded.settings.sound).toBe(true);
+    expect(reloaded.settings.highContrast).toBe(true);
+    expect(reloaded.settings.animations).toBe(false);
+  });
+
+  it('inventory and quest chain progress survive a reload', () => {
+    let save = makeSave(new Date('2026-09-04T10:00:00'));
+
+    save = completeQuest(
+      save,
+      makeOffer('chain_drawer_1'),
+      new Date('2026-09-04T10:10:00'),
+      NO_LUCK_RNG,
+    ).save;
+    save.inventory = [
+      { itemId: 'reroll_token', count: 3 },
+      { itemId: 'xp_elixir', count: 1 },
+    ];
+    saveGame(save);
+
+    const reloaded = loadGame().save;
+
+    expect(reloaded.questChains.forgotten_drawer?.completedSteps).toBe(1);
+    expect(reloaded.questChains.forgotten_drawer?.completed).toBe(false);
+    expect(reloaded.inventory).toHaveLength(2);
+    expect(reloaded.inventory.find((entry) => entry.itemId === 'reroll_token')?.count).toBe(3);
+  });
+});

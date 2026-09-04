@@ -1,0 +1,254 @@
+/* ==========================================================================
+   Keyframes. Every duration is driven by the motion tokens, so reduced-motion
+   collapses them without needing per-animation overrides.
+   ========================================================================== */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  60% {
+    transform: scale(1.015);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  45% {
+    opacity: 0.75;
+    transform: scale(0.94);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes legendary-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(251, 191, 36, 0.3),
+      0 0 22px rgba(251, 191, 36, 0.14);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(251, 191, 36, 0.55),
+      0 0 34px rgba(251, 191, 36, 0.3);
+  }
+}
+
+@keyframes boss-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes boss-ring {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes boss-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-9px);
+  }
+  30% {
+    transform: translateX(8px);
+  }
+  45% {
+    transform: translateX(-6px);
+  }
+  60% {
+    transform: translateX(4px);
+  }
+  80% {
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes dmg-rise {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 10px) scale(0.7);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -6px) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -70px) scale(0.95);
+  }
+}
+
+@keyframes burst {
+  0% {
+    transform: scale(0.3) rotate(-18deg);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.22) rotate(6deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes loot-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes levelup-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(34, 211, 238, 0.8);
+  }
+  50% {
+    opacity: 0.82;
+    text-shadow: 0 0 52px rgba(34, 211, 238, 1);
+  }
+}
+
+@keyframes intro-line {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes particle-burst {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--px, 0), var(--py, -50px)) scale(0.3);
+  }
+}
+
+/* When motion is reduced, decorative infinite loops stop entirely rather than
+   just running at zero duration. */
+:root[data-motion='reduced'] .hud__streak-flame,
+:root[data-motion='reduced'] .hero__icon,
+:root[data-motion='reduced'] .boss-portrait,
+:root[data-motion='reduced'] .boss-portrait::before,
+:root[data-motion='reduced'] .boss-portrait::after,
+:root[data-motion='reduced'] .bar__fill::after,
+:root[data-motion='reduced'] .offer--legendary,
+:root[data-motion='reduced'] .levelup__flash,
+:root[data-motion='reduced'] .event-modal__icon {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) .hud__streak-flame,
+  :root:not([data-motion='full']) .hero__icon,
+  :root:not([data-motion='full']) .boss-portrait,
+  :root:not([data-motion='full']) .boss-portrait::before,
+  :root:not([data-motion='full']) .boss-portrait::after,
+  :root:not([data-motion='full']) .bar__fill::after,
+  :root:not([data-motion='full']) .offer--legendary,
+  :root:not([data-motion='full']) .levelup__flash,
+  :root:not([data-motion='full']) .event-modal__icon {
+    animation: none !important;
+  }
+}

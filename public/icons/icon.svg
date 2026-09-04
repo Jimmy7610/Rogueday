@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="RogueDay">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#a855f7" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#05070d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="blade" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0e7490"/>
+      <stop offset="50%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a5f3fc"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="#05070d"/>
+  <rect width="512" height="512" rx="112" fill="url(#glow)"/>
+  <rect x="8" y="8" width="496" height="496" rx="106" fill="none"
+        stroke="#22d3ee" stroke-opacity="0.32" stroke-width="3"/>
+
+  <!-- die face: the roll that starts every quest -->
+  <rect x="150" y="150" width="212" height="212" rx="38" fill="none"
+        stroke="#22d3ee" stroke-width="10" stroke-opacity="0.85"/>
+  <circle cx="205" cy="205" r="17" fill="#67e8f9"/>
+  <circle cx="307" cy="205" r="17" fill="#d946ef"/>
+  <circle cx="256" cy="256" r="17" fill="#67e8f9"/>
+  <circle cx="205" cy="307" r="17" fill="#d946ef"/>
+  <circle cx="307" cy="307" r="17" fill="#67e8f9"/>
+
+  <!-- blade across the die -->
+  <path d="M124 388 L388 124" stroke="url(#blade)" stroke-width="14" stroke-linecap="round" opacity="0.9"/>
+  <path d="M124 388 L162 388 L162 350 Z" fill="#a5f3fc" opacity="0.9"/>
+</svg>

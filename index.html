@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#05070d" />
+    <meta
+      name="description"
+      content="RogueDay - förvandla vardagen till ett roguelike-äventyr. Helt offline, all data stannar på din enhet."
+    />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="RogueDay" />
+
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+
+    <title>RogueDay — Offline RPG</title>
+
+    <style>
+      /* Painted before React mounts so the first frame is already in-theme. */
+      html,
+      body {
+        margin: 0;
+        background: #05070d;
+        color: #c3d4ec;
+      }
+      #root:empty::after {
+        content: 'ROGUEDAY';
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        color: #22d3ee;
+        text-shadow: 0 0 24px rgba(34, 211, 238, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="padding: 24px; font-family: system-ui, sans-serif">
+        RogueDay behöver JavaScript för att fungera. Aktivera JavaScript och ladda om sidan.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

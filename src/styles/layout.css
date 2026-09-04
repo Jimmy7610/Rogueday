@@ -1,0 +1,337 @@
+/* ==========================================================================
+   Shell: HUD, central game column, bottom navigation
+   ========================================================================== */
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HUD ---------------------------------------------------------------- */
+
+.hud {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: linear-gradient(180deg, rgba(7, 10, 18, 0.97), rgba(7, 10, 18, 0.88));
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.hud__inner {
+  width: min(100%, var(--col-width-wide));
+  margin: 0 auto;
+  padding: 10px 16px 12px;
+}
+
+.hud__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hud__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hud__title {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--text-bright);
+  text-shadow: 0 0 14px rgba(34, 211, 238, 0.45);
+}
+
+.hud__subtitle {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.32em;
+  color: var(--cyan);
+  opacity: 0.75;
+}
+
+.hud__identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hud__name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--text-bright);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hud__rank {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--magenta-bright);
+  opacity: 0.85;
+}
+
+.hud__streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 3px 9px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 999px;
+  background: rgba(251, 191, 36, 0.08);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--amber-bright);
+  white-space: nowrap;
+}
+
+.hud__streak--cold {
+  border-color: var(--border-hairline);
+  background: rgba(120, 160, 220, 0.05);
+  color: var(--text-dim);
+}
+
+.hud__streak-flame {
+  display: inline-block;
+  animation: flicker 2.6s var(--ease) infinite;
+}
+
+/* --- level row ---------------------------------------------------------- */
+
+.hud__level {
+  margin-top: 10px;
+}
+
+.hud__level-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.hud__level-badge {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--cyan-bright);
+}
+
+.hud__level-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.hud__level-xp {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.hud__gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--amber);
+}
+
+/* --- main column -------------------------------------------------------- */
+
+.screen {
+  flex: 1;
+  width: min(100%, var(--col-width));
+  margin: 0 auto;
+  padding: 18px 16px calc(var(--nav-height) + 28px);
+  display: flex;
+  flex-direction: column;
+}
+
+.screen--wide {
+  width: min(100%, var(--col-width-wide));
+}
+
+.screen__header {
+  margin-bottom: 16px;
+}
+
+.screen__title {
+  font-size: 17px;
+  letter-spacing: 0.16em;
+  color: var(--text-bright);
+}
+
+.screen__subtitle {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.section {
+  margin-bottom: 22px;
+}
+
+.section__title {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section__title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-hairline), transparent);
+}
+
+/* --- bottom navigation -------------------------------------------------- */
+
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 45;
+  background: linear-gradient(0deg, rgba(5, 7, 13, 0.99), rgba(7, 10, 18, 0.93));
+  backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border-hairline);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.nav__inner {
+  width: min(100%, var(--col-width-wide));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.nav__button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: var(--nav-height);
+  padding: 8px 4px;
+  color: var(--text-dim);
+  transition:
+    color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+  position: relative;
+}
+
+.nav__button:hover {
+  color: var(--text-muted);
+}
+
+.nav__icon {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.nav__label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.nav__button--active {
+  color: var(--cyan-bright);
+  background: linear-gradient(180deg, rgba(34, 211, 238, 0.1), transparent 70%);
+}
+
+.nav__button--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+}
+
+.nav__badge {
+  position: absolute;
+  top: 8px;
+  right: calc(50% - 20px);
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--magenta);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 15px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(217, 70, 239, 0.6);
+}
+
+/* --- responsive --------------------------------------------------------- */
+
+@media (min-width: 768px) {
+  :root {
+    --col-width: 620px;
+    --col-width-wide: 780px;
+  }
+
+  .screen {
+    padding-top: 24px;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --col-width: 660px;
+    --col-width-wide: 820px;
+  }
+}
+
+@media (max-width: 380px) {
+  .hud__title {
+    font-size: 18px;
+    letter-spacing: 0.16em;
+  }
+
+  .hud__name {
+    max-width: 120px;
+  }
+
+  .nav__label {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .screen {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
