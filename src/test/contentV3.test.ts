@@ -31,8 +31,14 @@ const CONTENT_TAGS = new Set([
   'seated',
 ]);
 
+/**
+ * The pool an ordinary roll draws from: no chain steps (they are gated on
+ * chain progress) and no secret quests (they are gated on local conditions).
+ */
 function poolFor(filters: QuestFilters): Quest[] {
-  return QUESTS.filter((quest) => !quest.chainId && matchesFilters(quest, filters));
+  return QUESTS.filter(
+    (quest) => !quest.chainId && quest.category !== 'secret' && matchesFilters(quest, filters),
+  );
 }
 
 /* ------------------------------------------------------------------ */

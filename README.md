@@ -29,7 +29,8 @@ Allt körs lokalt i webbläsaren. Ingen server, inget konto, ingen AI vid körni
 Djupsystemen i V2 — tier-utmaningar, fokustimer, marknad, förmågor, bosstaktik
 och belöningsspecifikationen — beskrivs i [docs/v2.md](docs/v2.md).
 Innehållsexplosionen i V3 — de 1 008 uppdragen, anti-upprepning 2.0,
-innehållstaggarna och tumme upp/ned — beskrivs i [docs/v3.md](docs/v3.md).
+innehållstaggarna, de hemliga uppdragen och tumme upp/ned — beskrivs i
+[docs/v3.md](docs/v3.md).
 
 ---
 
@@ -71,6 +72,7 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 | **Innehållstaggar** | 18 praktiska taggar (tyst, skärmfritt, gratis, utomhus …) per uppdrag |
 | **Anti-upprepning** | 60 uppdrag djupt minne plus kategorivariation i dragningen |
 | **Tumme upp/ned** | Lokal viktning som aldrig gömmer en kategori |
+| **Hemliga uppdrag** | 26 uppdrag låsta bakom klockslag, veckodag, svit och nivå |
 
 ## Kom igång
 
@@ -246,7 +248,7 @@ sig, märken för sig, lagring för sig. Det finns ingen `App.tsx` på 5000 rade
 npm test
 ```
 
-497 tester täcker bland annat:
+510 tester täcker bland annat:
 
 - uppdragsfiltrering, sällsynthet och urval
 - XP-beräkning och nivåprogression
@@ -271,6 +273,7 @@ npm test
 - att varje kombination av tid, energi, plats och sinnesstämning har en riktig pool
 - anti-upprepningens minne, kategorivariation och viktade dragning
 - att tumme ned aldrig kan ta bort en kategori ur poolen
+- att hemliga uppdrag är låsta tills deras lokala villkor faktiskt gäller
 - hela appen genom React Testing Library, inklusive tangentbordsnavigering
 
 Nyckeltestet heter **`persists complete progression across full reload`** och gör exakt det

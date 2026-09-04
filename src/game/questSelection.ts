@@ -15,6 +15,7 @@ import type {
 import { CHAIN_BY_ID, QUEST_CHAINS } from '@/data/chains';
 import { eligibleChallenges } from '@/data/challenges';
 import { getWeaknessInfo } from './boss';
+import { isSecretUnlocked, type SecretContext } from './secrets';
 import { feedbackWeight } from './feedback';
 import { QUESTS, getQuestById } from '@/data/quests';
 import { createRng, createId, randomRng, type Rng } from '@/utils/rng';
@@ -169,6 +170,11 @@ export interface PoolOptions {
   recentQuestIds: string[];
   /** Include chain quests in the pool (default true). */
   includeChains?: boolean;
+  /**
+   * v3: the player's own situation, used to unlock secret quests. Without it
+   * the secret category stays locked, which is the safe default.
+   */
+  secrets?: SecretContext;
 }
 
 /**
@@ -251,11 +257,16 @@ export interface QuestPoolResult {
  * player rather than handing them something they cannot do.
  */
 export function buildQuestPoolDetailed(options: PoolOptions): QuestPoolResult {
-  const { filters, chains, recentQuestIds, includeChains = true } = options;
+  const { filters, chains, recentQuestIds, includeChains = true, secrets } = options;
 
   const allowed = (quest: Quest): boolean => {
     if (!includeChains && quest.chainId) return false;
     if (quest.chainId && !isChainQuestAvailable(quest, chains)) return false;
+    // Secret quests are gated on the player's own clock and save; without a
+    // context they stay hidden rather than leaking into an ordinary roll.
+    if (quest.category === 'secret' && !(secrets && isSecretUnlocked(quest, secrets))) {
+      return false;
+    }
     return matchesHardConstraints(quest, filters);
   };
 
@@ -393,6 +404,8 @@ export interface RollOptions {
   recentQuestIds: string[];
   /** v3: the player's local thumbs-up/down scores, used as a gentle weight. */
   feedback?: FeedbackState;
+  /** v3: unlocks secret quests whose local condition currently holds. */
+  secrets?: SecretContext;
   rng?: Rng;
   /** The week's boss, so offers can advertise weakness hits. */
   boss?: BossDefinition | undefined;
@@ -418,9 +431,15 @@ export interface QuestRollResult {
  * UI asks them to widen their filters instead.
  */
 export function rollQuestChoices(options: RollOptions): QuestRollResult {
-  const { filters, chains, recentQuestIds, feedback, rng = randomRng, boss, effects } = options;
+  const { filters, chains, recentQuestIds, feedback, secrets, rng = randomRng, boss, effects } =
+    options;
 
-  const pool = buildQuestPoolDetailed({ filters, chains, recentQuestIds });
+  const pool = buildQuestPoolDetailed({
+    filters,
+    chains,
+    recentQuestIds,
+    ...(secrets ? { secrets } : {}),
+  });
 
   if (pool.quests.length === 0) {
     return { offers: [], moodRelaxed: false, empty: true, poolSize: 0 };
