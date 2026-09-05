@@ -514,7 +514,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['promenad', 'utforskning'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'wl_landmark_loop',
@@ -527,7 +527,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'motivated'],
     tags: ['promenad', 'utforskning'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'wl_bench_destination',
@@ -540,7 +540,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored'],
     tags: ['promenad', 'vila'],
-    ctags: ['outdoors', 'relaxing', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'relaxing'],
   },
   {
     id: 'wl_sound_walk',
@@ -553,7 +553,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored'],
     tags: ['promenad', 'närvaro'],
-    ctags: ['outdoors', 'quiet', 'phone-free'],
+    ctags: ['no-money', 'outdoors', 'phone-free', 'quiet'],
   },
   {
     id: 'wl_three_streets',
@@ -566,7 +566,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['promenad', 'utforskning'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'wl_from_memory',
@@ -579,7 +579,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'motivated'],
     tags: ['promenad', 'utmaning'],
-    ctags: ['outdoors', 'phone-free', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'phone-free', 'physical'],
   },
   {
     id: 'wl_uphill_route',
@@ -592,7 +592,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'adventurous'],
     tags: ['promenad', 'träning'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'wl_counting_mission',
@@ -605,7 +605,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['promenad', 'lek'],
-    ctags: ['outdoors', 'physical', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'wl_shadow_route',
@@ -618,7 +618,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['promenad', 'lek'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'wl_neighbour_district',
@@ -631,7 +631,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['promenad', 'utforskning'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'wl_straight_ahead',
@@ -644,7 +644,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['promenad'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'wl_no_clock',
@@ -657,7 +657,7 @@ export const CARE_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored'],
     tags: ['promenad', 'lugn'],
-    ctags: ['outdoors', 'phone-free', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'phone-free', 'relaxing'],
   },
 
   /* ==================== MAT ==================== */

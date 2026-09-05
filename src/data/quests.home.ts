@@ -18,6 +18,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['ekonomi', 'vuxenpoäng'],
+    ctags: ['admin'],
   },
   {
     id: 'adult_appointment_call',
@@ -30,6 +31,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['bokning', 'mod'],
+    ctags: ['admin'],
   },
   {
     id: 'adult_receipt_purge',
@@ -41,6 +43,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['anywhere'],
     tags: ['rensning', 'snabbt'],
+    ctags: ['admin'],
   },
   {
     id: 'adult_budget_glance',
@@ -53,6 +56,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'uncommon',
     tags: ['ekonomi'],
+    ctags: ['admin'],
   },
   {
     id: 'adult_subscription_audit',
@@ -65,6 +69,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'epic',
     tags: ['ekonomi', 'digitalt'],
+    ctags: ['admin', 'screen'],
   },
   {
     id: 'adult_document_vault',
@@ -77,6 +82,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['papper', 'ordning'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_password_ward',
@@ -89,6 +95,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'rare',
     tags: ['säkerhet', 'digitalt'],
+    ctags: ['admin', 'screen'],
   },
   {
     id: 'adult_calendar_rite',
@@ -99,6 +106,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     dur: 15,
     energy: 'low',
     tags: ['planering'],
+    ctags: ['admin'],
   },
   {
     id: 'adult_return_item',
@@ -111,6 +119,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['ärende'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_insurance_scroll',
@@ -123,6 +132,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     diff: 'hard',
     rarity: 'epic',
     tags: ['ekonomi', 'tråkigt-men-viktigt'],
+    ctags: ['admin', 'screen'],
   },
   {
     id: 'adult_form_finish',
@@ -135,6 +145,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['byråkrati'],
+    ctags: ['admin'],
   },
   {
     id: 'adult_grocery_scroll',
@@ -146,6 +157,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['planering', 'mat'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_battery_hunt',
@@ -157,6 +169,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['återvinning'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_warranty_vault',
@@ -169,6 +182,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['ordning'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_firstaid_check',
@@ -180,6 +194,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['trygghet', 'ordning'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_mail_gate',
@@ -191,6 +206,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['post'],
+    ctags: ['admin', 'errand', 'indoors'],
   },
   {
     id: 'adult_repair_one',
@@ -204,6 +220,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['fix'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_price_compare',
@@ -216,6 +233,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     rarity: 'uncommon',
     tags: ['ekonomi'],
+    ctags: ['admin'],
   },
   {
     id: 'adult_key_ritual',
@@ -227,6 +245,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['system'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'adult_emergency_numbers',
@@ -238,6 +257,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     rarity: 'uncommon',
     tags: ['trygghet'],
+    ctags: ['admin', 'screen'],
   },
 
   /* ---------------- HOME ---------------- */
@@ -251,6 +271,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['snabbt', 'morgon'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_plant_rescue',
@@ -262,6 +283,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['växter', 'omsorg'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_lightbulb_quest',
@@ -274,6 +296,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['fix'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_bathroom_sweep',
@@ -285,6 +308,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['städ'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_towel_swap',
@@ -296,6 +320,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['snabbt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_bedsheet_ritual',
@@ -308,6 +333,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['sömn', 'lyx'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_laundry_start',
@@ -319,6 +345,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['tvätt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_laundry_fold',
@@ -331,6 +358,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['tvätt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_dish_mountain',
@@ -343,6 +371,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['kök'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_trash_run',
@@ -354,6 +383,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['städ'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_window_light',
@@ -366,6 +396,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['städ', 'ljus'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_air_ritual',
@@ -377,6 +408,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['luft', 'enkelt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_shoe_order',
@@ -388,6 +420,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['ordning'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_couch_reset',
@@ -399,6 +432,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['snabbt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_fridge_purge',
@@ -411,6 +445,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['kök', 'rensning'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_floor_sweep',
@@ -422,6 +457,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['städ'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_mirror_polish',
@@ -433,6 +469,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['städ'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_cable_taming',
@@ -446,6 +483,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['ordning', 'teknik'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_doorframe_dust',
@@ -457,6 +495,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['städ'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_pillow_fluff',
@@ -468,6 +507,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['snabbt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_entry_reset',
@@ -479,6 +519,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['ordning'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'home_deep_bathroom',
@@ -493,6 +534,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     rarity: 'epic',
     tags: ['städ', 'storstädning'],
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
   {
     id: 'home_seasonal_swap',
@@ -505,6 +547,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['garderob'],
+    ctags: ['cleaning', 'indoors'],
   },
 
   /* ---------------- CLEANING ---------------- */
@@ -518,6 +561,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['timer', 'snabbt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_counter_conquest',
@@ -529,6 +573,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['kök'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_microwave_beast',
@@ -541,6 +586,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['kök'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_stove_siege',
@@ -554,6 +600,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     diff: 'hard',
     rarity: 'rare',
     tags: ['kök'],
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
   {
     id: 'clean_sink_shine',
@@ -565,6 +612,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['kök'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_one_surface',
@@ -576,6 +624,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['minimalt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_fridge_shelf',
@@ -587,6 +636,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['kök'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_floor_deep',
@@ -601,6 +651,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     rarity: 'epic',
     tags: ['storstädning'],
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
   {
     id: 'clean_vacuum_run',
@@ -613,6 +664,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['städ'],
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
   {
     id: 'clean_trash_can_wash',
@@ -624,6 +676,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['äckligt-men-nödvändigt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_handle_hunt',
@@ -636,6 +689,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['hygien'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_oven_lich',
@@ -650,6 +704,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'legendary',
     tags: ['kök', 'boss-nivå'],
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
   {
     id: 'clean_shower_scale',
@@ -663,6 +718,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     diff: 'hard',
     rarity: 'rare',
     tags: ['badrum'],
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
   {
     id: 'clean_crumb_patrol',
@@ -674,6 +730,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['snabbt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'clean_keyboard_dust',
@@ -684,6 +741,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     dur: 15,
     energy: 'low',
     tags: ['teknik'],
+    ctags: ['cleaning', 'screen'],
   },
   {
     id: 'clean_phone_wipe',
@@ -694,6 +752,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['hygien', 'snabbt'],
+    ctags: ['cleaning', 'screen'],
   },
 
   /* ---------------- ORGANIZATION ---------------- */
@@ -708,6 +767,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['ordning'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_bookshelf_sort',
@@ -721,6 +781,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated', 'adventurous'],
     rarity: 'uncommon',
     tags: ['estetik'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_pantry_map',
@@ -733,6 +794,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['kök'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_sock_alliance',
@@ -744,6 +806,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['tvätt', 'melankoliskt'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_toolbox_order',
@@ -756,6 +819,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['verktyg'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_bag_reset',
@@ -766,6 +830,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     dur: 15,
     energy: 'low',
     tags: ['vardag'],
+    ctags: ['admin'],
   },
   {
     id: 'org_spice_rack',
@@ -777,6 +842,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['kök'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_cable_box',
@@ -789,6 +855,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['teknik', 'rensning'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_freezer_map',
@@ -801,6 +868,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['kök'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_meal_plan',
@@ -813,6 +881,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'uncommon',
     tags: ['mat', 'planering'],
+    ctags: ['admin'],
   },
   {
     id: 'org_label_run',
@@ -824,6 +893,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['system'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_desk_command',
@@ -836,6 +906,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['fokus'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_wardrobe_sort',
@@ -847,6 +918,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['kläder'],
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'org_photo_folder',
@@ -858,6 +930,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     rarity: 'uncommon',
     tags: ['digitalt', 'minnen'],
+    ctags: ['admin', 'screen'],
   },
 
   /* ---------------- DECLUTTERING ---------------- */
@@ -872,6 +945,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['rensning'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_one_bag',
@@ -884,6 +958,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['rensning'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_clothes_purge',
@@ -897,6 +972,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'bored'],
     rarity: 'rare',
     tags: ['kläder'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_mug_purge',
@@ -909,6 +985,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'motivated'],
     tags: ['kök', 'humor'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_paper_burn',
@@ -921,6 +998,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['papper'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_bathroom_shelf',
@@ -932,6 +1010,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['badrum'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_surface_zero',
@@ -944,6 +1023,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['minimalism'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_junk_drawer',
@@ -956,6 +1036,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'rare',
     tags: ['klassiker'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_expired_food',
@@ -967,6 +1048,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['kök'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_donate_run',
@@ -978,6 +1060,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['snabbt'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_bag_of_bags',
@@ -990,6 +1073,7 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'motivated'],
     tags: ['humor', 'kök'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'declutter_full_room',
@@ -1004,5 +1088,6 @@ export const HOME_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'epic',
     tags: ['storstädning'],
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
 ];

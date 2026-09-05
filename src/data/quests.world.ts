@@ -16,6 +16,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['outside'],
     tags: ['enkelt', 'luft'],
+    ctags: ['no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'out_mailbox_run',
@@ -27,6 +28,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['outside'],
     tags: ['ärende'],
+    ctags: ['errand', 'outdoors'],
   },
   {
     id: 'out_sky_watch',
@@ -40,6 +42,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed', 'adventurous'],
     rarity: 'uncommon',
     tags: ['stillhet'],
+    ctags: ['no-money', 'outdoors', 'phone-free'],
   },
   {
     id: 'out_balcony_reset',
@@ -51,6 +54,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['outside', 'home'],
     tags: ['städ'],
+    ctags: ['cleaning', 'no-money', 'outdoors'],
   },
   {
     id: 'out_bench_sit',
@@ -64,6 +68,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous', 'stressed'],
     rarity: 'rare',
     tags: ['utforskning'],
+    ctags: ['no-money', 'outdoors', 'relaxing'],
   },
   {
     id: 'out_shop_errand',
@@ -77,6 +82,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'uncommon',
     tags: ['ärende'],
+    ctags: ['errand', 'outdoors'],
   },
   {
     id: 'out_photo_hunt',
@@ -90,6 +96,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['kreativt', 'utforskning'],
+    ctags: ['creative', 'no-money', 'outdoors'],
   },
   {
     id: 'out_sunlight_dose',
@@ -102,6 +109,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     rarity: 'uncommon',
     tags: ['hälsa', 'ljus'],
+    ctags: ['no-money', 'outdoors'],
   },
   {
     id: 'out_recycling_run',
@@ -114,6 +122,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     rarity: 'uncommon',
     tags: ['miljö', 'ärende'],
+    ctags: ['no-money', 'outdoors'],
   },
   {
     id: 'out_new_street',
@@ -127,6 +136,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['utforskning'],
+    ctags: ['no-money', 'outdoors'],
   },
 
   /* ---------------- WALKING ---------------- */
@@ -140,6 +150,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['outside'],
     tags: ['promenad'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'walk_stair_climb',
@@ -150,6 +161,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'medium',
     tags: ['rörelse'],
+    ctags: ['exploration', 'no-money', 'physical'],
   },
   {
     id: 'walk_wrong_turn',
@@ -163,6 +175,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'epic',
     tags: ['äventyr', 'utforskning'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
 
   /* ---------------- SOCIAL ---------------- */
@@ -177,6 +190,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated', 'adventurous'],
     rarity: 'uncommon',
     tags: ['vänskap'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_call_someone',
@@ -189,6 +203,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['vänskap', 'mod'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_thank_you',
@@ -200,6 +215,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     rarity: 'uncommon',
     tags: ['vänlighet'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_compliment_quest',
@@ -210,6 +226,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['vänlighet'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_plan_meetup',
@@ -222,6 +239,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['vänskap', 'planering'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_family_check',
@@ -233,6 +251,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     rarity: 'uncommon',
     tags: ['familj'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_help_someone',
@@ -245,6 +264,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['godhet'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_neighbour_nod',
@@ -258,6 +278,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'uncommon',
     tags: ['mod'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_share_something',
@@ -268,6 +289,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['vänskap'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_reply_backlog',
@@ -280,6 +302,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'uncommon',
     tags: ['digitalt'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'social_coffee_invite',
@@ -292,6 +315,7 @@ export const WORLD_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'epic',
     tags: ['vänskap'],
+    ctags: ['no-money', 'social'],
   },
 
   /* ---------------- MINI ADVENTURE ---------------- */

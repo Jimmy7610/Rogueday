@@ -46,7 +46,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet', 'utforskning'],
-    ctags: ['indoors', 'exploration'],
+    ctags: ['exploration', 'indoors', 'no-money'],
   },
   {
     id: 'cu_back_of_the_building',
@@ -59,7 +59,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet', 'utforskning'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'cu_across_the_street',
@@ -72,7 +72,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored', 'stressed'],
     tags: ['nyfikenhet', 'perspektiv'],
-    ctags: ['outdoors', 'exploration', 'quiet'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'cu_other_entrance',
@@ -85,7 +85,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'cu_random_entry',
@@ -97,7 +97,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet', 'lärande'],
-    ctags: ['seated', 'quiet', 'exploration'],
+    ctags: ['exploration', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'cu_first_paragraph',
@@ -109,7 +109,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet', 'läsning'],
-    ctags: ['seated', 'quiet', 'exploration'],
+    ctags: ['exploration', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'cu_blind_taste',
@@ -159,7 +159,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet', 'perspektiv'],
-    ctags: ['indoors', 'creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'indoors', 'no-money'],
   },
   {
     id: 'cu_new_path_indoors',
@@ -197,7 +197,7 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet', 'språk'],
-    ctags: ['social', 'exploration'],
+    ctags: ['exploration', 'no-money', 'social'],
   },
   {
     id: 'cu_object_from_below',
@@ -210,6 +210,6 @@ export const CURIOUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['adventurous', 'bored'],
     tags: ['nyfikenhet'],
-    ctags: ['indoors', 'exploration', 'quiet'],
+    ctags: ['exploration', 'indoors', 'no-money', 'quiet'],
   },
 ];

@@ -278,6 +278,12 @@ export function DataScreen(): JSX.Element {
               checked={save.settings.highContrast}
               onChange={(value) => updateSetting('highContrast', value)}
             />
+            <ToggleRow
+              label="Långa överraskningar"
+              hint="Låt ÖVERRASKA MIG föreslå uppdrag på en timme. Av som standard."
+              checked={save.settings.longSurprises}
+              onChange={(value) => updateSetting('longSurprises', value)}
+            />
           </div>
         </div>
       </section>

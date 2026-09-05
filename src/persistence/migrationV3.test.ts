@@ -102,6 +102,14 @@ describe('v2 -> v3 migration', () => {
     expect(result.toVersion).toBe(SCHEMA_VERSION);
   });
 
+  it('carries a v2 save all the way through v3 to the current schema', () => {
+    const save = mergeWithDefaults(migrateSave(makeV2Fixture()).save);
+    expect(save.schemaVersion).toBe(SCHEMA_VERSION);
+    // Both later additions are present and empty.
+    expect(save.feedback).toEqual({ scores: {}, quests: {}, up: 0, down: 0 });
+    expect(save.packs.favourites).toEqual([]);
+  });
+
   it('keeps every point of V2 progress untouched', () => {
     const save = mergeWithDefaults(migrateSave(makeV2Fixture()).save);
 

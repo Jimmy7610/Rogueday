@@ -116,7 +116,7 @@ export const LEGENDARY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous'],
     rarity: 'legendary',
     tags: ['utforskning', 'äventyr'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'lg_long_water_walk',
@@ -131,7 +131,7 @@ export const LEGENDARY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'legendary',
     tags: ['natur', 'uthållighet'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'lg_museum_visit',
@@ -160,7 +160,7 @@ export const LEGENDARY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'legendary',
     tags: ['äventyr', 'planering'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
 
   /* ================= SECRET ================= */

@@ -31,6 +31,8 @@ och belöningsspecifikationen — beskrivs i [docs/v2.md](docs/v2.md).
 Innehållsexplosionen i V3 och kategoribalansen i V3.1 — de 1 188 uppdragen,
 anti-upprepning 2.0, innehållstaggarna, de hemliga uppdragen och tumme
 upp/ned — beskrivs i [docs/v3.md](docs/v3.md).
+Aktivitetslägena i V3.2 — de 16 lägena, dagens läge, favoriter och
+överraskningar — beskrivs i [docs/v3.2.md](docs/v3.2.md).
 
 ---
 
@@ -48,6 +50,7 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 
 | System | Beskrivning |
 | --- | --- |
+| **Aktivitetslägen** | 16 kurerade lägen — säg situationen istället för att ställa in filter |
 | **Uppdragsbibliotek** | 1 188 handskrivna uppdrag i 22 kategorier, minst 42 i varje |
 | **Filtrering** | Tid (5/15/30/60 min), energi, plats och sinnesstämning respekteras strikt |
 | **Tre val** | Varje tärningsslag ger tre alternativ med stigande risk och belöning |
@@ -73,6 +76,8 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 | **Anti-upprepning** | 60 uppdrag djupt minne plus kategorivariation i dragningen |
 | **Tumme upp/ned** | Lokal viktning som aldrig gömmer en kategori |
 | **Hemliga uppdrag** | 44 uppdrag låsta bakom klockslag, datum, bossens HP, svit, nivå och spelhistorik |
+| **Dagens läge** | Ett deterministiskt läge per dag, med +10% guld på första uppdraget |
+| **Överraska mig** | Ett kast utan filter som aldrig tar en timme om du inte ber om det |
 
 ## Kom igång
 
@@ -110,6 +115,8 @@ fungerar även från en underkatalog.
 | `npm run coverage` | Skriver ut täckningsrapporten för uppdragsbiblioteket |
 | `npm run qa:filters` | Rullar riktiga uppdrag för varje filterkombination och kontrollerar dem |
 | `npm run qa:dupes` | Letar dubbletter och nästan-dubbletter i uppdragsbiblioteket |
+| `npm run qa:packs` | Poolstorlek och form för varje aktivitetsläge |
+| `npm run qa:packrolls` | Kastar varje läge många gånger och kontrollerar erbjudandena |
 
 ## Så fungerar sparfilen
 
@@ -129,10 +136,11 @@ rogueDay.save.v1        huvudsparfil
 rogueDay.save.backup    säkerhetskopia
 ```
 
-Nycklarna är oförändrade sedan 1.0. Schemat är version 3; sparfiler från version 1 och 2
+Nycklarna är oförändrade sedan 1.0. Schemat är version 4; sparfiler från version 1, 2 och 3
 migreras automatiskt vid inläsning utan att förlora någonting. Migreringarna är additiva —
 de får lägga till fält men aldrig skriva över något spelaren redan tjänat ihop. Se
-[docs/v2.md](docs/v2.md#sparfil-v1--v2) och [docs/v3.md](docs/v3.md#sparfil-v2--v3).
+[docs/v2.md](docs/v2.md#sparfil-v1--v2), [docs/v3.md](docs/v3.md#sparfil-v2--v3) och
+[docs/v3.2.md](docs/v3.2.md#sparfil-v3--v4).
 
 **Startordning vid varje sidladdning:**
 
@@ -249,7 +257,7 @@ sig, märken för sig, lagring för sig. Det finns ingen `App.tsx` på 5000 rade
 npm test
 ```
 
-532 tester täcker bland annat:
+625 tester täcker bland annat:
 
 - uppdragsfiltrering, sällsynthet och urval
 - XP-beräkning och nivåprogression
@@ -269,7 +277,7 @@ npm test
 - bossars svagheter, motstånd och att varje fas utlöses exakt en gång
 - bossbalans genom simulerad veckospelning
 - att belöningsposterna summerar till exakt den ändring som sker
-- migrering v1 → v2 och v2 → v3 mot kompletta sparfiler från varje version
+- migrering v1 → v2 → v3 → v4 mot kompletta sparfiler från varje version
 - innehållsvalidering: 1 188 unika id:n, titlar, mål och smaktexter
 - att ingen kategori sjunker under fyrtio uppdrag
 - att varje kombination av tid, energi, plats och sinnesstämning har en riktig pool
@@ -277,6 +285,8 @@ npm test
 - att tumme ned aldrig kan ta bort en kategori ur poolen
 - varje hemligt villkor för sig, inklusive strax före och strax efter sitt fönster
 - att inget hemligt uppdrag är permanent oåtkomligt
+- varje aktivitetsläges löfte för sig, plus att inget läge får en tunn pool
+- att ett läge aldrig kan erbjuda något utanför sina hårda begränsningar
 - hela appen genom React Testing Library, inklusive tangentbordsnavigering
 
 Nyckeltestet heter **`persists complete progression across full reload`** och gör exakt det

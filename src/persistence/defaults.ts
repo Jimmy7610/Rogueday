@@ -11,7 +11,7 @@ import type {
   StreakState,
 } from '@/types';
 
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 export const APP_VERSION = '2.0.0';
 export const DEFAULT_PLAYER_NAME = 'Skuggvandrare';
 
@@ -91,11 +91,23 @@ export function createDefaultSettings(): Settings {
     reducedMotion: prefersReducedMotion,
     animations: !prefersReducedMotion,
     highContrast: false,
+    longSurprises: false,
   };
 }
 
 export function createDefaultPlayer(name = DEFAULT_PLAYER_NAME): Player {
   return { name, createdAt: new Date().toISOString() };
+}
+
+/** v3.2: an empty activity-pack record. */
+export function createDefaultPacks(): RogueDaySave['packs'] {
+  return {
+    favourites: [],
+    recent: [],
+    completions: {},
+    dailyBonusClaimedOn: null,
+    dailyPackCompletions: 0,
+  };
 }
 
 /** v3: an empty thumbs-up/down record. */
@@ -130,6 +142,7 @@ export function createDefaultSave(name = DEFAULT_PLAYER_NAME): RogueDaySave {
     activeQuest: null,
     recentQuestIds: [],
     feedback: createDefaultFeedback(),
+    packs: createDefaultPacks(),
     onboardingComplete: false,
     metadata: {
       createdAt: now,

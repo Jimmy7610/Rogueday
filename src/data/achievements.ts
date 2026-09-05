@@ -1,4 +1,5 @@
 import type { AchievementContext, AchievementDefinition } from '@/types';
+import { STANDARD_PACKS } from './activityPacks';
 
 /**
  * Märken. Varje märke har en riktig predikatfunktion som körs mot spelarens
@@ -19,6 +20,29 @@ const categoryAtLeast =
   (category: string, count: number) =>
   (ctx: AchievementContext): boolean =>
     (ctx.statistics.questsByCategory[category] ?? 0) >= count;
+
+/* --- v3.2: activity packs --- */
+
+const packsCompleted = (ctx: AchievementContext): [string, number][] =>
+  Object.entries(ctx.packs.completions).filter(([, count]) => count > 0);
+
+/** Quests finished from at least this many different packs. */
+const distinctPacksAtLeast =
+  (count: number) =>
+  (ctx: AchievementContext): boolean =>
+    packsCompleted(ctx).length >= count;
+
+/** At least this many quests finished from one single pack. */
+const singlePackAtLeast =
+  (count: number) =>
+  (ctx: AchievementContext): boolean =>
+    packsCompleted(ctx).some(([, done]) => done >= count);
+
+/** One quest finished from every pack that is always available. */
+const everyStandardPack = (ctx: AchievementContext): boolean => {
+  const done = new Set(packsCompleted(ctx).map(([packId]) => packId));
+  return STANDARD_PACKS.every((pack) => done.has(pack.id));
+};
 
 export const ACHIEVEMENTS: AchievementDefinition[] = [
   /* ---------------- QUESTS ---------------- */
@@ -976,6 +1000,44 @@ export const ACHIEVEMENTS: AchievementDefinition[] = [
     hidden: true,
     rewardGold: 100,
     check: (ctx) => ctx.statistics.questsCompleted >= 20 && ctx.statistics.rerollsUsed === 0,
+  },
+
+  /* ---------------- ACTIVITY PACKS ---------------- */
+  {
+    id: 'pack_switcher',
+    name: 'LÄGESVÄXLARE',
+    description: 'Slutför uppdrag från 5 olika lägen.',
+    hiddenName: '???',
+    category: 'special',
+    icon: '🎛️',
+    hidden: false,
+    rewardGold: 60,
+    rewardXp: 120,
+    check: distinctPacksAtLeast(5),
+  },
+  {
+    id: 'pack_specialist',
+    name: 'SPECIALIST',
+    description: 'Slutför 10 uppdrag från ett och samma läge.',
+    hiddenName: '???',
+    category: 'special',
+    icon: '🎯',
+    hidden: false,
+    rewardGold: 80,
+    rewardXp: 150,
+    check: singlePackAtLeast(10),
+  },
+  {
+    id: 'pack_allround',
+    name: 'ALLROUND',
+    description: 'Slutför minst ett uppdrag från varje ordinarie läge.',
+    hiddenName: '???',
+    category: 'special',
+    icon: '🧭',
+    hidden: true,
+    rewardGold: 250,
+    rewardXp: 500,
+    check: everyStandardPack,
   },
 ];
 

@@ -21,6 +21,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['kaos', 'lek'],
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'chaos_no_sitting',
@@ -34,6 +35,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['kaos', 'förbannelse'],
+    ctags: ['physical'],
   },
   {
     id: 'chaos_speedrun_dishes',
@@ -49,6 +51,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'epic',
     tags: ['kaos', 'speedrun'],
+    ctags: ['indoors'],
   },
   {
     id: 'chaos_one_song_tidy',
@@ -63,6 +66,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['kaos', 'musik'],
+    ctags: ['indoors'],
   },
   {
     id: 'chaos_silent_mode',
@@ -76,6 +80,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['kaos'],
+    ctags: ['quiet'],
   },
   {
     id: 'chaos_wrong_hand',
@@ -89,6 +94,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['kaos', 'lek'],
+    ctags: ['indoors'],
   },
   {
     id: 'chaos_combo_double',
@@ -103,6 +109,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'epic',
     tags: ['kaos', 'combo'],
+    ctags: ['focus'],
   },
   {
     id: 'chaos_random_drawer',
@@ -117,6 +124,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['kaos', 'slump'],
+    ctags: ['indoors', 'quiet'],
   },
   {
     id: 'chaos_timer_gamble',
@@ -131,6 +139,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'epic',
     tags: ['kaos', 'speedrun'],
+    ctags: ['focus'],
   },
   {
     id: 'chaos_narrate_everything',
@@ -145,6 +154,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['kaos', 'humor'],
+    ctags: ['indoors'],
   },
   {
     id: 'chaos_five_things_five_rooms',
@@ -159,6 +169,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated', 'adventurous'],
     rarity: 'uncommon',
     tags: ['kaos', 'snabbt'],
+    ctags: ['indoors'],
   },
   {
     id: 'chaos_mystery_objective',
@@ -173,6 +184,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'bored'],
     rarity: 'epic',
     tags: ['kaos', 'mysterium'],
+    ctags: ['focus', 'indoors'],
   },
   {
     id: 'chaos_opposite_day',
@@ -227,6 +239,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous', 'motivated'],
     rarity: 'uncommon',
     tags: ['kaos', 'städ'],
+    ctags: ['indoors'],
   },
   {
     id: 'chaos_coin_flip_task',
@@ -255,6 +268,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'legendary',
     tags: ['hemligt'],
+    ctags: ['indoors'],
   },
   {
     id: 'secret_kindness_anonymous',
@@ -293,6 +307,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'legendary',
     tags: ['hemligt', 'städ'],
+    ctags: ['indoors'],
   },
   {
     id: 'secret_old_photo',
@@ -305,6 +320,7 @@ export const CHAOS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'epic',
     tags: ['hemligt', 'socialt'],
+    ctags: ['creative'],
   },
   {
     id: 'secret_unfinished_thing',

@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import type { HistoryEntry, QuestCategory } from '@/types';
 import { useGame } from '@/app/GameProvider';
 import { CATEGORY_ICONS, CATEGORY_LABELS } from '@/data/quests';
+import { ACTIVITY_PACKS } from '@/data/activityPacks';
+import { packStats } from '@/game/activityPacks';
 import { RARITY_LABELS } from '@/game/rarity';
 import { daysBetween, formatDateTime, formatMinutes, toLocalDateKey } from '@/utils/date';
 import { DIFFICULTY_LABELS, EmptyState, SectionTitle, Stat, formatNumber } from '@/components/ui';
@@ -45,6 +47,7 @@ export function HistoryScreen(): JSX.Element {
   }, [save.history]);
 
   const stats = save.statistics;
+  const packSummary = useMemo(() => packStats(save.packs), [save.packs]);
 
   return (
     <>
@@ -86,6 +89,33 @@ export function HistoryScreen(): JSX.Element {
               <span className="kv__key">Vanligaste kategori</span>
               <span className="kv__value">{mostPlayedCategory(stats.questsByCategory)}</span>
             </div>
+            <div className="kv">
+              <span className="kv__key">Uppdrag via lägen</span>
+              <span className="kv__value">{packSummary.totalCompletions}</span>
+            </div>
+            {packSummary.mostUsed && (
+              <div className="kv">
+                <span className="kv__key">Mest använda läge</span>
+                <span className="kv__value">
+                  {packSummary.mostUsed.pack.icon} {packSummary.mostUsed.pack.name} ·{' '}
+                  {packSummary.mostUsed.count}
+                </span>
+              </div>
+            )}
+            {packSummary.distinctPacks > 0 && (
+              <div className="kv">
+                <span className="kv__key">Olika lägen provade</span>
+                <span className="kv__value">
+                  {packSummary.distinctPacks} / {ACTIVITY_PACKS.length}
+                </span>
+              </div>
+            )}
+            {packSummary.dailyPackCompletions > 0 && (
+              <div className="kv">
+                <span className="kv__key">Dagens läge</span>
+                <span className="kv__value">{packSummary.dailyPackCompletions}</span>
+              </div>
+            )}
             <div className="kv">
               <span className="kv__key">Kedjor klara</span>
               <span className="kv__value">{stats.chainsCompleted}</span>

@@ -27,7 +27,7 @@ describe('content inventory', () => {
   it('matches the figures quoted in the README', () => {
     expect(QUEST_COUNT).toBe(1188);
     expect(BOSSES.length).toBe(14);
-    expect(ACHIEVEMENTS.length).toBe(85);
+    expect(ACHIEVEMENTS.length).toBe(88);
     expect(QUEST_CHAINS.length).toBe(6);
     expect(GAME_EVENTS.length).toBe(6);
     expect(LOOT_ITEMS.length).toBe(10);

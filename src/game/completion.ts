@@ -16,6 +16,12 @@ import { createId, randomRng, type Rng } from '@/utils/rng';
 import { applyBossDamage, ensureCurrentBoss, getWeaknessInfo } from './boss';
 import { evaluateAchievements } from './achievements';
 import {
+  DAILY_PACK_GOLD_BONUS,
+  getDailyPack,
+  qualifiesForDailyBonus,
+  recordPackCompletion,
+} from './activityPacks';
+import {
   BOSS_KEY_DAMAGE_MULTIPLIER,
   FOCUS_RUNE_GOLD_MULTIPLIER,
   SHRINE_XP_MULTIPLIER,
@@ -98,6 +104,25 @@ export function completeQuest(
     detail: quest.title,
     tone: 'default',
   });
+
+  /* ---------------- daily pack bonus ---------------- */
+
+  // The pack the quest was rolled from, and whether this completion is the
+  // first one today through DAGENS LÄGE. Modest and once per day.
+  const packId = (active ?? save.activeQuest)?.packId ?? null;
+  const viaDailyPack = qualifiesForDailyBonus(save.packs, packId, dateKey);
+
+  if (viaDailyPack) {
+    const bonusGold = Math.max(1, Math.round(goldEarned * DAILY_PACK_GOLD_BONUS));
+    lines.push({
+      id: 'daily-pack',
+      label: 'DAGENS LÄGE',
+      xp: 0,
+      gold: bonusGold,
+      detail: getDailyPack(dateKey).name,
+      tone: 'bonus',
+    });
+  }
 
   /* ---------------- timed challenge ---------------- */
 
@@ -299,6 +324,10 @@ export function completeQuest(
     daily: offer.isDaily ? { ...save.daily, completed: true } : save.daily,
     activeQuest: null,
     recentQuestIds: rememberQuests(save.recentQuestIds, [quest.id]),
+    packs: {
+      ...recordPackCompletion(save.packs, packId, viaDailyPack),
+      ...(viaDailyPack ? { dailyBonusClaimedOn: dateKey } : {}),
+    },
   };
 
   /* ---------------- achievements ---------------- */

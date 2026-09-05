@@ -89,6 +89,25 @@ const MIGRATIONS: Record<number, Migration> = {
     schemaVersion: 3,
     feedback: save.feedback ?? { scores: {}, quests: {}, up: 0, down: 0 },
   }),
+
+  /**
+   * v3 -> v4: activity packs.
+   *
+   * Adds only the local pack record: favourites, recents, completion counts
+   * and the daily-pack bonus marker. A v3 player keeps everything they had,
+   * including their thumbs-up/down feedback.
+   */
+  3: (save) => ({
+    ...save,
+    schemaVersion: 4,
+    packs: save.packs ?? {
+      favourites: [],
+      recent: [],
+      completions: {},
+      dailyBonusClaimedOn: null,
+      dailyPackCompletions: 0,
+    },
+  }),
 };
 
 export interface MigrationResult {

@@ -175,6 +175,12 @@ export interface PoolOptions {
    * the secret category stays locked, which is the safe default.
    */
   secrets?: SecretContext;
+  /**
+   * v3.2: when present, only these quest ids are eligible. Activity packs use
+   * it to narrow the library before the ordinary engine runs. It can only ever
+   * remove candidates, never add one back.
+   */
+  restrictTo?: ReadonlySet<string>;
 }
 
 /**
@@ -257,9 +263,10 @@ export interface QuestPoolResult {
  * player rather than handing them something they cannot do.
  */
 export function buildQuestPoolDetailed(options: PoolOptions): QuestPoolResult {
-  const { filters, chains, recentQuestIds, includeChains = true, secrets } = options;
+  const { filters, chains, recentQuestIds, includeChains = true, secrets, restrictTo } = options;
 
   const allowed = (quest: Quest): boolean => {
+    if (restrictTo && !restrictTo.has(quest.id)) return false;
     if (!includeChains && quest.chainId) return false;
     if (quest.chainId && !isChainQuestAvailable(quest, chains)) return false;
     // Secret quests are gated on the player's own clock and save; without a
@@ -406,6 +413,14 @@ export interface RollOptions {
   feedback?: FeedbackState;
   /** v3: unlocks secret quests whose local condition currently holds. */
   secrets?: SecretContext;
+  /** v3.2: narrow the library to these ids before rolling (activity packs). */
+  restrictTo?: ReadonlySet<string>;
+  /**
+   * v3.2: an extra multiplier per quest, layered on top of the existing
+   * category-variety and feedback weights. Packs use it for their soft
+   * preferences. It cannot make a quest eligible - only more likely.
+   */
+  extraWeight?: (quest: Quest) => number;
   rng?: Rng;
   /** The week's boss, so offers can advertise weakness hits. */
   boss?: BossDefinition | undefined;
@@ -431,14 +446,25 @@ export interface QuestRollResult {
  * UI asks them to widen their filters instead.
  */
 export function rollQuestChoices(options: RollOptions): QuestRollResult {
-  const { filters, chains, recentQuestIds, feedback, secrets, rng = randomRng, boss, effects } =
-    options;
+  const {
+    filters,
+    chains,
+    recentQuestIds,
+    feedback,
+    secrets,
+    restrictTo,
+    extraWeight,
+    rng = randomRng,
+    boss,
+    effects,
+  } = options;
 
   const pool = buildQuestPoolDetailed({
     filters,
     chains,
     recentQuestIds,
     ...(secrets ? { secrets } : {}),
+    ...(restrictTo ? { restrictTo } : {}),
   });
 
   if (pool.quests.length === 0) {
@@ -457,7 +483,10 @@ export function rollQuestChoices(options: RollOptions): QuestRollResult {
     pool.quests,
     tiers.length,
     rng,
-    (quest) => (catWeights.get(quest.category) ?? 1) * feedbackWeight(scores, quest.category),
+    (quest) =>
+      (catWeights.get(quest.category) ?? 1) *
+      feedbackWeight(scores, quest.category) *
+      (extraWeight ? Math.max(0.05, extraWeight(quest)) : 1),
   );
 
   // Pick three quests, then hand the biggest to the riskiest tier.

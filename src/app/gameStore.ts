@@ -15,6 +15,14 @@ import { randomRng, type Rng } from '@/utils/rng';
 import { getBossById } from '@/data/bosses';
 import { getQuestById } from '@/data/quests';
 import { applyFeedback } from '@/game/feedback';
+import { getPackById } from '@/data/activityPacks';
+import {
+  packFilters,
+  rememberPack,
+  rollFromPack,
+  surprisePack,
+  toggleFavouritePack,
+} from '@/game/activityPacks';
 import { ensureCurrentBoss } from '@/game/boss';
 import { abandonQuest, completeQuest } from '@/game/completion';
 import {
@@ -57,6 +65,10 @@ export interface GameState {
   /** Transient message shown by the market. */
   marketMessage: { text: string; ok: boolean } | null;
   lastReward: RewardSummary | null;
+  /** v3.2: the pack whose screen is open, if any. Never persisted. */
+  activePackId: string | null;
+  /** v3.2: the pack the current offers were rolled from. */
+  offersPackId: string | null;
   /**
    * The quest the player just finished or abandoned, so the thumbs-up/down
    * prompt knows what it is rating. Never persisted.
@@ -89,6 +101,11 @@ export type GameAction =
   | { type: 'COMPLETE_QUEST'; now?: Date; rng?: Rng }
   | { type: 'ABANDON_QUEST' }
   | { type: 'RATE_QUEST'; questId: string; vote: 1 | -1 }
+  | { type: 'OPEN_PACK'; packId: string }
+  | { type: 'CLOSE_PACK' }
+  | { type: 'ROLL_PACK'; packId: string; now?: Date; rng?: Rng }
+  | { type: 'SURPRISE_ME'; now?: Date; rng?: Rng }
+  | { type: 'TOGGLE_FAVOURITE_PACK'; packId: string }
   | { type: 'DISMISS_REWARD' }
   | { type: 'RESOLVE_EVENT'; choiceId: string; rng?: Rng }
   | { type: 'DISMISS_EVENT' }
@@ -169,6 +186,8 @@ export function createInitialState(): GameState {
     lastReward: null,
     lastQuest: null,
     lastQuestOutcome: null,
+    activePackId: null,
+    offersPackId: null,
     loadSource: result.source,
     loadWarnings: result.warnings,
     saveTick: 0,
@@ -248,13 +267,87 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    /* --------------------- v3.2: activity packs --------------------- */
+
+    case 'OPEN_PACK': {
+      if (!getPackById(action.packId)) return state;
+      return { ...state, activePackId: action.packId };
+    }
+
+    case 'CLOSE_PACK':
+      return { ...state, activePackId: null };
+
+    /**
+     * Roll from a pack. The pack narrows the library and the ordinary engine
+     * does the rest, so tiers, rarity, anti-repetition and feedback weighting
+     * all behave exactly as they do on the manual path.
+     */
+    case 'ROLL_PACK': {
+      const pack = getPackById(action.packId);
+      if (!pack) return state;
+
+      const result = rollFromPack({
+        pack,
+        save: state.save,
+        effects: getEffects(state.save),
+        ...(action.now ? { now: action.now } : {}),
+        ...(action.rng ? { rng: action.rng } : {}),
+      });
+
+      return {
+        ...state,
+        save: { ...state.save, packs: rememberPack(state.save.packs, pack.id) },
+        filters: packFilters(pack, state.filters.mood),
+        offers: result.empty ? null : result.offers,
+        offersMoodRelaxed: result.moodRelaxed,
+        offersEmpty: result.empty,
+        offersPackId: pack.id,
+        activePackId: null,
+      };
+    }
+
+    /**
+     * ÖVERRASKA MIG. A pack-shaped roll with no pack behind it, capped at
+     * 30 minutes unless the player turned long surprises on themselves.
+     */
+    case 'SURPRISE_ME': {
+      const pack = surprisePack(state.save.settings.longSurprises);
+      const result = rollFromPack({
+        pack,
+        save: state.save,
+        effects: getEffects(state.save),
+        ...(action.now ? { now: action.now } : {}),
+        ...(action.rng ? { rng: action.rng } : {}),
+      });
+
+      return {
+        ...state,
+        filters: packFilters(pack, state.filters.mood),
+        offers: result.empty ? null : result.offers,
+        offersMoodRelaxed: result.moodRelaxed,
+        offersEmpty: result.empty,
+        offersPackId: null,
+        activePackId: null,
+      };
+    }
+
+    case 'TOGGLE_FAVOURITE_PACK': {
+      const packs = toggleFavouritePack(state.save.packs, action.packId);
+      if (packs === state.save.packs) return state;
+      return { ...state, save: { ...state.save, packs } };
+    }
+
     case 'CLOSE_OFFERS':
       return { ...state, offers: null, offersEmpty: false, offersMoodRelaxed: false };
 
     case 'ACCEPT_QUEST': {
       const save: RogueDaySave = {
         ...state.save,
-        activeQuest: { offer: action.offer, acceptedAt: new Date().toISOString() },
+        activeQuest: {
+          offer: action.offer,
+          acceptedAt: new Date().toISOString(),
+          ...(state.offersPackId ? { packId: state.offersPackId } : {}),
+        },
         recentQuestIds: rememberQuests(
           state.save.recentQuestIds,
           state.offers?.map((offer) => offer.quest.id) ?? [action.offer.quest.id],
@@ -482,6 +575,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         lastReward: null,
         lastQuest: null,
         lastQuestOutcome: null,
+        activePackId: null,
+        offersPackId: null,
         loadSource: action.source ?? state.loadSource,
         loadWarnings: [],
         saveError: null,
@@ -509,6 +604,8 @@ const PERSISTING_ACTIONS = new Set<GameAction['type']>([
   'COMPLETE_QUEST',
   'ABANDON_QUEST',
   'RATE_QUEST',
+  'ROLL_PACK',
+  'TOGGLE_FAVOURITE_PACK',
   'RESOLVE_EVENT',
   'USE_ITEM',
   'START_TIMER',

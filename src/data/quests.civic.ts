@@ -270,7 +270,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['motivated', 'adventurous'],
     tags: ['grannar'],
-    ctags: ['social', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'social'],
   },
   {
     id: 'cv_hold_the_door',
@@ -283,7 +283,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'adventurous'],
     tags: ['godhet'],
-    ctags: ['outdoors', 'social'],
+    ctags: ['no-money', 'outdoors', 'social'],
   },
   {
     id: 'cv_litter_bag',
@@ -296,7 +296,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'adventurous'],
     tags: ['miljö'],
-    ctags: ['outdoors', 'physical', 'cleaning'],
+    ctags: ['cleaning', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'cv_local_business',
@@ -383,7 +383,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'stressed'],
     tags: ['omtanke'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
 
   /* ==================== ÅRSTIDER OCH VÄDER ==================== */
@@ -451,7 +451,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'bored'],
     rarity: 'rare',
     tags: ['säsong', 'ute'],
-    ctags: ['outdoors', 'relaxing', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'relaxing'],
   },
   {
     id: 'cv_storm_prep',
@@ -477,7 +477,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['säsong', 'foto'],
-    ctags: ['outdoors', 'creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'cv_seasonal_food',
@@ -554,7 +554,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['resa', 'utforskning'],
-    ctags: ['seated', 'exploration'],
+    ctags: ['exploration', 'no-money', 'seated'],
   },
   {
     id: 'cv_transit_route',
@@ -591,7 +591,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['geografi'],
-    ctags: ['seated', 'exploration'],
+    ctags: ['exploration', 'no-money', 'seated'],
   },
   {
     id: 'cv_walk_to_next_area',
@@ -604,7 +604,7 @@ export const CIVIC_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous'],
     tags: ['utforskning', 'promenad'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'cv_emergency_bag',

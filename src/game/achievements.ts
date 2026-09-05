@@ -17,6 +17,7 @@ export function buildAchievementContext(save: RogueDaySave): AchievementContext 
     inventory: save.inventory,
     player: save.player,
     achievementsUnlocked: save.achievements.length,
+    packs: save.packs,
   };
 }
 

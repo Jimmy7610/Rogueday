@@ -21,6 +21,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja'],
     chainId: 'forgotten_drawer',
     chainStep: 1,
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'chain_drawer_2',
@@ -35,6 +36,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja'],
     chainId: 'forgotten_drawer',
     chainStep: 2,
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'chain_drawer_3',
@@ -49,6 +51,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'final'],
     chainId: 'forgotten_drawer',
     chainStep: 3,
+    ctags: ['admin', 'indoors'],
   },
 
   /* -------- INBOX WAR I-IV -------- */
@@ -64,6 +67,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'mejl'],
     chainId: 'inbox_war',
     chainStep: 1,
+    ctags: ['screen', 'seated'],
   },
   {
     id: 'chain_inbox_2',
@@ -77,6 +81,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'mejl'],
     chainId: 'inbox_war',
     chainStep: 2,
+    ctags: ['screen', 'seated'],
   },
   {
     id: 'chain_inbox_3',
@@ -92,6 +97,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'mejl'],
     chainId: 'inbox_war',
     chainStep: 3,
+    ctags: ['screen', 'seated'],
   },
   {
     id: 'chain_inbox_4',
@@ -105,6 +111,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'final'],
     chainId: 'inbox_war',
     chainStep: 4,
+    ctags: ['screen', 'seated'],
   },
 
   /* -------- KITCHEN KINGDOM I-III -------- */
@@ -121,6 +128,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'kök'],
     chainId: 'kitchen_kingdom',
     chainStep: 1,
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'chain_kitchen_2',
@@ -135,6 +143,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'kök'],
     chainId: 'kitchen_kingdom',
     chainStep: 2,
+    ctags: ['cleaning', 'indoors'],
   },
   {
     id: 'chain_kitchen_3',
@@ -150,6 +159,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'final'],
     chainId: 'kitchen_kingdom',
     chainStep: 3,
+    ctags: ['cleaning', 'indoors', 'physical'],
   },
 
   /* -------- THE WALKER'S PATH I-V -------- */
@@ -166,6 +176,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'promenad'],
     chainId: 'walkers_path',
     chainStep: 1,
+    ctags: ['exploration', 'outdoors', 'physical'],
   },
   {
     id: 'chain_walker_2',
@@ -180,6 +191,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'promenad'],
     chainId: 'walkers_path',
     chainStep: 2,
+    ctags: ['exploration', 'outdoors', 'physical'],
   },
   {
     id: 'chain_walker_3',
@@ -194,6 +206,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'promenad'],
     chainId: 'walkers_path',
     chainStep: 3,
+    ctags: ['exploration', 'outdoors', 'physical'],
   },
   {
     id: 'chain_walker_4',
@@ -209,6 +222,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'promenad'],
     chainId: 'walkers_path',
     chainStep: 4,
+    ctags: ['exploration', 'outdoors', 'physical'],
   },
   {
     id: 'chain_walker_5',
@@ -225,6 +239,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'final'],
     chainId: 'walkers_path',
     chainStep: 5,
+    ctags: ['exploration', 'outdoors', 'physical'],
   },
 
   /* -------- DIGITAL EXORCISM I-III -------- */
@@ -240,6 +255,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'fokus'],
     chainId: 'digital_exorcism',
     chainStep: 1,
+    ctags: ['screen', 'seated'],
   },
   {
     id: 'chain_exorcism_2',
@@ -255,6 +271,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'fokus'],
     chainId: 'digital_exorcism',
     chainStep: 2,
+    ctags: ['screen', 'seated'],
   },
   {
     id: 'chain_exorcism_3',
@@ -270,6 +287,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'final'],
     chainId: 'digital_exorcism',
     chainStep: 3,
+    ctags: ['phone-free', 'seated'],
   },
 
   /* -------- THE PAPER TOMB I-III -------- */
@@ -286,6 +304,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'papper'],
     chainId: 'paper_tomb',
     chainStep: 1,
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'chain_paper_2',
@@ -300,6 +319,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'papper'],
     chainId: 'paper_tomb',
     chainStep: 2,
+    ctags: ['admin', 'indoors'],
   },
   {
     id: 'chain_paper_3',
@@ -315,6 +335,7 @@ export const CHAIN_QUEST_SEEDS: QuestSeed[] = [
     tags: ['kedja', 'final'],
     chainId: 'paper_tomb',
     chainStep: 3,
+    ctags: ['admin', 'indoors'],
   },
 ];
 

@@ -18,7 +18,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['skapande'],
-    ctags: ['creative', 'seated', 'phone-free'],
+    ctags: ['creative', 'no-money', 'phone-free', 'seated'],
   },
   {
     id: 'm2_photo_of_ordinary',
@@ -45,7 +45,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['lek', 'humor'],
-    ctags: ['indoors', 'creative', 'family-friendly'],
+    ctags: ['creative', 'family-friendly', 'indoors', 'no-money'],
   },
   {
     id: 'm2_arrange_five',
@@ -58,7 +58,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['estetik'],
-    ctags: ['indoors', 'creative'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
 
   /* ================= CREATIVE · 15-60 MIN ================= */
@@ -87,7 +87,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'legendary',
     tags: ['skapande'],
-    ctags: ['creative', 'focus'],
+    ctags: ['creative', 'focus', 'no-money'],
   },
   {
     id: 'm2_zine_page',
@@ -100,7 +100,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'epic',
     tags: ['skapande'],
-    ctags: ['creative', 'seated', 'phone-free'],
+    ctags: ['creative', 'no-money', 'phone-free', 'seated'],
   },
   {
     id: 'm2_redesign_corner',
@@ -114,7 +114,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous', 'motivated'],
     rarity: 'epic',
     tags: ['inredning'],
-    ctags: ['indoors', 'creative'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
 
   /* ================= LEARNING ================= */
@@ -129,7 +129,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['övning'],
-    ctags: ['focus', 'solo'],
+    ctags: ['focus', 'no-money', 'solo'],
   },
   {
     id: 'm2_research_small',
@@ -155,7 +155,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed', 'motivated'],
     rarity: 'epic',
     tags: ['läsning'],
-    ctags: ['seated', 'quiet', 'phone-free'],
+    ctags: ['no-money', 'phone-free', 'quiet', 'seated'],
   },
   {
     id: 'm2_practice_hour',
@@ -169,7 +169,7 @@ export const MIND2_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     rarity: 'legendary',
     tags: ['färdighet'],
-    ctags: ['focus'],
+    ctags: ['focus', 'no-money'],
   },
 
   /* ================= MINDFULNESS ================= */

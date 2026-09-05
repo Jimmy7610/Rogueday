@@ -20,7 +20,7 @@ export const SOCIAL_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['samtal'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'so_photo_send',
@@ -47,7 +47,7 @@ export const SOCIAL_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated'],
     rarity: 'uncommon',
     tags: ['vänskap'],
-    ctags: ['social', 'creative'],
+    ctags: ['creative', 'no-money', 'social'],
   },
   {
     id: 'so_long_conversation',
@@ -60,7 +60,7 @@ export const SOCIAL_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'legendary',
     tags: ['vänskap'],
-    ctags: ['social', 'phone-free'],
+    ctags: ['no-money', 'phone-free', 'social'],
   },
   {
     id: 'so_help_bigger',
@@ -74,7 +74,7 @@ export const SOCIAL_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'legendary',
     tags: ['godhet'],
-    ctags: ['social', 'physical'],
+    ctags: ['no-money', 'physical', 'social'],
   },
 
   /* ================= FOOD ================= */

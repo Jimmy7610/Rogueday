@@ -26,6 +26,8 @@ function stateFrom(save = makeSave()): GameState {
     itemReveal: null,
     lastQuest: null,
     lastQuestOutcome: null,
+    activePackId: null,
+    offersPackId: null,
     marketMessage: null,
     lastReward: null,
     loadSource: 'fresh',

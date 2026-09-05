@@ -20,7 +20,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     diff: 'hard',
     tags: ['fokus', 'arbete'],
-    ctags: ['focus', 'phone-free', 'seated'],
+    ctags: ['focus', 'no-money', 'phone-free', 'seated'],
   },
   {
     id: 'fk_shutdown_ritual',
@@ -57,7 +57,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     diff: 'hard',
     tags: ['fokus'],
-    ctags: ['focus', 'seated'],
+    ctags: ['focus', 'no-money', 'seated'],
   },
   {
     id: 'fk_one_tab_rule',
@@ -258,7 +258,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'adventurous'],
     tags: ['socialt', 'godhet'],
-    ctags: ['social', 'creative'],
+    ctags: ['creative', 'no-money', 'social'],
   },
   {
     id: 'fk_teach_someone_thing',
@@ -270,7 +270,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'adventurous'],
     tags: ['socialt', 'lärande'],
-    ctags: ['social', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'social'],
   },
   {
     id: 'fk_ask_for_help',
@@ -283,7 +283,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     diff: 'hard',
     tags: ['socialt', 'mod'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'fk_share_a_photo',
@@ -307,7 +307,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['motivated', 'adventurous'],
     tags: ['socialt'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'fk_household_manual',
@@ -334,7 +334,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'stressed'],
     tags: ['språk', 'läsning'],
-    ctags: ['quiet', 'seated', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'fk_pronounce_practice',
@@ -358,7 +358,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'adventurous'],
     tags: ['språk', 'skrivande'],
-    ctags: ['seated', 'focus'],
+    ctags: ['focus', 'no-money', 'seated'],
   },
   {
     id: 'fk_listen_other_language',
@@ -394,7 +394,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'bored'],
     tags: ['lärande'],
-    ctags: ['focus', 'family-friendly'],
+    ctags: ['family-friendly', 'focus', 'no-money'],
   },
 
   /* ==================== FOTO OCH BILD ==================== */
@@ -408,7 +408,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['bored', 'adventurous'],
     tags: ['foto'],
-    ctags: ['creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'no-money'],
   },
   {
     id: 'fk_photo_from_low',
@@ -420,7 +420,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['bored', 'adventurous'],
     tags: ['foto'],
-    ctags: ['creative', 'physical'],
+    ctags: ['creative', 'no-money', 'physical'],
   },
   {
     id: 'fk_digitise_photos',
@@ -459,7 +459,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['foto', 'hem'],
-    ctags: ['indoors', 'creative'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
 
   /* ==================== STORA TIMMESPROJEKT ==================== */
@@ -843,7 +843,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['hobby'],
-    ctags: ['indoors', 'creative'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'fk_screen_wipe',
@@ -869,7 +869,7 @@ export const FOCUS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated'],
     tags: ['städ', 'säsong'],
-    ctags: ['outdoors', 'cleaning', 'physical'],
+    ctags: ['cleaning', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'fk_swap_an_app',

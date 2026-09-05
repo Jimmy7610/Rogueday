@@ -57,6 +57,7 @@ describe('achievement catalogue', () => {
       inventory: save.inventory,
       player: save.player,
       achievementsUnlocked: 0,
+      packs: save.packs,
     };
 
     for (const achievement of ACHIEVEMENTS) {

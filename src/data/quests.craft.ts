@@ -360,7 +360,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'bored'],
     tags: ['trädgård'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'cf_rake_leaves',
@@ -373,7 +373,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'adventurous'],
     tags: ['trädgård'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'cf_bird_food',
@@ -386,7 +386,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'motivated', 'stressed'],
     tags: ['natur', 'djur'],
-    ctags: ['outdoors', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'relaxing'],
   },
   {
     id: 'cf_pet_play',
@@ -399,7 +399,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['stressed', 'bored', 'motivated'],
     tags: ['djur'],
-    ctags: ['indoors', 'phone-free', 'relaxing', 'family-friendly'],
+    ctags: ['family-friendly', 'indoors', 'no-money', 'phone-free', 'relaxing'],
   },
   {
     id: 'cf_pet_gear_wash',
@@ -452,7 +452,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['stressed', 'bored'],
     tags: ['hantverk'],
-    ctags: ['indoors', 'seated', 'creative', 'relaxing'],
+    ctags: ['creative', 'indoors', 'no-money', 'relaxing', 'seated'],
   },
   {
     id: 'cf_candle_or_jar',
@@ -492,7 +492,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'motivated'],
     tags: ['kreativt', 'planering'],
-    ctags: ['indoors', 'seated', 'creative'],
+    ctags: ['creative', 'indoors', 'no-money', 'seated'],
   },
   {
     id: 'cf_rearrange_room',
@@ -518,7 +518,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['motivated', 'bored'],
     tags: ['hantverk'],
-    ctags: ['indoors', 'seated', 'creative'],
+    ctags: ['creative', 'indoors', 'no-money', 'seated'],
   },
   {
     id: 'cf_pressed_flowers',
@@ -558,7 +558,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['spel', 'socialt'],
-    ctags: ['indoors', 'social', 'seated', 'family-friendly'],
+    ctags: ['family-friendly', 'indoors', 'no-money', 'seated', 'social'],
   },
   {
     id: 'cf_solo_puzzle',
@@ -570,7 +570,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['stressed', 'bored'],
     tags: ['spel'],
-    ctags: ['seated', 'quiet', 'relaxing', 'solo'],
+    ctags: ['no-money', 'quiet', 'relaxing', 'seated', 'solo'],
   },
   {
     id: 'cf_learn_card_trick',
@@ -582,7 +582,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['lärande', 'lek'],
-    ctags: ['indoors', 'seated', 'creative'],
+    ctags: ['creative', 'indoors', 'no-money', 'seated'],
   },
   {
     id: 'cf_play_by_ear',
@@ -595,7 +595,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['musik'],
-    ctags: ['indoors', 'creative', 'focus'],
+    ctags: ['creative', 'focus', 'indoors', 'no-money'],
   },
   {
     id: 'cf_sing_out_loud',
@@ -608,7 +608,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'stressed', 'adventurous'],
     tags: ['musik'],
-    ctags: ['indoors', 'relaxing'],
+    ctags: ['indoors', 'no-money', 'relaxing'],
   },
   {
     id: 'cf_album_full_listen',
@@ -620,7 +620,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['stressed', 'bored'],
     tags: ['musik'],
-    ctags: ['relaxing', 'seated', 'quiet'],
+    ctags: ['no-money', 'quiet', 'relaxing', 'seated'],
   },
   {
     id: 'cf_juggle_practice',
@@ -645,7 +645,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['lek', 'kreativt'],
-    ctags: ['indoors', 'creative', 'family-friendly'],
+    ctags: ['creative', 'family-friendly', 'indoors', 'no-money'],
   },
   {
     id: 'cf_memory_game',
@@ -657,7 +657,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'motivated'],
     tags: ['lek', 'minne'],
-    ctags: ['quiet', 'focus'],
+    ctags: ['focus', 'no-money', 'quiet'],
   },
   {
     id: 'cf_video_game_finish',
@@ -723,7 +723,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['motivated', 'bored'],
     tags: ['mat', 'lärande'],
-    ctags: ['indoors', 'focus'],
+    ctags: ['focus', 'indoors', 'no-money'],
   },
   {
     id: 'cf_taste_test',
@@ -774,7 +774,7 @@ export const CRAFT_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['motivated', 'bored'],
     tags: ['mat', 'socialt'],
-    ctags: ['social', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'social'],
   },
   {
     id: 'cf_bake_and_share',

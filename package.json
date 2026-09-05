@@ -14,7 +14,9 @@
     "icons": "node scripts/generate-icons.mjs",
     "coverage": "node scripts/coverage-report.mjs",
     "qa:filters": "node scripts/qa-filters.mjs",
-    "qa:dupes": "node scripts/dup-report.mjs"
+    "qa:dupes": "node scripts/dup-report.mjs",
+    "qa:packs": "node scripts/pack-report.mjs",
+    "qa:packrolls": "node scripts/qa-packs.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

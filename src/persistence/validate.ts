@@ -3,11 +3,17 @@ import { isValidDateKey } from '@/utils/date';
 import { sanitiseTimer } from '@/game/timer';
 import { FEEDBACK_LIMIT } from '@/game/feedback';
 import {
+  FAVOURITE_PACK_LIMIT,
+  RECENT_PACK_LIMIT,
+  getPackById,
+} from '@/data/activityPacks';
+import {
   APP_VERSION,
   SCHEMA_VERSION,
   createDefaultBuffs,
   createDefaultDaily,
   createDefaultFeedback,
+  createDefaultPacks,
   createDefaultMarket,
   createDefaultPerks,
   createDefaultProgression,
@@ -115,6 +121,45 @@ export function validateSave(candidate: unknown): ValidationResult {
  * The timer is sanitised separately so broken stamps cannot produce nonsense
  * elapsed times.
  */
+/**
+ * v3.2 activity packs. Unknown pack ids are dropped rather than trusted, so a
+ * save written by a newer build - or edited by hand - cannot leave a dangling
+ * favourite the UI would have to guard against.
+ */
+function mergePacks(value: unknown): RogueDaySave['packs'] {
+  const base = createDefaultPacks();
+  if (!isObject(value)) return base;
+
+  const known = (ids: unknown, limit: number): string[] =>
+    Array.isArray(ids)
+      ? [
+          ...new Set(
+            ids.filter((id): id is string => typeof id === 'string' && Boolean(getPackById(id))),
+          ),
+        ].slice(0, limit)
+      : [];
+
+  const completions: Record<string, number> = {};
+  if (isObject(value.completions)) {
+    for (const [packId, count] of Object.entries(value.completions)) {
+      if (!getPackById(packId) || !isFiniteNumber(count)) continue;
+      completions[packId] = Math.max(0, Math.round(count));
+    }
+  }
+
+  return {
+    favourites: known(value.favourites, FAVOURITE_PACK_LIMIT),
+    recent: known(value.recent, RECENT_PACK_LIMIT),
+    completions,
+    dailyBonusClaimedOn: isValidDateKey(value.dailyBonusClaimedOn)
+      ? (value.dailyBonusClaimedOn as string)
+      : null,
+    dailyPackCompletions: isFiniteNumber(value.dailyPackCompletions)
+      ? Math.max(0, Math.round(value.dailyPackCompletions))
+      : 0,
+  };
+}
+
 /**
  * v3 feedback. Scores are clamped on the way in so a hand-edited or corrupted
  * backup can never turn the weighting into something that hides content.
@@ -285,6 +330,7 @@ export function mergeWithDefaults(partial: Record<string, unknown>): RogueDaySav
       ? partial.recentQuestIds.filter((id): id is string => typeof id === 'string')
       : [],
     feedback: mergeFeedback(partial.feedback),
+    packs: mergePacks(partial.packs),
     onboardingComplete: partial.onboardingComplete === true,
     metadata: {
       createdAt:

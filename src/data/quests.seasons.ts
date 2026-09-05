@@ -507,7 +507,7 @@ export const SEASONS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'motivated'],
     tags: ['promenad'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'pr_errand_walk',
@@ -533,7 +533,7 @@ export const SEASONS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'adventurous'],
     tags: ['promenad', 'träning'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'pr_walk_to_music',
@@ -546,7 +546,7 @@ export const SEASONS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'motivated', 'adventurous'],
     tags: ['promenad', 'musik'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'pr_long_walk',
@@ -559,7 +559,7 @@ export const SEASONS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'motivated'],
     tags: ['promenad', 'uthållighet'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'pr_walk_and_think',
@@ -572,7 +572,7 @@ export const SEASONS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'motivated'],
     tags: ['promenad', 'reflektion'],
-    ctags: ['outdoors', 'phone-free', 'physical', 'focus'],
+    ctags: ['focus', 'no-money', 'outdoors', 'phone-free', 'physical'],
   },
   {
     id: 'pr_walk_in_rain',
@@ -585,7 +585,7 @@ export const SEASONS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['promenad', 'väder'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'pr_walk_photograph',
@@ -598,7 +598,7 @@ export const SEASONS_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['promenad', 'foto'],
-    ctags: ['outdoors', 'creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'no-money', 'outdoors'],
   },
 
   /* ==================== HEMLIGT ==================== */

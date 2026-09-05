@@ -21,7 +21,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'stressed'],
     tags: ['ute'],
-    ctags: ['outdoors', 'quiet', 'phone-free'],
+    ctags: ['no-money', 'outdoors', 'phone-free', 'quiet'],
   },
   {
     id: 'fx_sit_outside',
@@ -112,7 +112,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored', 'motivated'],
     tags: ['promenad'],
-    ctags: ['outdoors', 'physical', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'physical', 'relaxing'],
   },
   {
     id: 'fx_pick_up_three',
@@ -125,7 +125,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'bored'],
     tags: ['miljö'],
-    ctags: ['outdoors', 'cleaning'],
+    ctags: ['cleaning', 'no-money', 'outdoors'],
   },
   {
     id: 'fx_doorstep_stretch',
@@ -177,7 +177,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'motivated'],
     tags: ['socialt'],
-    ctags: ['outdoors', 'social'],
+    ctags: ['no-money', 'outdoors', 'social'],
   },
   {
     id: 'fx_evening_air',
@@ -876,7 +876,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['motivated', 'stressed'],
     tags: ['socialt'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'so_old_friend',
@@ -888,7 +888,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'adventurous'],
     tags: ['socialt'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'so_plan_meetup',
@@ -912,7 +912,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'bored'],
     tags: ['socialt', 'familj'],
-    ctags: ['social', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'social'],
   },
   {
     id: 'so_compliment_specific',
@@ -924,7 +924,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['motivated', 'adventurous'],
     tags: ['socialt'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'so_help_someone',
@@ -936,7 +936,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated'],
     tags: ['socialt'],
-    ctags: ['social'],
+    ctags: ['no-money', 'social'],
   },
   {
     id: 'so_walk_together',
@@ -949,7 +949,7 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'adventurous', 'bored'],
     tags: ['socialt', 'promenad'],
-    ctags: ['outdoors', 'social', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical', 'social'],
   },
   {
     id: 'so_postcard',
@@ -973,6 +973,6 @@ export const FILL_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'stressed'],
     tags: ['socialt'],
-    ctags: ['social', 'focus'],
+    ctags: ['focus', 'no-money', 'social'],
   },
 ];

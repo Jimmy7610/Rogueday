@@ -18,6 +18,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed', 'adventurous'],
     rarity: 'uncommon',
     tags: ['skapande', 'lek'],
+    ctags: ['creative', 'no-money'],
   },
   {
     id: 'create_three_ideas',
@@ -28,6 +29,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['tankar'],
+    ctags: ['creative', 'no-money'],
   },
   {
     id: 'create_write_paragraph',
@@ -40,6 +42,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated', 'adventurous'],
     rarity: 'uncommon',
     tags: ['skrivande'],
+    ctags: ['creative', 'no-money'],
   },
   {
     id: 'create_playlist_forge',
@@ -52,6 +55,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated', 'adventurous'],
     rarity: 'uncommon',
     tags: ['musik'],
+    ctags: ['creative', 'no-money'],
   },
   {
     id: 'create_instrument_touch',
@@ -65,6 +69,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated'],
     rarity: 'rare',
     tags: ['musik'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'create_recipe_invent',
@@ -78,6 +83,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'bored'],
     rarity: 'rare',
     tags: ['mat', 'improvisation'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'create_letter_future',
@@ -90,6 +96,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed', 'motivated'],
     rarity: 'epic',
     tags: ['reflektion', 'skrivande'],
+    ctags: ['creative', 'no-money'],
   },
   {
     id: 'create_rearrange_room',
@@ -104,6 +111,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous', 'motivated'],
     rarity: 'epic',
     tags: ['inredning'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'create_doodle_margin',
@@ -114,6 +122,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['lek'],
+    ctags: ['creative', 'no-money'],
   },
   {
     id: 'create_story_seed',
@@ -126,6 +135,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['fantasi'],
+    ctags: ['creative', 'no-money'],
   },
 
   /* ---------------- HEALTH ---------------- */
@@ -138,6 +148,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['snabbt', 'kropp'],
+    ctags: ['indoors'],
   },
   {
     id: 'health_fruit_ration',
@@ -148,6 +159,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['mat'],
+    ctags: ['indoors'],
   },
   {
     id: 'health_screen_break',
@@ -158,6 +170,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['ögon', 'paus'],
+    ctags: ['relaxing', 'screen'],
   },
   {
     id: 'health_posture_reset',
@@ -168,6 +181,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['kropp', 'snabbt'],
+    ctags: ['physical', 'seated'],
   },
   {
     id: 'health_early_bed',
@@ -181,6 +195,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['sömn'],
+    ctags: ['indoors'],
   },
   {
     id: 'health_no_phone_meal',
@@ -194,6 +209,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'uncommon',
     tags: ['mat', 'närvaro'],
+    ctags: ['indoors', 'phone-free'],
   },
   {
     id: 'health_breakfast_quest',
@@ -207,6 +223,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'uncommon',
     tags: ['morgon', 'mat'],
+    ctags: ['indoors'],
   },
   {
     id: 'health_hydrate_day',
@@ -227,6 +244,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['paus'],
+    ctags: ['quiet'],
   },
 
   /* ---------------- MOVEMENT ---------------- */
@@ -239,6 +257,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['stretch'],
+    ctags: ['physical'],
   },
   {
     id: 'move_dance_song',
@@ -252,6 +271,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed', 'adventurous'],
     rarity: 'uncommon',
     tags: ['musik', 'glädje'],
+    ctags: ['indoors', 'physical'],
   },
   {
     id: 'move_ten_squats',
@@ -262,6 +282,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'medium',
     tags: ['styrka'],
+    ctags: ['physical'],
   },
   {
     id: 'move_morning_flow',
@@ -275,6 +296,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'uncommon',
     tags: ['yoga', 'morgon'],
+    ctags: ['indoors', 'physical'],
   },
   {
     id: 'move_stand_hour',
@@ -287,6 +309,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'uncommon',
     tags: ['rutin'],
+    ctags: ['physical'],
   },
   {
     id: 'move_clean_workout',
@@ -301,6 +324,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['städ', 'rörelse'],
+    ctags: ['indoors', 'physical'],
   },
   {
     id: 'move_body_scan_shake',
@@ -314,6 +338,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'uncommon',
     tags: ['stress'],
+    ctags: ['indoors', 'physical'],
   },
   {
     id: 'move_thirty_active',
@@ -327,6 +352,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['träning'],
+    ctags: ['physical'],
   },
 
   /* ---------------- MINDFULNESS ---------------- */
@@ -339,6 +365,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['andning', 'snabbt'],
+    ctags: ['quiet'],
   },
   {
     id: 'mind_five_senses',
@@ -351,6 +378,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'uncommon',
     tags: ['grundning'],
+    ctags: ['quiet'],
   },
   {
     id: 'mind_silence_ten',
@@ -363,6 +391,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['meditation'],
+    ctags: ['phone-free', 'quiet', 'seated'],
   },
   {
     id: 'mind_brain_dump',
@@ -375,6 +404,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'rare',
     tags: ['skrivande', 'stress'],
+    ctags: ['quiet'],
   },
   {
     id: 'mind_gratitude_three',
@@ -385,6 +415,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['reflektion'],
+    ctags: ['quiet'],
   },
   {
     id: 'mind_worry_window',
@@ -397,6 +428,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed'],
     rarity: 'rare',
     tags: ['stress'],
+    ctags: ['quiet'],
   },
   {
     id: 'mind_slow_tea',
@@ -410,6 +442,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'uncommon',
     tags: ['närvaro'],
+    ctags: ['indoors', 'quiet'],
   },
   {
     id: 'mind_window_gaze',
@@ -422,6 +455,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'stressed'],
     tags: ['stillhet'],
+    ctags: ['indoors', 'quiet'],
   },
   {
     id: 'mind_single_task',
@@ -434,6 +468,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['fokus'],
+    ctags: ['phone-free', 'quiet'],
   },
   {
     id: 'mind_evening_review',
@@ -444,6 +479,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['kväll', 'reflektion'],
+    ctags: ['quiet'],
   },
 
   /* ---------------- SELFCARE ---------------- */
@@ -459,6 +495,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'uncommon',
     tags: ['vila'],
+    ctags: ['indoors', 'relaxing'],
   },
   {
     id: 'self_skin_ritual',
@@ -470,6 +507,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['omsorg'],
+    ctags: ['indoors', 'relaxing'],
   },
   {
     id: 'self_nap_permission',
@@ -483,6 +521,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'rare',
     tags: ['vila'],
+    ctags: ['indoors', 'relaxing'],
   },
   {
     id: 'self_comfort_clothes',
@@ -494,6 +533,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['snabbt'],
+    ctags: ['indoors', 'relaxing'],
   },
   {
     id: 'self_say_no',
@@ -506,6 +546,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'epic',
     tags: ['gränser', 'mod'],
+    ctags: ['relaxing'],
   },
   {
     id: 'self_favourite_thing',
@@ -518,6 +559,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed'],
     rarity: 'rare',
     tags: ['glädje'],
+    ctags: ['relaxing'],
   },
   {
     id: 'self_tidy_bedside',
@@ -529,6 +571,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['kväll', 'ordning'],
+    ctags: ['indoors', 'relaxing'],
   },
   {
     id: 'self_music_alone',
@@ -541,6 +584,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed'],
     rarity: 'rare',
     tags: ['musik', 'fokus'],
+    ctags: ['relaxing'],
   },
 
   /* ---------------- LEARNING ---------------- */
@@ -553,6 +597,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     dur: 5,
     energy: 'low',
     tags: ['språk', 'snabbt'],
+    ctags: ['focus', 'no-money'],
   },
   {
     id: 'learn_wiki_dive',
@@ -565,6 +610,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['läsning'],
+    ctags: ['focus', 'no-money'],
   },
   {
     id: 'learn_read_chapter',
@@ -577,6 +623,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated'],
     rarity: 'uncommon',
     tags: ['läsning'],
+    ctags: ['focus', 'no-money'],
   },
   {
     id: 'learn_tutorial_watch',
@@ -589,6 +636,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'epic',
     tags: ['färdighet'],
+    ctags: ['focus', 'no-money'],
   },
   {
     id: 'learn_ten_min_skill',
@@ -601,6 +649,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     rarity: 'uncommon',
     tags: ['övning'],
+    ctags: ['focus', 'no-money'],
   },
   {
     id: 'learn_teach_someone',
@@ -613,6 +662,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['socialt'],
+    ctags: ['focus', 'no-money'],
   },
   {
     id: 'learn_documentary',
@@ -625,6 +675,7 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['film'],
+    ctags: ['focus', 'no-money'],
   },
   {
     id: 'learn_question_hunt',
@@ -637,5 +688,6 @@ export const MIND_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous', 'motivated'],
     rarity: 'uncommon',
     tags: ['nyfikenhet'],
+    ctags: ['focus', 'no-money'],
   },
 ];

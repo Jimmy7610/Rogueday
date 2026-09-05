@@ -292,7 +292,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['stressed', 'bored'],
     tags: ['skrivande'],
-    ctags: ['seated', 'quiet', 'creative', 'focus'],
+    ctags: ['creative', 'focus', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'in_write_a_scene',
@@ -304,7 +304,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['bored', 'adventurous'],
     tags: ['skrivande'],
-    ctags: ['seated', 'creative', 'focus'],
+    ctags: ['creative', 'focus', 'no-money', 'seated'],
   },
   {
     id: 'in_describe_a_stranger',
@@ -316,7 +316,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['skrivande'],
-    ctags: ['seated', 'creative', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'in_list_of_titles',
@@ -328,7 +328,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['skrivande', 'lek'],
-    ctags: ['seated', 'creative'],
+    ctags: ['creative', 'no-money', 'seated'],
   },
   {
     id: 'in_rewrite_a_day',
@@ -340,7 +340,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'stressed'],
     tags: ['skrivande'],
-    ctags: ['seated', 'creative'],
+    ctags: ['creative', 'no-money', 'seated'],
   },
   {
     id: 'in_letter_never_sent',
@@ -376,7 +376,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'bored'],
     tags: ['lärande', 'skrivande'],
-    ctags: ['seated', 'focus'],
+    ctags: ['focus', 'no-money', 'seated'],
   },
   {
     id: 'in_question_list',
@@ -388,7 +388,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['bored', 'adventurous'],
     tags: ['skrivande', 'nyfikenhet'],
-    ctags: ['seated', 'creative', 'focus'],
+    ctags: ['creative', 'focus', 'no-money', 'seated'],
   },
   {
     id: 'in_keep_a_log',
@@ -595,7 +595,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous', 'stressed'],
     tags: ['natur', 'kväll'],
-    ctags: ['outdoors', 'quiet', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
   {
     id: 'in_wind_direction',
@@ -608,7 +608,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['natur'],
-    ctags: ['outdoors', 'quiet', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'in_touch_a_tree',
@@ -634,7 +634,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['väder'],
-    ctags: ['outdoors', 'quiet'],
+    ctags: ['no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'in_count_birds',
@@ -647,7 +647,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'stressed'],
     tags: ['natur'],
-    ctags: ['outdoors', 'quiet', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'in_horizon_look',
@@ -660,7 +660,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored'],
     tags: ['vila', 'ögon'],
-    ctags: ['outdoors', 'quiet', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
   {
     id: 'in_shortest_errand',
@@ -712,7 +712,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'motivated', 'bored'],
     tags: ['socialt', 'ute'],
-    ctags: ['outdoors', 'social', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'relaxing', 'social'],
   },
   {
     id: 'in_eat_outside',
@@ -738,7 +738,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored'],
     tags: ['läsning', 'ute'],
-    ctags: ['outdoors', 'seated', 'relaxing', 'phone-free'],
+    ctags: ['no-money', 'outdoors', 'phone-free', 'relaxing', 'seated'],
   },
   {
     id: 'in_work_outside',
@@ -751,7 +751,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['motivated', 'adventurous'],
     tags: ['ute', 'fokus'],
-    ctags: ['outdoors', 'focus', 'seated'],
+    ctags: ['focus', 'no-money', 'outdoors', 'seated'],
   },
   {
     id: 'in_sunset_watch',
@@ -764,7 +764,7 @@ export const INNER_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'adventurous', 'bored'],
     tags: ['natur', 'kväll'],
-    ctags: ['outdoors', 'quiet', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
 
   /* ==================== FLER KAOSUPPDRAG ==================== */

@@ -77,6 +77,84 @@ export type ContentTag =
   | 'screen'
   | 'seated';
 
+/* ------------------------------------------------------------------ */
+/* v3.2: activity packs                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * A curated situation mode.
+ *
+ * A pack owns no quests of its own. It is a declarative filter and weighting
+ * over the existing library, so the player can say "this is the situation I am
+ * in" instead of configuring four filters by hand.
+ *
+ * Everything here is data. No pack logic lives in a component.
+ */
+export interface ActivityPack {
+  id: string;
+  name: string;
+  icon: string;
+  /** One line on the card. */
+  shortDescription: string;
+  /** The longer line inside the pack screen. */
+  flavourText: string;
+
+  /* --- hard constraints: a quest outside these is never offered --- */
+  allowedDurations: QuestDuration[];
+  allowedEnergies: EnergyLevel[];
+  allowedLocations: QuestLocation[];
+  /** Tags every quest must carry. */
+  requiredTags: ContentTag[];
+  /** Tags that disqualify a quest outright. */
+  excludedTags: ContentTag[];
+  /** Categories that disqualify a quest outright. */
+  excludedCategories: QuestCategory[];
+  /** When set, only these categories are eligible. */
+  onlyCategories?: QuestCategory[];
+
+  /* --- soft weighting: shapes what tends to come up --- */
+  preferredEnergy?: EnergyLevel;
+  preferredMoods: Mood[];
+  preferredTags: ContentTag[];
+  preferredCategories: QuestCategory[];
+
+  /** Chaos packs draw from the chaos pool instead of the normal one. */
+  mode: QuestMode;
+  /** Hidden until the player reaches this level. Absent means always shown. */
+  minimumLevel?: number;
+  /** Card accent, from the existing palette. */
+  accent: string;
+  sortOrder: number;
+  /**
+   * v3.2: a pack whose eligible set depends on live save state rather than on
+   * the library alone. BOSS RUSH is the only one, and it follows the week.
+   */
+  dynamic?: 'boss-weakness';
+}
+
+/** How a pack's pool looked when it was last measured. */
+export interface PackPoolInfo {
+  packId: string;
+  /** Quests that satisfy the pack right now. */
+  total: number;
+  /** True when the pool is too small to roll three distinct offers from. */
+  starved: boolean;
+}
+
+/** v3.2: local, per-device pack state. */
+export interface PackState {
+  /** Up to FAVOURITE_PACK_LIMIT pack ids, in the order the player picked them. */
+  favourites: string[];
+  /** Pack ids most recently rolled from, most recent first. */
+  recent: string[];
+  /** Completions per pack id, for stats and achievements. */
+  completions: Record<string, number>;
+  /** The local date key whose daily-pack bonus has already been claimed. */
+  dailyBonusClaimedOn: string | null;
+  /** How many completions came through the daily pack, for stats. */
+  dailyPackCompletions: number;
+}
+
 export interface Quest {
   id: string;
   title: string;
@@ -416,6 +494,8 @@ export interface AchievementContext {
   inventory: InventoryEntry[];
   player: Player;
   achievementsUnlocked: number;
+  /** v3.2: activity-pack usage, for the pack badges. */
+  packs: PackState;
 }
 
 export interface AchievementState {
@@ -625,6 +705,11 @@ export interface Settings {
   reducedMotion: boolean;
   animations: boolean;
   highContrast: boolean;
+  /**
+   * v3.2: may ÖVERRASKA MIG hand out a 60-minute quest? Off by default - a
+   * surprise the player did not choose should not be able to claim an hour.
+   */
+  longSurprises: boolean;
 }
 
 export interface ActiveQuestState {
@@ -632,6 +717,8 @@ export interface ActiveQuestState {
   acceptedAt: string;
   /** Optional focus timer. Absent until the player starts one. */
   timer?: FocusTimerState;
+  /** v3.2: the activity pack this quest was rolled from, if any. */
+  packId?: string;
 }
 
 export interface SaveMetadata {
@@ -684,6 +771,8 @@ export interface RogueDaySave {
   recentQuestIds: string[];
   /** v3: local thumbs-up/down weighting. */
   feedback: FeedbackState;
+  /** v3.2: favourites, recents and completion counts for activity packs. */
+  packs: PackState;
   onboardingComplete: boolean;
   metadata: SaveMetadata;
 }

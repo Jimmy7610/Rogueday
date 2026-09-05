@@ -23,7 +23,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'uncommon',
     tags: ['närvaro'],
-    ctags: ['outdoors', 'quiet', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
   {
     id: 'out_cloud_watch',
@@ -36,7 +36,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'stressed'],
     tags: ['stillhet'],
-    ctags: ['outdoors', 'relaxing', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'outdoors', 'relaxing'],
   },
   {
     id: 'out_one_tree',
@@ -49,7 +49,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored', 'adventurous'],
     tags: ['natur'],
-    ctags: ['outdoors', 'quiet', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
   {
     id: 'out_doorstep_stretch',
@@ -62,7 +62,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'motivated'],
     tags: ['kropp', 'luft'],
-    ctags: ['outdoors', 'physical', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'physical', 'relaxing'],
   },
   {
     id: 'out_light_dose',
@@ -89,7 +89,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored'],
     tags: ['lek', 'observation'],
-    ctags: ['outdoors', 'quiet', 'family-friendly'],
+    ctags: ['family-friendly', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'out_smell_test',
@@ -102,7 +102,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'stressed', 'adventurous'],
     tags: ['närvaro'],
-    ctags: ['outdoors', 'quiet'],
+    ctags: ['no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'out_bench_two_minutes',
@@ -115,7 +115,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored'],
     tags: ['vila'],
-    ctags: ['outdoors', 'seated', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'relaxing', 'seated'],
   },
   {
     id: 'out_balcony_air',
@@ -156,7 +156,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'motivated', 'stressed'],
     tags: ['promenad', 'snabbt'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_brisk_lap',
@@ -241,7 +241,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'uncommon',
     tags: ['promenad', 'lugn'],
-    ctags: ['outdoors', 'relaxing', 'quiet'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
   {
     id: 'out_sit_and_watch',
@@ -255,7 +255,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed'],
     rarity: 'uncommon',
     tags: ['stillhet'],
-    ctags: ['outdoors', 'seated', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'relaxing', 'seated'],
   },
   {
     id: 'out_sunset_watch',
@@ -269,7 +269,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored', 'adventurous'],
     rarity: 'rare',
     tags: ['natur', 'kväll'],
-    ctags: ['outdoors', 'relaxing', 'quiet'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
   {
     id: 'out_texture_hunt',
@@ -283,7 +283,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['sinnen'],
-    ctags: ['outdoors', 'exploration', 'family-friendly'],
+    ctags: ['exploration', 'family-friendly', 'no-money', 'outdoors'],
   },
   {
     id: 'out_weather_note',
@@ -312,7 +312,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['lek', 'observation'],
-    ctags: ['outdoors', 'exploration', 'family-friendly'],
+    ctags: ['exploration', 'family-friendly', 'no-money', 'outdoors'],
   },
   {
     id: 'out_alphabet_walk',
@@ -326,7 +326,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['lek'],
-    ctags: ['outdoors', 'exploration', 'family-friendly'],
+    ctags: ['exploration', 'family-friendly', 'no-money', 'outdoors'],
   },
   {
     id: 'out_door_study',
@@ -340,7 +340,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['observation'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'out_podcast_walk_short',
@@ -353,7 +353,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'motivated'],
     tags: ['promenad', 'ljud'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_one_stop_early',
@@ -367,7 +367,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'uncommon',
     tags: ['pendling'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_errand_walk',
@@ -395,7 +395,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['viljestyrka'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
 
   /* ================= 15 MIN · HIGH · OUTSIDE ================= */
@@ -472,7 +472,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['natur', 'promenad'],
-    ctags: ['outdoors', 'relaxing', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical', 'relaxing'],
   },
   {
     id: 'out_green_route',
@@ -486,7 +486,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored', 'motivated'],
     rarity: 'uncommon',
     tags: ['natur'],
-    ctags: ['outdoors', 'relaxing', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical', 'relaxing'],
   },
   {
     id: 'out_silent_march',
@@ -500,7 +500,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['mindfulness'],
-    ctags: ['outdoors', 'phone-free', 'quiet'],
+    ctags: ['no-money', 'outdoors', 'phone-free', 'quiet'],
   },
   {
     id: 'out_photo_series_walk',
@@ -514,7 +514,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['foto'],
-    ctags: ['outdoors', 'creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'out_market_wander',
@@ -542,7 +542,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_reverse_route',
@@ -556,7 +556,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'uncommon',
     tags: ['promenad'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_bus_three_stops',
@@ -584,7 +584,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous', 'bored'],
     rarity: 'rare',
     tags: ['socialt'],
-    ctags: ['outdoors', 'social', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical', 'social'],
   },
   {
     id: 'out_sit_park_half',
@@ -598,7 +598,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'bored'],
     rarity: 'rare',
     tags: ['vila', 'natur'],
-    ctags: ['outdoors', 'seated', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'relaxing', 'seated'],
   },
   {
     id: 'out_sketch_outside',
@@ -612,7 +612,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'rare',
     tags: ['skapande'],
-    ctags: ['outdoors', 'creative', 'seated', 'phone-free'],
+    ctags: ['creative', 'no-money', 'outdoors', 'phone-free', 'seated'],
   },
 
   /* ================= 30 MIN · HIGH · OUTSIDE ================= */
@@ -674,7 +674,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'epic',
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_garden_work',
@@ -689,7 +689,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['trädgård'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
 
   /* ================= 60 MIN · OUTSIDE ================= */
@@ -706,7 +706,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'epic',
     tags: ['promenad', 'uthållighet'],
-    ctags: ['outdoors', 'physical', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_tourist_home',
@@ -720,7 +720,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'legendary',
     tags: ['utforskning', 'kultur'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'out_library_trip',
@@ -748,7 +748,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'epic',
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'out_map_pin',
@@ -763,7 +763,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous'],
     rarity: 'epic',
     tags: ['äventyr', 'slump'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_neighbourhood_map',
@@ -777,7 +777,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'epic',
     tags: ['utforskning', 'kreativt'],
-    ctags: ['outdoors', 'exploration', 'creative'],
+    ctags: ['creative', 'exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'out_photo_mission_hour',
@@ -791,7 +791,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'adventurous'],
     rarity: 'epic',
     tags: ['foto', 'utforskning'],
-    ctags: ['outdoors', 'creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'out_walk_and_errands',
@@ -820,7 +820,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'adventurous', 'bored'],
     rarity: 'epic',
     tags: ['natur'],
-    ctags: ['outdoors', 'relaxing', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'relaxing'],
   },
   {
     id: 'out_sunrise_walk',
@@ -834,7 +834,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'legendary',
     tags: ['morgon', 'promenad'],
-    ctags: ['outdoors', 'quiet', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical', 'quiet'],
   },
   {
     id: 'out_full_loop_hour',
@@ -849,7 +849,7 @@ export const OUTDOOR_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'legendary',
     tags: ['promenad', 'uthållighet'],
-    ctags: ['outdoors', 'physical'],
+    ctags: ['no-money', 'outdoors', 'physical'],
   },
   {
     id: 'out_outdoor_cleanup_hour',

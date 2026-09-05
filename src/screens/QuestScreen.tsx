@@ -10,6 +10,7 @@ import { FocusTimer } from '@/components/FocusTimer';
 import { Market } from '@/components/Market';
 import { QuestChoiceModal } from '@/components/QuestChoiceModal';
 import { QuestFeedback } from '@/components/QuestFeedback';
+import { PackModal, PackPicker } from '@/components/PackPicker';
 import { QuestFinderModal } from '@/components/QuestFinderModal';
 import {
   DIFFICULTY_LABELS,
@@ -144,12 +145,15 @@ export function QuestScreen({
             <p className="hero__text">Förvandla vardaglig tristess till verkliga hjältedåd.</p>
             <button
               type="button"
-              className="btn btn--primary btn--lg btn--block"
+              className="btn btn--ghost btn--lg btn--block"
               onClick={openFinder}
             >
               HITTA ETT UPPDRAG 🎲
             </button>
+            <p className="hero__hint">Egna filter: tid, energi, plats, humör och kaos.</p>
           </div>
+
+          <PackPicker />
 
           <BossStrip onOpen={onOpenBoss} />
           <FollowUpCard />
@@ -166,6 +170,8 @@ export function QuestScreen({
       )}
 
       {tab === 'market' && <Market />}
+
+      {state.activePackId && <PackModal />}
 
       {finderOpen && (
         <QuestFinderModal

@@ -19,6 +19,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'uncommon',
     tags: ['matlagning'],
+    ctags: ['indoors'],
   },
   {
     id: 'food_leftover_alchemy',
@@ -32,6 +33,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['matlagning', 'sparsamt'],
+    ctags: ['indoors'],
   },
   {
     id: 'food_new_recipe',
@@ -46,6 +48,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'epic',
     tags: ['matlagning', 'äventyr'],
+    ctags: ['indoors'],
   },
   {
     id: 'food_prep_tomorrow',
@@ -59,6 +62,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated'],
     rarity: 'uncommon',
     tags: ['planering'],
+    ctags: ['indoors'],
   },
   {
     id: 'food_veg_boost',
@@ -70,6 +74,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['enkelt'],
+    ctags: ['indoors'],
   },
   {
     id: 'food_bake_something',
@@ -83,6 +88,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'motivated', 'adventurous'],
     rarity: 'rare',
     tags: ['bak'],
+    ctags: ['creative', 'indoors'],
   },
   {
     id: 'food_water_before_coffee',
@@ -118,6 +124,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['sparsamt'],
+    ctags: ['errand', 'indoors'],
   },
 
   /* ---------------- MORNING ---------------- */
@@ -133,6 +140,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'adventurous'],
     rarity: 'epic',
     tags: ['morgon', 'disciplin'],
+    ctags: ['indoors'],
   },
   {
     id: 'morn_no_phone_first',
@@ -146,6 +154,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'rare',
     tags: ['morgon', 'fokus'],
+    ctags: ['indoors', 'quiet', 'screen'],
   },
   {
     id: 'morn_three_priorities',
@@ -169,6 +178,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     loc: ['home'],
     tags: ['ljus', 'snabbt'],
+    ctags: ['indoors'],
   },
   {
     id: 'morn_cold_finish',
@@ -182,6 +192,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['adventurous', 'motivated'],
     rarity: 'rare',
     tags: ['morgon', 'utmaning'],
+    ctags: ['indoors'],
   },
   {
     id: 'morn_prep_evening_before',
@@ -195,6 +206,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'uncommon',
     tags: ['planering', 'kväll'],
+    ctags: ['indoors'],
   },
   {
     id: 'morn_first_task_hard',
@@ -223,6 +235,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['motivated', 'stressed'],
     rarity: 'rare',
     tags: ['kväll', 'kök'],
+    ctags: ['indoors'],
   },
   {
     id: 'eve_screen_curfew',
@@ -236,6 +249,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['stressed', 'motivated'],
     rarity: 'rare',
     tags: ['sömn'],
+    ctags: ['indoors', 'phone-free'],
   },
   {
     id: 'eve_ten_minute_tidy',
@@ -247,6 +261,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['städ', 'rutin'],
+    ctags: ['indoors'],
   },
   {
     id: 'eve_tomorrow_list',
@@ -270,6 +285,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     rarity: 'uncommon',
     tags: ['sömn', 'ljus'],
+    ctags: ['indoors'],
   },
   {
     id: 'eve_read_before_sleep',
@@ -283,6 +299,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     moods: ['bored', 'stressed'],
     rarity: 'uncommon',
     tags: ['läsning', 'sömn'],
+    ctags: ['indoors'],
   },
   {
     id: 'eve_reset_living_room',
@@ -294,6 +311,7 @@ export const DAILY_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     loc: ['home'],
     tags: ['rutin'],
+    ctags: ['indoors'],
   },
   {
     id: 'eve_gratitude_close',

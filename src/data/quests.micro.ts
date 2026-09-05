@@ -20,7 +20,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous', 'stressed'],
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration', 'quiet'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'mx_count_doors',
@@ -33,7 +33,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['utforskning', 'lek'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'mx_nearest_tree',
@@ -46,7 +46,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'bored', 'adventurous'],
     tags: ['natur'],
-    ctags: ['outdoors', 'quiet', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'quiet', 'relaxing'],
   },
   {
     id: 'mx_one_new_street',
@@ -59,7 +59,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'mx_oldest_building',
@@ -72,7 +72,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['utforskning', 'historia'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'mx_sound_map',
@@ -98,7 +98,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration', 'quiet'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'mx_shortcut_hunt',
@@ -111,7 +111,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'motivated'],
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'mx_bench_survey',
@@ -124,7 +124,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'stressed'],
     tags: ['utforskning', 'vila'],
-    ctags: ['outdoors', 'seated', 'relaxing'],
+    ctags: ['no-money', 'outdoors', 'relaxing', 'seated'],
   },
   {
     id: 'mx_local_sign',
@@ -137,7 +137,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['utforskning'],
-    ctags: ['outdoors', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'mx_water_search',
@@ -150,7 +150,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'stressed'],
     tags: ['natur'],
-    ctags: ['outdoors', 'exploration', 'relaxing'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'relaxing'],
   },
   {
     id: 'mx_door_of_the_day',
@@ -163,7 +163,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['utforskning', 'foto'],
-    ctags: ['outdoors', 'exploration', 'creative'],
+    ctags: ['creative', 'exploration', 'no-money', 'outdoors'],
   },
   {
     id: 'mx_new_shop',
@@ -189,7 +189,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['adventurous', 'bored'],
     tags: ['natur', 'utforskning'],
-    ctags: ['outdoors', 'exploration', 'physical'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'physical'],
   },
   {
     id: 'mx_texture_walk',
@@ -202,7 +202,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'stressed'],
     tags: ['närvaro', 'utforskning'],
-    ctags: ['outdoors', 'quiet', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'mx_light_hunt',
@@ -215,7 +215,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['stressed', 'adventurous', 'bored'],
     tags: ['utforskning'],
-    ctags: ['outdoors', 'quiet', 'exploration'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'mx_home_detail_hunt',
@@ -228,7 +228,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'stressed'],
     tags: ['utforskning'],
-    ctags: ['indoors', 'quiet', 'exploration'],
+    ctags: ['exploration', 'indoors', 'no-money', 'quiet'],
   },
   {
     id: 'mx_ceiling_check',
@@ -241,7 +241,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'motivated'],
     tags: ['utforskning', 'hem'],
-    ctags: ['indoors', 'exploration'],
+    ctags: ['exploration', 'indoors', 'no-money'],
   },
   {
     id: 'mx_behind_furniture',
@@ -254,7 +254,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['adventurous', 'motivated'],
     tags: ['utforskning', 'städ'],
-    ctags: ['indoors', 'cleaning', 'exploration'],
+    ctags: ['cleaning', 'exploration', 'indoors', 'no-money'],
   },
   {
     id: 'mx_stairwell_read',
@@ -279,7 +279,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['adventurous', 'bored'],
     tags: ['utforskning', 'kreativt'],
-    ctags: ['creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'no-money'],
   },
 
   /* ==================== DIGITAL RENSNING ==================== */
@@ -583,7 +583,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['kreativt', 'teckning'],
-    ctags: ['creative', 'seated', 'indoors'],
+    ctags: ['creative', 'indoors', 'no-money', 'seated'],
   },
   {
     id: 'kx_six_word_story',
@@ -595,7 +595,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous', 'stressed'],
     tags: ['kreativt', 'skrivande'],
-    ctags: ['creative', 'seated', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'kx_object_backstory',
@@ -607,7 +607,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'adventurous'],
     tags: ['kreativt', 'fantasi'],
-    ctags: ['creative', 'seated', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'kx_one_color_drawing',
@@ -619,7 +619,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'stressed'],
     tags: ['kreativt', 'teckning'],
-    ctags: ['creative', 'seated', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'kx_sound_song',
@@ -632,7 +632,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['kreativt', 'musik'],
-    ctags: ['creative', 'indoors'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'kx_letter_to_future',
@@ -644,7 +644,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['stressed', 'motivated', 'bored'],
     tags: ['kreativt', 'skrivande'],
-    ctags: ['creative', 'seated', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'kx_rearrange_shelf_art',
@@ -657,7 +657,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'motivated'],
     tags: ['kreativt', 'hem'],
-    ctags: ['creative', 'indoors'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'kx_photo_series',
@@ -669,7 +669,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['bored', 'adventurous'],
     tags: ['kreativt', 'foto'],
-    ctags: ['creative', 'exploration'],
+    ctags: ['creative', 'exploration', 'no-money'],
   },
   {
     id: 'kx_bad_poem',
@@ -681,7 +681,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'stressed'],
     tags: ['kreativt', 'skrivande'],
-    ctags: ['creative', 'seated', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'kx_recipe_invention',
@@ -694,7 +694,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'motivated'],
     tags: ['kreativt', 'mat'],
-    ctags: ['creative', 'indoors'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'kx_map_from_memory',
@@ -706,7 +706,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'stressed'],
     tags: ['kreativt', 'minnen'],
-    ctags: ['creative', 'seated', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
   {
     id: 'kx_reuse_something',
@@ -719,7 +719,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['motivated', 'adventurous'],
     tags: ['kreativt', 'återbruk'],
-    ctags: ['creative', 'indoors'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'kx_soundtrack_day',
@@ -743,7 +743,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['stressed', 'bored'],
     tags: ['kreativt', 'skrivande'],
-    ctags: ['creative', 'seated', 'quiet', 'phone-free'],
+    ctags: ['creative', 'no-money', 'phone-free', 'quiet', 'seated'],
   },
   {
     id: 'kx_build_something',
@@ -756,7 +756,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous', 'motivated'],
     tags: ['kreativt', 'bygga'],
-    ctags: ['creative', 'indoors'],
+    ctags: ['creative', 'indoors', 'no-money'],
   },
   {
     id: 'kx_teach_yourself_draw',
@@ -768,7 +768,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['motivated', 'bored'],
     tags: ['kreativt', 'övning'],
-    ctags: ['creative', 'seated', 'focus'],
+    ctags: ['creative', 'focus', 'no-money', 'seated'],
   },
   {
     id: 'kx_rename_rooms',
@@ -781,7 +781,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['bored', 'adventurous'],
     tags: ['kreativt', 'lek'],
-    ctags: ['creative', 'indoors', 'family-friendly'],
+    ctags: ['creative', 'family-friendly', 'indoors', 'no-money'],
   },
   {
     id: 'kx_describe_room',
@@ -793,7 +793,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'stressed'],
     tags: ['kreativt', 'skrivande'],
-    ctags: ['creative', 'seated', 'quiet'],
+    ctags: ['creative', 'no-money', 'quiet', 'seated'],
   },
 
   /* ==================== LÄRANDE I KORTA SKURAR ==================== */
@@ -819,7 +819,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['bored', 'motivated', 'adventurous'],
     tags: ['lärande', 'praktiskt'],
-    ctags: ['seated', 'indoors'],
+    ctags: ['indoors', 'no-money', 'seated'],
   },
   {
     id: 'lx_country_of_the_day',
@@ -867,7 +867,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['stressed', 'bored'],
     tags: ['lärande', 'läsning'],
-    ctags: ['seated', 'quiet', 'relaxing', 'phone-free'],
+    ctags: ['no-money', 'phone-free', 'quiet', 'relaxing', 'seated'],
   },
   {
     id: 'lx_explain_out_loud',
@@ -879,7 +879,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'low',
     moods: ['motivated', 'bored'],
     tags: ['lärande'],
-    ctags: ['quiet', 'focus'],
+    ctags: ['focus', 'no-money', 'quiet'],
   },
   {
     id: 'lx_keyboard_shortcut',
@@ -904,7 +904,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['motivated', 'bored'],
     tags: ['lärande', 'mat'],
-    ctags: ['indoors', 'focus'],
+    ctags: ['focus', 'indoors', 'no-money'],
   },
   {
     id: 'lx_bird_or_plant',
@@ -917,7 +917,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['outside'],
     moods: ['bored', 'adventurous'],
     tags: ['lärande', 'natur'],
-    ctags: ['outdoors', 'exploration', 'quiet'],
+    ctags: ['exploration', 'no-money', 'outdoors', 'quiet'],
   },
   {
     id: 'lx_finance_term',
@@ -942,7 +942,7 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     loc: ['home'],
     moods: ['motivated', 'bored'],
     tags: ['lärande', 'musik'],
-    ctags: ['indoors', 'creative', 'focus'],
+    ctags: ['creative', 'focus', 'indoors', 'no-money'],
   },
   {
     id: 'lx_documentary',
@@ -966,6 +966,6 @@ export const MICRO_QUEST_SEEDS: QuestSeed[] = [
     energy: 'medium',
     moods: ['bored', 'motivated'],
     tags: ['lärande'],
-    ctags: ['focus', 'phone-free'],
+    ctags: ['focus', 'no-money', 'phone-free'],
   },
 ];

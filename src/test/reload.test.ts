@@ -217,6 +217,7 @@ describe('full reload persistence', () => {
       reducedMotion: true,
       animations: false,
       highContrast: true,
+      longSurprises: true,
     };
     saveGame(save);
 
