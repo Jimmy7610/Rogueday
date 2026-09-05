@@ -28,9 +28,9 @@ Allt körs lokalt i webbläsaren. Ingen server, inget konto, ingen AI vid körni
 
 Djupsystemen i V2 — tier-utmaningar, fokustimer, marknad, förmågor, bosstaktik
 och belöningsspecifikationen — beskrivs i [docs/v2.md](docs/v2.md).
-Innehållsexplosionen i V3 — de 1 008 uppdragen, anti-upprepning 2.0,
-innehållstaggarna, de hemliga uppdragen och tumme upp/ned — beskrivs i
-[docs/v3.md](docs/v3.md).
+Innehållsexplosionen i V3 och kategoribalansen i V3.1 — de 1 188 uppdragen,
+anti-upprepning 2.0, innehållstaggarna, de hemliga uppdragen och tumme
+upp/ned — beskrivs i [docs/v3.md](docs/v3.md).
 
 ---
 
@@ -48,7 +48,7 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 
 | System | Beskrivning |
 | --- | --- |
-| **Uppdragsbibliotek** | 1 008 handskrivna uppdrag i 22 kategorier, med full metadata |
+| **Uppdragsbibliotek** | 1 188 handskrivna uppdrag i 22 kategorier, minst 42 i varje |
 | **Filtrering** | Tid (5/15/30/60 min), energi, plats och sinnesstämning respekteras strikt |
 | **Tre val** | Varje tärningsslag ger tre alternativ med stigande risk och belöning |
 | **Sällsynthet** | Vanlig 45% · Ovanlig 28% · Sällsynt 17% · Episk 8% · Legendarisk 2% |
@@ -72,7 +72,7 @@ Det är inte en att-göra-lista. Det är en roguelike där sysslorna är fiender
 | **Innehållstaggar** | 18 praktiska taggar (tyst, skärmfritt, gratis, utomhus …) per uppdrag |
 | **Anti-upprepning** | 60 uppdrag djupt minne plus kategorivariation i dragningen |
 | **Tumme upp/ned** | Lokal viktning som aldrig gömmer en kategori |
-| **Hemliga uppdrag** | 26 uppdrag låsta bakom klockslag, veckodag, svit och nivå |
+| **Hemliga uppdrag** | 44 uppdrag låsta bakom klockslag, datum, bossens HP, svit, nivå och spelhistorik |
 
 ## Kom igång
 
@@ -109,6 +109,7 @@ fungerar även från en underkatalog.
 | `npm run icons` | Genererar PWA-ikonerna lokalt (inga beroenden) |
 | `npm run coverage` | Skriver ut täckningsrapporten för uppdragsbiblioteket |
 | `npm run qa:filters` | Rullar riktiga uppdrag för varje filterkombination och kontrollerar dem |
+| `npm run qa:dupes` | Letar dubbletter och nästan-dubbletter i uppdragsbiblioteket |
 
 ## Så fungerar sparfilen
 
@@ -248,7 +249,7 @@ sig, märken för sig, lagring för sig. Det finns ingen `App.tsx` på 5000 rade
 npm test
 ```
 
-510 tester täcker bland annat:
+532 tester täcker bland annat:
 
 - uppdragsfiltrering, sällsynthet och urval
 - XP-beräkning och nivåprogression
@@ -269,11 +270,13 @@ npm test
 - bossbalans genom simulerad veckospelning
 - att belöningsposterna summerar till exakt den ändring som sker
 - migrering v1 → v2 och v2 → v3 mot kompletta sparfiler från varje version
-- innehållsvalidering: 1 008 unika id:n, titlar, mål och smaktexter
+- innehållsvalidering: 1 188 unika id:n, titlar, mål och smaktexter
+- att ingen kategori sjunker under fyrtio uppdrag
 - att varje kombination av tid, energi, plats och sinnesstämning har en riktig pool
 - anti-upprepningens minne, kategorivariation och viktade dragning
 - att tumme ned aldrig kan ta bort en kategori ur poolen
-- att hemliga uppdrag är låsta tills deras lokala villkor faktiskt gäller
+- varje hemligt villkor för sig, inklusive strax före och strax efter sitt fönster
+- att inget hemligt uppdrag är permanent oåtkomligt
 - hela appen genom React Testing Library, inklusive tangentbordsnavigering
 
 Nyckeltestet heter **`persists complete progression across full reload`** och gör exakt det

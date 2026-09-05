@@ -109,6 +109,16 @@ function medianQuests(bossId: string, style: 'safe' | 'mixed'): number {
   return runs[Math.floor(runs.length / 2)];
 }
 
+/** Dev aid: RD_BOSS_REPORT=1 npx vitest run src/game/bossBalance.test.ts */
+if (process.env.RD_BOSS_REPORT) {
+  for (const boss of BOSSES) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `${boss.id.padEnd(22)} ${boss.difficulty.padEnd(8)} hp=${String(boss.maxHp).padStart(5)}  mixed=${medianQuests(boss.id, 'mixed')}  safe=${medianQuests(boss.id, 'safe')}`,
+    );
+  }
+}
+
 describe('weekly boss balance', () => {
   it('every boss is beatable within a week of ordinary play', () => {
     for (const boss of BOSSES) {

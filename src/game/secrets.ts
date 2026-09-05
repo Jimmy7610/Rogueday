@@ -32,6 +32,76 @@ const completedToday = (ctx: SecretContext): number =>
 
 /* --- reusable conditions --- */
 
+/** An exact clock window, [from, to) in local hours. */
+const between =
+  (from: number, to: number): Condition =>
+  (ctx) =>
+    hour(ctx) >= from && hour(ctx) < to;
+
+/** JS weekdays: 0 = Sunday, 5 = Friday. */
+const onWeekday =
+  (...days: number[]): Condition =>
+  (ctx) =>
+    days.includes(ctx.now.getDay());
+
+/** Wednesday onwards - "the week is already half gone". */
+const midweekOrLater: Condition = (ctx) => [3, 4, 5, 6, 0].includes(ctx.now.getDay());
+
+const withinFirstDaysOfMonth =
+  (days: number): Condition =>
+  (ctx) =>
+    ctx.now.getDate() <= days;
+
+const isLastDayOfMonth: Condition = (ctx) => {
+  const probe = new Date(ctx.now.getFullYear(), ctx.now.getMonth(), ctx.now.getDate() + 1);
+  return probe.getDate() === 1;
+};
+
+/* --- the weekly boss --- */
+
+const bossHpFraction = (ctx: SecretContext): number | null => {
+  const boss = ctx.save.boss;
+  if (!boss || boss.maxHp <= 0) return null;
+  return boss.currentHp / boss.maxHp;
+};
+
+/** The boss is wounded but still standing. */
+const bossHpBelow =
+  (fraction: number): Condition =>
+  (ctx) => {
+    if (ctx.save.boss?.defeated) return false;
+    const hp = bossHpFraction(ctx);
+    return hp !== null && hp > 0 && hp <= fraction;
+  };
+
+/** The boss has barely been touched this week. */
+const bossHpAbove =
+  (fraction: number): Condition =>
+  (ctx) => {
+    if (ctx.save.boss?.defeated) return false;
+    const hp = bossHpFraction(ctx);
+    return hp !== null && hp >= fraction;
+  };
+
+const bossDefeatedThisWeek: Condition = (ctx) => ctx.save.boss?.defeated === true;
+
+/* --- what the player has actually played a lot of --- */
+
+const statAtLeast =
+  (key: 'chaosQuests' | 'legendaryQuests' | 'epicQuests' | 'bossesDefeated', count: number): Condition =>
+  (ctx) =>
+    (ctx.save.statistics[key] ?? 0) >= count;
+
+const categoryPlayedAtLeast =
+  (category: string, count: number): Condition =>
+  (ctx) =>
+    (ctx.save.statistics.questsByCategory[category] ?? 0) >= count;
+
+const historyAtLeast =
+  (entries: number): Condition =>
+  (ctx) =>
+    ctx.save.history.length >= entries;
+
 const lateEvening: Condition = (ctx) => hour(ctx) >= 21 || hour(ctx) < 2;
 const earlyMorning: Condition = (ctx) => hour(ctx) >= 4 && hour(ctx) < 8;
 const daytime: Condition = (ctx) => hour(ctx) >= 9 && hour(ctx) < 18;
@@ -109,6 +179,38 @@ const CONDITIONS: Record<string, Condition> = {
   secret_kindness_anonymous: any(isWeekend, streakAtLeast(2)),
   sc_leave_it_better: any(isWeekend, daytime),
   in_secret_stranger_kindness: daytime,
+
+  /* ================= V3.1 ================= */
+
+  /* --- exact clock windows --- */
+  sx_thirteenth_hour: between(13, 14),
+  sx_between_two_and_three: between(2, 4),
+
+  /* --- the day on the calendar --- */
+  sx_friday_last_act: all(onWeekday(5), between(15, 21)),
+  sx_sunday_idleness: onWeekday(0),
+  sx_last_day_of_month: isLastDayOfMonth,
+  sx_new_month_hour: withinFirstDaysOfMonth(3),
+
+  /* --- how the weekly boss is doing --- */
+  sx_dragons_last_breath: bossHpBelow(0.2),
+  sx_victory_lap: bossDefeatedThisWeek,
+  sx_untouched_boss: all(bossHpAbove(0.9), midweekOrLater),
+
+  /* --- streak and level milestones --- */
+  sx_seventh_day: streakAtLeast(7),
+  sx_thirtieth_day: streakAtLeast(30),
+  sx_level_twenty: levelAtLeast(20),
+
+  /* --- what this player has actually played a lot of --- */
+  sx_child_of_chaos: statAtLeast('chaosQuests', 25),
+  sx_first_legend: statAtLeast('legendaryQuests', 1),
+  sx_cleaners_secret: categoryPlayedAtLeast('cleaning', 20),
+  sx_wanderers_find: categoryPlayedAtLeast('walking', 15),
+
+  /* --- a long history, and a very busy day --- */
+  sx_archivists_reward: historyAtLeast(100),
+  sx_fifth_today: doneTodayAtLeast(5),
 };
 
 /** A quest with no explicit rule still needs a little history behind it. */

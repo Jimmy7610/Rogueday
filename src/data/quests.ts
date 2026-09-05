@@ -22,6 +22,11 @@ import { CRAFT_QUEST_SEEDS } from './quests.craft';
 import { CIVIC_QUEST_SEEDS } from './quests.civic';
 import { INNER_QUEST_SEEDS } from './quests.inner';
 import { FOCUS_QUEST_SEEDS } from './quests.focus';
+import { RHYTHM2_QUEST_SEEDS } from './quests.rhythm2';
+import { CARE_QUEST_SEEDS } from './quests.care';
+import { ORDER2_QUEST_SEEDS } from './quests.order2';
+import { SECRET2_QUEST_SEEDS } from './quests.secret2';
+import { CURIOUS_QUEST_SEEDS } from './quests.curious';
 import { CHAIN_QUEST_SEEDS } from './chains';
 
 const ALL_SEEDS: QuestSeed[] = [
@@ -47,6 +52,11 @@ const ALL_SEEDS: QuestSeed[] = [
   ...CIVIC_QUEST_SEEDS,
   ...INNER_QUEST_SEEDS,
   ...FOCUS_QUEST_SEEDS,
+  ...RHYTHM2_QUEST_SEEDS,
+  ...CARE_QUEST_SEEDS,
+  ...ORDER2_QUEST_SEEDS,
+  ...SECRET2_QUEST_SEEDS,
+  ...CURIOUS_QUEST_SEEDS,
   ...CHAIN_QUEST_SEEDS,
 ];
 

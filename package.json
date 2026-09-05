@@ -13,7 +13,8 @@
     "test:watch": "vitest",
     "icons": "node scripts/generate-icons.mjs",
     "coverage": "node scripts/coverage-report.mjs",
-    "qa:filters": "node scripts/qa-filters.mjs"
+    "qa:filters": "node scripts/qa-filters.mjs",
+    "qa:dupes": "node scripts/dup-report.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",

@@ -96,7 +96,10 @@ export const BOSSES: BossDefinition[] = [
     subtitle: 'Kaosets Behållare',
     description: 'Gem, sladdar och en nyckel till ingenting.',
     flavourText: 'Ingen vet vad som finns längst bak. Ingen vill veta.',
-    maxHp: 730,
+    // V3.1: raised from 730. Its weaknesses - ORDNING, RENSNING and HEM - are
+    // three of the categories the V3.1 content pass grew, so a larger share of
+    // an ordinary pool now hits them and the fight had drifted below its band.
+    maxHp: 800,
     difficulty: 'medium',
     icon: '🗄️',
     accent: '#fbbf24',

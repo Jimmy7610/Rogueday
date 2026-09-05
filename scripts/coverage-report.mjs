@@ -34,11 +34,20 @@ const ENERGIES = ['low', 'medium', 'high'];
 const LOCATIONS = ['home', 'outside', 'anywhere'];
 const MOODS = ['bored', 'stressed', 'motivated', 'adventurous'];
 
-/** How many quests a real player with these filters would actually be offered. */
+/**
+ * How many quests a real player with these filters would actually be offered.
+ *
+ * Chain steps are gated on chain progress and secret quests on local unlock
+ * conditions, so neither belongs in the ordinary pool this matrix describes.
+ */
 function poolFor(duration, energy, location, mood, mode = 'normal') {
   const filters = { duration, energy, location, mood, mode };
   return QUESTS.filter(
-    (quest) => matchesHardConstraints(quest, filters) && matchesMood(quest, filters),
+    (quest) =>
+      !quest.chainId &&
+      quest.category !== 'secret' &&
+      matchesHardConstraints(quest, filters) &&
+      matchesMood(quest, filters),
   ).length;
 }
 

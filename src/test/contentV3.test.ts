@@ -251,14 +251,20 @@ describe('v3 coverage matrix', () => {
     expect(thin, `thin chaos combinations:\n${thin.join('\n')}`).toEqual([]);
   });
 
-  it('offers real depth in every major category', () => {
+  it('gives every single category real depth', () => {
+    // V3.1 brought the ten thinnest categories up to this floor. It is a hard
+    // number rather than a ratio so a future content pass cannot quietly let
+    // one family wither while the total keeps growing.
     const counts = new Map<string, number>();
     for (const quest of QUESTS) {
       counts.set(quest.category, (counts.get(quest.category) ?? 0) + 1);
     }
-    for (const [category, count] of counts) {
-      expect(count, `category ${category}`).toBeGreaterThanOrEqual(15);
-    }
+
+    const thin = [...counts.entries()]
+      .filter(([, count]) => count < 40)
+      .map(([category, count]) => `${category}=${count}`);
+
+    expect(thin, `categories under 40: ${thin.join(', ')}`).toEqual([]);
     expect(counts.size).toBe(Object.keys(CATEGORY_LABELS).length);
   });
 

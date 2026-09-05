@@ -25,7 +25,7 @@ describe('content inventory', () => {
   });
 
   it('matches the figures quoted in the README', () => {
-    expect(QUEST_COUNT).toBe(1008);
+    expect(QUEST_COUNT).toBe(1188);
     expect(BOSSES.length).toBe(14);
     expect(ACHIEVEMENTS.length).toBe(85);
     expect(QUEST_CHAINS.length).toBe(6);
